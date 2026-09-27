@@ -3,7 +3,7 @@
 Zwilling der Librarian-Werte aus Obsidian (`Librarian.md` Wertetabellen + Librarian-Teil von `Tweak-Werte.md`), kompakt. Bei Abweichung gilt Obsidian.
 Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 1. Stand: 2026-09-26.
 
-## Basic Trades — `data/villageroverhaul/villageroverhaul/trade/librarian_*.json`
+## Basic Trades — `data/vo_trade_rework/villageroverhaul/trade/librarian_*.json`
 | Rang | Trade | Preis (Smaragde) | 2. Slot | Output | Stock |
 |---|---|---|---|---|---|
 | 0 | Laterne | 1 → 1 | – | 1 → 1 | 1 → 1 |
@@ -50,7 +50,7 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | Redstone-Puls | 2 Ticks | `EnchantmentStationBlock.PULSE_TICKS` |
 | Besitzer gilt als weg nach | 250 Ticks | `EnchantmentStationBlockEntity.OWNER_TIMEOUT_TICKS` |
 | Verzauberbarkeit Spezialbücher | 1 (wie Buch) | `LibrarianItems` |
-- Kategorien: `data/villageroverhaul/tags/enchantment/{weapon,ranged,tool,armor}_book.json` (Haltbarkeit in allen, Dreizack = Waffe)
+- Kategorien: `data/vo_trade_rework/tags/enchantment/{weapon,ranged,tool,armor}_book.json` (Haltbarkeit in allen, Dreizack = Waffe)
 
 ## Erfahrungsflaschen — `librarian/ExperienceBottles.java`, `librarian/VillagerExperienceOrb.java`
 | Wert | Aktuell |
@@ -59,7 +59,7 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | Villager-XP-Flasche | 2500 Villager-XP |
 | Kugel: Radius / Lebensdauer | 8 Blöcke / 6000 Ticks |
 
-## Lore-Schriftrollen — `data/villageroverhaul/loot_modifiers/*.json` (`chance`)
+## Lore-Schriftrollen — `data/vo_trade_rework/loot_modifiers/*.json` (`chance`)
 | Quelle | Chance | Schriftrolle |
 |---|---|---|
 | Strukturtruhen | 30 % | je nach Ort I–III |

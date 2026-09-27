@@ -3,7 +3,7 @@
 Zwilling der Mason-Werte aus Obsidian (`Mason.md` Wertetabellen + Brechstation-Teil von `Tweak-Werte.md`), kompakt. Bei Abweichung gilt Obsidian.
 Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 1. Stand: 2026-09-27.
 
-## Basic Trades — `data/villageroverhaul/villageroverhaul/trade/mason_*.json`
+## Basic Trades — `data/vo_trade_rework/villageroverhaul/trade/mason_*.json`
 | Rang | Trade | Preis | 2. Slot | Output | Stock |
 |---|---|---|---|---|---|
 | 0 | Sandstein | 1 → 1 Smaragd | – | 1 → 1 | 1 → 1 |
@@ -39,4 +39,4 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | Redstone-Puls | 2 Ticks |
 | Tuff-Abbaugeräusch beim Füllen / Nachlauf | alle 4 Ticks (Vanilla-Abbautakt), Lautstärke 0,75 / 20 Ticks |
 | Verhältnis | 1 : 1 (Steinmetz-Varianten im Steinmetz-Verhältnis) |
-- Regeln: Steinmetz-Rezepte rückwärts (automatisch) + `data/villageroverhaul/villageroverhaul/crushing/*.json` (crushing, cobbled_forms, smooth_blocks, concrete, glazed_terracotta); jede Steinart → Bruch-Form samt Varianten
+- Regeln: Steinmetz-Rezepte rückwärts (automatisch) + `data/vo_trade_rework/vo_trade_rework/crushing/*.json` (crushing, cobbled_forms, smooth_blocks, concrete, glazed_terracotta); jede Steinart → Bruch-Form samt Varianten

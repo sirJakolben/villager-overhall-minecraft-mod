@@ -1,7 +1,7 @@
 # Tweaks – allgemein (alle Berufe)
 
 Zwilling von Obsidian `Tweak-Werte.md` (allgemeiner Teil), kompakt. Beide werden gemeinsam geändert; bei Abweichung gilt Obsidian.
-Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md](veteran.md) · geplant: [runesmith.md](runesmith.md), [salvager.md](salvager.md), [cartographer.md](cartographer.md), [fisherman.md](fisherman.md), [leatherworker.md](leatherworker.md). Stand: 2026-09-27.
+Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md](veteran.md) · geplant: [runesmith.md](runesmith.md), [salvager.md](salvager.md), [cartographer.md](cartographer.md), [fisherman.md](fisherman.md), [leatherworker.md](leatherworker.md). Stand: 2026-09-28. Code-Stellen: Kern `core/…`, Berufe `trade-rework/…` (siehe README).
 
 ## Level & XP — `progression/ProgressionService.java`
 | Wert | Aktuell |
@@ -53,7 +53,7 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 | Leistengröße (Trades) | 1500 Punkte |
 | Punkte pro Check | 50 (0 % Glück) … 100 (100 %) |
 | Freigabe voller Leiste nach Trade | 40 Ticks |
-| Passiv-Leiste nach Passiv-Rang 0–6 | Librarian 6000 · 6000 · 6000 · 6000 · 3000 · 2000 · 1500 (= 1,1,1,1,2,3,4 Upgrades/Tag, `BookUpgradeWork`) · Mason 750 … 187 (= 8 … 32 Batches/Tag, `CrushingWork`); Weiche `PassiveWork.stepsPerDay` |
+| Passiv-Leiste nach Passiv-Rang 0–6 | Librarian 6000 · 6000 · 6000 · 6000 · 3000 · 2000 · 1500 (= 1,1,1,1,2,3,4 Upgrades/Tag, `BookUpgradeWork`) · Mason 750 … 187 (= 8 … 32 Batches/Tag, `CrushingWork`) · Beruf ohne Passive 6000 (= 1 Schritt/Tag, `PassiveWork.NO_PASSIVE_STEPS_PER_DAY`, Kern); Weiche `PassiveWork.stepsPerDay` fragt die Extension |
 - Fokus: größte Lücke → leerste Leiste → höchster Rang (Buch-Upgrade fällig hat Vorrang) · Ruf-Rabatt/Nachfrage aus · Held-Rabatt Vanilla
 
 ## Quests — `quest/QuestSlots.java`, `quest/QuestActions.java`

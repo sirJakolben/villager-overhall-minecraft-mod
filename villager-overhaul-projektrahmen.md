@@ -90,9 +90,20 @@ Festgelegt 2026-09-26 beim Planen von Mason und Schmieden. Leitfrage für jeden 
 
 ---
 
+## Zwei Mods: Kern + Extension
+
+Festgelegt 2026-09-28. Das Projekt besteht aus zwei Mods in einem Gradle-Projekt:
+
+- **Villager Overhaul** (Kern, `core/`, `villageroverhaul`): alles, was für jeden Villager gleich funktioniert – Leveln durch Arbeit, Upgrade-Gruppen, Handelsfenster, Quests, Restock, Glücklichkeit, Arbeitsplätze, Claim, Handelsblock, Beruf wird fest. Jeder Beruf läuft hier nach der Nicht-Implementierungsregel.
+- **Villager Overhaul: Trade Rework** (Extension, `trade-rework/`, `vo_trade_rework`): alle eigenen Berufe mit Trades, Quests, Items, Blöcken, Master- und Passive-Stationen und allem, was nur ein Beruf braucht (Mob-Waffen, Karten, Polster …).
+- **Richtung der Abhängigkeit:** Die Extension kennt den Kern, der Kern nie die Extension. Braucht der Kern an einer Stelle Berufswissen, bekommt er einen neutralen Haken in `api/ExtensionHooks`, den die Extension füllt – kein Import aus der Extension im Kern.
+- **Neue Arbeit einordnen:** Gilt es für jeden Villager (auch für Farmer und Berufe fremder Mods)? → Kern. Gehört es zu einem Beruf, den wir designen? → Extension.
+
+---
+
 ## Nicht-Implementierungsregel (Mod-Kompatibilität)
 
-Festgelegt 2026-09-27. Gilt **immer** für jeden Beruf, den wir nicht selbst gebaut haben – Vanilla-Berufe ohne eigenes Design (Farmer, Fischer, Schäfer, Pfeilmacher, Kleriker, Metzger, Gerber) und jeden Beruf aus anderen Mods. Erkannt daran: keine eigenen Stationen (`ProfessionStations`), keine eigenen Trade- oder Quest-Dateien, aber Vanilla-Trade-Sets. Sobald ein Beruf eigene Dateien bekommt, gilt wieder unser normales System.
+Festgelegt 2026-09-27. Gilt **immer** für jeden Beruf, den wir nicht selbst gebaut haben – Vanilla-Berufe ohne eigenes Design (Farmer, Fischer, Schäfer, Pfeilmacher, Kleriker, Metzger, Gerber) und jeden Beruf aus anderen Mods. Erkannt daran: keine eigenen Stationen (`ProfessionStations`, befüllt von der Extension), keine eigenen Trade- oder Quest-Dateien, aber Vanilla-Trade-Sets. Ohne die Extension Trade Rework gilt das für **jeden** Beruf – genau das ist die Basis-Mod. Sobald ein Beruf eigene Dateien bekommt, gilt wieder unser normales System.
 
 - Grundlage sind **alle** Vanilla-Trades des Berufs (Level 1–5, der ganze Pool, nicht Vanillas Zufallsauswahl), in Vanilla-Reihenfolge; Biom-Einschränkungen von Vanilla gelten weiter
 - Gibt es einen Trade in **mehr als drei Farbvarianten** (16 Wollfarben …), bleibt pro Villager eine zufällige davon
@@ -144,7 +155,7 @@ Feste Regel seit 2026-09-23: **Alle einstellbaren Zahlen der Mod** (Level-Kurve,
 
 - Java, Standard-NeoForge-Modding-Konventionen.
 - Code, Bezeichner, Kommentare, Commit-Nachrichten und Übersetzungs-Keys auf **Englisch**; Erklärungen und Rückfragen an den Nutzer auf **Deutsch**.
-- Alle Registry-IDs unter dem einheitlichen Namespace `villageroverhaul`; keine hartcodierten Strings, wo Konstanten sinnvoll sind.
+- Registry-IDs: Kern unter `villageroverhaul`, Extension unter `vo_trade_rework` (Trades/Quests der Extension liegen in den Registries des Kerns: `data/vo_trade_rework/villageroverhaul/trade/`); keine hartcodierten Strings, wo Konstanten sinnvoll sind.
 - Alle UI-Texte über Translation-Keys, niemals hartcodiert.
 - Kommentare im Code nur dort, wo das Warum nicht offensichtlich ist – die ausführliche Erklärung gehört in den Fließtext der Antwort, nicht in den Quelltext.
 

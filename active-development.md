@@ -1,10 +1,11 @@
 # Villager Overhaul – Active Development
 
 Alles, was noch aussteht. Erledigtes wandert (kompakt) nach [README.md](README.md) und wird hier gelöscht.
-Zahlen: [tweaks/](tweaks/) · fehlende Grafiken: Obsidian `Fehlende Texturen und Modelle.md`. Stand: 2026-09-26.
+Zahlen: [tweaks/](tweaks/) · fehlende Grafiken: Obsidian `Fehlende Texturen und Modelle.md`. Stand: 2026-09-28. Seit 2026-09-28 zwei Mods: Kern `core/` (Villager Overhaul) + Extension `trade-rework/` (Trade Rework) – siehe README.
 
 ## 1. Im Spiel testen (umgesetzt, noch nie getestet)
 
+- [ ] **Aufteilung Kern + Extension** (2026-09-28): IntelliJ-Gradle-Projekt neu laden (neue Run-Konfigurationen). `:trade-rework:runClient` – alte Test-Welt öffnen: Villager behalten Level/Punkte/Ränge, gesetzte Extension-Blöcke/-Items (Stationen, Bücherstapel, Waffenständer …) sind weg (neue ID `vo_trade_rework:`), Handelsblock bleibt; neu kaufen/setzen, alle sechs Berufe wie vorher. `:core:runClient` (eigener Ordner `run-core/`, neue Welt): Librarian, Mason, Toolsmith, Weaponsmith, Kartograph, Armorer verhalten sich wie der Farmer (Vanilla-Trades sortiert, keine Level-Grenze, nur Vanilla-Arbeitsblock, kein Passive-Bereich), Berufsnamen wieder Vanilla, Erfahrungsfläschchen-Trade des Klerikers kostet keine Spieler-XP
 - [ ] Zweiter Bezahl-Slot (`second_input`)
 - [ ] Spezialbücher am Zaubertisch: nur Kategorie-Verzauberungen, Ergebnis = verzaubertes Buch, eine von mehreren wird gestrichen, Vorschau stimmt
 - [ ] Verbesserungsstation: Trichter/Spender rein, nur fertige Bücher raus, Komparator, Redstone-Puls + Arbeitsgeräusch, Abbauen droppt Bücher
@@ -40,13 +41,13 @@ Zahlen: [tweaks/](tweaks/) · fehlende Grafiken: Obsidian `Fehlende Texturen und
 
 - [ ] **Notizzettel / Papierstapel als Block**: an die Wand oder auf Blöcke, stapelt wie Blütenblätter; Item `paper_pile` existiert; Textur + Modell später
 - [ ] **Passiv-Bereich im Villager-Fenster**: Villager mit seiner Station zeigen – Design offen
-- [ ] **Lore-Fragment-Texte**: 36 Texte (4 Herkünfte × 3 Stufen × 3), Platzhalter in `lang/*.json`, Schlüssel `lore.villageroverhaul.<herkunft>_<stufe>.<1-3>`
+- [ ] **Lore-Fragment-Texte**: 36 Texte (4 Herkünfte × 3 Stufen × 3), Platzhalter in `lang/*.json`, Schlüssel `lore.vo_trade_rework.<herkunft>_<stufe>.<1-3>` (Extension)
 - [ ] **Balancing**: alle Trade-/Quest-Werte stehen noch auf 1 (außer Lore-Quests) → [tweaks/librarian.md](tweaks/librarian.md)
 - [ ] Texturen: Fernkampfbuch, Lore-Schriftrollen, finale Stationen (Liste in Obsidian)
 
 ## 3. Weitere Berufe
 
-Muster pro Beruf: Obsidian-Datei nach Vorbild `Librarian.md` · Basic Trades (Rang 0–6, Workstations auf Basic-Rang 4) · Master Trades · Quests (Easy-, Hard-Pool, Dauer-Quest) · Passive (letzter Rang Sonderwirkung) · Stationen enden auf „Station“ (`…_station`) · Items/Blöcke/Texturen · Eintrag in `claim/ProfessionStations.java` · Tweak-Datei in `tweaks/` · im Spiel getestet
+Muster pro Beruf: Obsidian-Datei nach Vorbild `Librarian.md` · Basic Trades (Rang 0–6, Workstations auf Basic-Rang 4) · Master Trades · Quests (Easy-, Hard-Pool, Dauer-Quest) · Passive (letzter Rang Sonderwirkung) · Stationen enden auf „Station“ (`…_station`) · Items/Blöcke/Texturen · Einträge in `TradeReworkProfessions.java` (Stationen, Passive, Sonderfälle – Extension) · Tweak-Datei in `tweaks/` · im Spiel getestet
 
 Bis ein Beruf designt ist, gilt die **Nicht-Implementierungsregel** (Projektrahmen): er läuft mit seinen Vanilla-Trades auf unserem System.
 
