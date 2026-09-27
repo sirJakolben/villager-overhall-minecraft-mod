@@ -1,0 +1,31 @@
+{
+  "result": "minecraft:netherite_scrap",
+  "items": {
+    "minecraft:netherite_helmet": 4,
+    "minecraft:netherite_chestplate": 4,
+    "minecraft:netherite_leggings": 4,
+    "minecraft:netherite_boots": 4,
+    "minecraft:netherite_sword": 4,
+    "minecraft:netherite_pickaxe": 4,
+    "minecraft:netherite_axe": 4,
+    "minecraft:netherite_shovel": 4,
+    "minecraft:netherite_hoe": 4,
+    "minecraft:netherite_spear": 4,
+    "minecraft:netherite_horse_armor": 4,
+    "minecraft:netherite_nautilus_armor": 4
+  },
+  "downgrade": {
+    "minecraft:netherite_helmet": "minecraft:diamond_helmet",
+    "minecraft:netherite_chestplate": "minecraft:diamond_chestplate",
+    "minecraft:netherite_leggings": "minecraft:diamond_leggings",
+    "minecraft:netherite_boots": "minecraft:diamond_boots",
+    "minecraft:netherite_sword": "minecraft:diamond_sword",
+    "minecraft:netherite_pickaxe": "minecraft:diamond_pickaxe",
+    "minecraft:netherite_axe": "minecraft:diamond_axe",
+    "minecraft:netherite_shovel": "minecraft:diamond_shovel",
+    "minecraft:netherite_hoe": "minecraft:diamond_hoe",
+    "minecraft:netherite_spear": "minecraft:diamond_spear",
+    "minecraft:netherite_horse_armor": "minecraft:diamond_horse_armor",
+    "minecraft:netherite_nautilus_armor": "minecraft:diamond_nautilus_armor"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "pairs": [
+    { "input": "minecraft:smooth_sandstone", "output": "minecraft:sandstone" },
+    { "input": "minecraft:smooth_red_sandstone", "output": "minecraft:red_sandstone" },
+    { "input": "minecraft:smooth_quartz", "output": "minecraft:quartz_block" },
+    { "input": "minecraft:quartz_bricks", "output": "minecraft:quartz_block" }
+  ]
+}

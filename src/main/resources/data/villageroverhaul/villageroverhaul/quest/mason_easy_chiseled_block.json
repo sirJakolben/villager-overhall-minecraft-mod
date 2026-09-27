@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:mason",
+  "tier": "basic",
+  "input_variants": ["minecraft:chiseled_stone_bricks", "minecraft:chiseled_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:chiseled_deepslate", "minecraft:chiseled_tuff", "minecraft:chiseled_tuff_bricks", "minecraft:chiseled_copper", "minecraft:chiseled_resin_bricks"],
+  "base_input": { "item": "minecraft:chiseled_stone_bricks", "count": 1 },
+  "max_input": { "item": "minecraft:chiseled_stone_bricks", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

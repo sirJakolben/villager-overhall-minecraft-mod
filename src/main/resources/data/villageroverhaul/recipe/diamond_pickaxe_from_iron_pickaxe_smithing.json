@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:diamond_block",
+  "base": "minecraft:iron_pickaxe",
+  "result": {
+    "id": "minecraft:diamond_pickaxe"
+  },
+  "template": "villageroverhaul:upgrade_smithing_template"
+}

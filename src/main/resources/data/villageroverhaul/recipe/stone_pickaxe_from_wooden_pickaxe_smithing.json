@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:cobblestone",
+  "base": "minecraft:wooden_pickaxe",
+  "result": {
+    "id": "minecraft:stone_pickaxe"
+  },
+  "template": "villageroverhaul:upgrade_smithing_template"
+}

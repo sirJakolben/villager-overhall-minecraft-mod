@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": "#minecraft:planks",
+    "E": "minecraft:emerald"
+  },
+  "pattern": [
+    "EE",
+    "PP",
+    "PP"
+  ],
+  "result": {
+    "id": "villageroverhaul:trading_block"
+  }
+}

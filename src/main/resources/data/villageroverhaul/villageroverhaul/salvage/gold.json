@@ -1,0 +1,15 @@
+{
+  "result": "minecraft:gold_ingot",
+  "items": {
+    "minecraft:golden_helmet": 5,
+    "minecraft:golden_chestplate": 8,
+    "minecraft:golden_leggings": 7,
+    "minecraft:golden_boots": 4,
+    "minecraft:golden_sword": 2,
+    "minecraft:golden_pickaxe": 3,
+    "minecraft:golden_axe": 3,
+    "minecraft:golden_shovel": 1,
+    "minecraft:golden_hoe": 2,
+    "minecraft:golden_spear": 1
+  }
+}

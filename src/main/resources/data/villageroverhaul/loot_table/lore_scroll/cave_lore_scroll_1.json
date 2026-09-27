@@ -1,0 +1,8 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "villageroverhaul:cave_lore_scroll_1" } ]
+    }
+  ]
+}

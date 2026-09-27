@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "entries": [
+    "villageroverhaul:overworld_1_structures",
+    "villageroverhaul:overworld_1_villages",
+    "villageroverhaul:overworld_1_witch",
+    "villageroverhaul:overworld_2_structures",
+    "villageroverhaul:overworld_3_structures",
+    "villageroverhaul:cave_1_structures",
+    "villageroverhaul:cave_2_structures",
+    "villageroverhaul:cave_3_structures",
+    "villageroverhaul:underwater_1_structures",
+    "villageroverhaul:underwater_1_fishing",
+    "villageroverhaul:underwater_2_structures",
+    "villageroverhaul:underwater_3_elder_guardian",
+    "villageroverhaul:nether_1_structures",
+    "villageroverhaul:nether_1_bartering",
+    "villageroverhaul:nether_2_structures",
+    "villageroverhaul:nether_3_structures",
+    "villageroverhaul:nether_3_ancient_debris"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "pairs": [
+    { "input": "minecraft:stone", "output": "minecraft:cobblestone", "with_variants": true },
+    { "input": "minecraft:smooth_stone", "output": "minecraft:cobblestone", "with_variants": true },
+    { "input": "minecraft:cracked_stone_bricks", "output": "minecraft:cobblestone" },
+    { "input": "minecraft:mossy_stone_bricks", "output": "minecraft:mossy_cobblestone", "with_variants": true },
+    { "input": "minecraft:deepslate", "output": "minecraft:cobbled_deepslate", "with_variants": true },
+    { "input": "minecraft:cracked_deepslate_bricks", "output": "minecraft:cobbled_deepslate" },
+    { "input": "minecraft:cracked_deepslate_tiles", "output": "minecraft:cobbled_deepslate" },
+    { "input": "minecraft:smooth_basalt", "output": "minecraft:basalt", "with_variants": true }
+  ]
+}

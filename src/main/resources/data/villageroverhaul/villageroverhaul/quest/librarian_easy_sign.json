@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:librarian",
+  "tier": "basic",
+  "input_variants": ["minecraft:oak_sign", "minecraft:spruce_sign", "minecraft:birch_sign", "minecraft:jungle_sign", "minecraft:acacia_sign", "minecraft:dark_oak_sign", "minecraft:mangrove_sign", "minecraft:cherry_sign", "minecraft:pale_oak_sign", "minecraft:bamboo_sign"],
+  "base_input": { "item": "minecraft:oak_sign", "count": 1 },
+  "max_input": { "item": "minecraft:oak_sign", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

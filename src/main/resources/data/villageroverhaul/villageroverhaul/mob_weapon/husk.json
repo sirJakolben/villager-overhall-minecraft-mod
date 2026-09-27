@@ -1,0 +1,4 @@
+{
+  "entity": "minecraft:husk",
+  "effect": { "id": "minecraft:hunger", "duration": 280 }
+}

@@ -1,0 +1,91 @@
+{
+    "credit":  "Made with Blockbench (assets/Mason/rock_pile, group 1)",
+    "parent":  "minecraft:block/block",
+    "textures":  {
+                     "1":  "villageroverhaul:block/rock_pile_2",
+                     "2":  "villageroverhaul:block/rock_pile_3",
+                     "3":  "villageroverhaul:block/rock_pile_4",
+                     "4":  "villageroverhaul:block/rock_pile_1",
+                     "particle":  "villageroverhaul:block/rock_pile_1"
+                 },
+    "elements":  [
+                     {
+                         "name":  "medium rock",
+                         "from":  [
+                                      5,
+                                      0,
+                                      2
+                                  ],
+                         "to":  [
+                                    9,
+                                    3,
+                                    7
+                                ],
+                         "rotation":  {
+                                          "angle":  0,
+                                          "axis":  "y",
+                                          "origin":  [
+                                                         6,
+                                                         0,
+                                                         3
+                                                     ]
+                                      },
+                         "faces":  {
+                                       "north":  {
+                                                     "uv":  [
+                                                                0,
+                                                                8,
+                                                                4,
+                                                                11
+                                                            ],
+                                                     "texture":  "#4"
+                                                 },
+                                       "east":  {
+                                                    "uv":  [
+                                                               0,
+                                                               5,
+                                                               5,
+                                                               8
+                                                           ],
+                                                    "texture":  "#4"
+                                                },
+                                       "south":  {
+                                                     "uv":  [
+                                                                8,
+                                                                0,
+                                                                12,
+                                                                3
+                                                            ],
+                                                     "texture":  "#4"
+                                                 },
+                                       "west":  {
+                                                    "uv":  [
+                                                               5,
+                                                               5,
+                                                               10,
+                                                               8
+                                                           ],
+                                                    "texture":  "#4"
+                                                },
+                                       "up":  {
+                                                  "uv":  [
+                                                             0,
+                                                             0,
+                                                             4,
+                                                             5
+                                                         ],
+                                                  "texture":  "#4"
+                                              },
+                                       "down":  {
+                                                    "uv":  [
+                                                               4,
+                                                               0,
+                                                               8,
+                                                               5
+                                                           ],
+                                                    "texture":  "#4"
+                                                }
+                                   }
+                     }
+                 ]
+}

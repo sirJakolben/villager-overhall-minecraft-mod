@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:armorer",
+  "tier": "master",
+  "unlock_rank": 3,
+  "base_input": { "item": "minecraft:emerald", "count": 1 },
+  "max_input": { "item": "minecraft:emerald", "count": 1 },
+  "base_output": { "item": "villageroverhaul:missing_trade", "count": 1 },
+  "max_output": { "item": "villageroverhaul:missing_trade", "count": 1 },
+  "base_max_uses": 0,
+  "max_max_uses": 0
+}

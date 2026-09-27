@@ -1,0 +1,15 @@
+{
+  "result": "minecraft:copper_ingot",
+  "items": {
+    "minecraft:copper_helmet": 5,
+    "minecraft:copper_chestplate": 8,
+    "minecraft:copper_leggings": 7,
+    "minecraft:copper_boots": 4,
+    "minecraft:copper_sword": 2,
+    "minecraft:copper_pickaxe": 3,
+    "minecraft:copper_axe": 3,
+    "minecraft:copper_shovel": 1,
+    "minecraft:copper_hoe": 2,
+    "minecraft:copper_spear": 1
+  }
+}

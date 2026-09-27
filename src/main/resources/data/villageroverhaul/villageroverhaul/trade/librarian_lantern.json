@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:librarian",
+  "tier": "basic",
+  "unlock_rank": 0,
+  "base_input": { "item": "minecraft:emerald", "count": 1 },
+  "max_input": { "item": "minecraft:emerald", "count": 1 },
+  "base_output": { "item": "minecraft:lantern", "count": 1 },
+  "max_output": { "item": "minecraft:lantern", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

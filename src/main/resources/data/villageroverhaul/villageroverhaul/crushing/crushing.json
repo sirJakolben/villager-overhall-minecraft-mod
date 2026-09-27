@@ -1,0 +1,9 @@
+{
+  "pairs": [
+    { "input": "minecraft:cobblestone", "output": "minecraft:gravel" },
+    { "input": "minecraft:sandstone", "output": "minecraft:sand" },
+    { "input": "minecraft:red_sandstone", "output": "minecraft:red_sand" },
+    { "input": "minecraft:glass", "output": "minecraft:sand" },
+    { "input": "minecraft:terracotta", "output": "minecraft:red_sand" }
+  ]
+}

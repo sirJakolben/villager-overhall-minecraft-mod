@@ -1,0 +1,84 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/block",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "villageroverhaul:block/book_enhance_station_bottom",
+		"1": "villageroverhaul:block/book_enhance_station_book",
+		"2": "villageroverhaul:block/book_enhance_station_small_side",
+		"3": "villageroverhaul:block/book_enhance_station_book_row",
+		"4": "villageroverhaul:block/book_enhance_station_tall_side",
+		"particle": "villageroverhaul:block/book_enhance_station_bottom"
+	},
+	"elements": [
+		{
+			"name": "book_enhance_station_bottom",
+			"from": [0, 0, 0],
+			"to": [16, 8, 16],
+			"faces": {
+				"north": {"uv": [8, 0, 16, 4], "texture": "#0"},
+				"east": {"uv": [8, 4, 16, 8], "texture": "#0"},
+				"south": {"uv": [8, 8, 16, 12], "texture": "#0"},
+				"west": {"uv": [8, 12, 16, 16], "texture": "#0"},
+				"up": {"uv": [0, 0, 8, 8], "texture": "#0"},
+				"down": {"uv": [0, 8, 8, 16], "texture": "#0"}
+			}
+		},
+		{
+			"name": "book_enhance_station_book",
+			"from": [3, 8, 9],
+			"to": [9, 9, 13],
+			"rotation": {"angle": -35, "axis": "y", "origin": [6, 8, 10]},
+			"faces": {
+				"north": {"uv": [6, 0, 12, 1], "texture": "#1"},
+				"east": {"uv": [6, 2, 10, 3], "texture": "#1"},
+				"south": {"uv": [6, 1, 12, 2], "texture": "#1"},
+				"west": {"uv": [6, 3, 10, 4], "texture": "#1"},
+				"up": {"uv": [0, 0, 6, 4], "texture": "#1"},
+				"down": {"uv": [0, 4, 6, 8], "texture": "#1"}
+			}
+		},
+		{
+			"name": "book_enhance_station_small_side",
+			"from": [14, 8, 2],
+			"to": [16, 12, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [13, 8, 8]},
+			"faces": {
+				"north": {"uv": [2, 4, 3, 6], "texture": "#2"},
+				"east": {"uv": [0, 0, 7, 2], "texture": "#2"},
+				"south": {"uv": [3, 4, 4, 6], "texture": "#2"},
+				"west": {"uv": [0, 2, 7, 4], "texture": "#2"},
+				"up": {"uv": [0, 4, 1, 11], "texture": "#2"},
+				"down": {"uv": [1, 4, 2, 11], "texture": "#2"}
+			}
+		},
+		{
+			"name": "book_enhance_station_book_row",
+			"from": [8, 8, 2],
+			"to": [14, 14, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [13, 8, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 3, 3], "texture": "#3"},
+				"east": {"uv": [0, 3, 3, 6], "texture": "#3"},
+				"south": {"uv": [3, 0, 6, 3], "texture": "#3"},
+				"west": {"uv": [3, 3, 6, 6], "texture": "#3"},
+				"up": {"uv": [0, 6, 3, 9], "texture": "#3"},
+				"down": {"uv": [6, 0, 9, 3], "texture": "#3"}
+			}
+		},
+		{
+			"name": "book_enhance_station_tall_side",
+			"from": [0, 8, 0],
+			"to": [16, 16, 2],
+			"rotation": {"angle": 0, "axis": "y", "origin": [13, 8, 8]},
+			"faces": {
+				"north": {"uv": [0, 0, 8, 4], "texture": "#4"},
+				"east": {"uv": [8, 1, 9, 5], "texture": "#4"},
+				"south": {"uv": [0, 4, 8, 8], "texture": "#4"},
+				"west": {"uv": [8, 5, 9, 9], "texture": "#4"},
+				"up": {"uv": [0, 8, 8, 9], "texture": "#4"},
+				"down": {"uv": [8, 0, 16, 1], "texture": "#4"}
+			}
+		}
+	]
+}

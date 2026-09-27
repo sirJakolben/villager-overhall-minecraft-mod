@@ -1,0 +1,4 @@
+{
+  "entity": "minecraft:bogged",
+  "effect": { "id": "minecraft:poison", "duration": 100 }
+}

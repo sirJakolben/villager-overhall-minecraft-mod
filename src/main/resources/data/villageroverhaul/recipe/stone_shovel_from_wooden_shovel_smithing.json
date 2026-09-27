@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:cobblestone",
+  "base": "minecraft:wooden_shovel",
+  "result": {
+    "id": "minecraft:stone_shovel"
+  },
+  "template": "villageroverhaul:upgrade_smithing_template"
+}

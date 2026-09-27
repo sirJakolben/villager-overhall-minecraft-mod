@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:copper_block",
+  "base": "minecraft:leather_chestplate",
+  "result": {
+    "id": "minecraft:copper_chestplate"
+  },
+  "template": "villageroverhaul:upgrade_smithing_template"
+}

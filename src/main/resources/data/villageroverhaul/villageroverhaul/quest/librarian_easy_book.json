@@ -1,0 +1,10 @@
+{
+  "profession": "minecraft:librarian",
+  "tier": "basic",
+  "base_input": { "item": "minecraft:book", "count": 1 },
+  "max_input": { "item": "minecraft:book", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

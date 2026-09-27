@@ -1,0 +1,10 @@
+{
+  "profession": "minecraft:weaponsmith",
+  "tier": "basic",
+  "base_input": { "item": "minecraft:crossbow", "count": 1, "mob": "minecraft:pillager" },
+  "max_input": { "item": "minecraft:crossbow", "count": 1, "mob": "minecraft:pillager" },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

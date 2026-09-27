@@ -1,0 +1,4 @@
+{
+  "entity": "minecraft:stray",
+  "effect": { "id": "minecraft:slowness", "duration": 600 }
+}

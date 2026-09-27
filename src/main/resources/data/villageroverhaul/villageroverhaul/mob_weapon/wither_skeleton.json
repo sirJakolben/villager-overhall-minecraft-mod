@@ -1,0 +1,4 @@
+{
+  "entity": "minecraft:wither_skeleton",
+  "effect": { "id": "minecraft:wither", "duration": 200 }
+}

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "villageroverhaul:block/smelting_station" },
+    "powered=true": { "model": "villageroverhaul:block/smelting_station" }
+  }
+}

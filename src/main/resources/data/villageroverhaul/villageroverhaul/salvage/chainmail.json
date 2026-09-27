@@ -1,0 +1,9 @@
+{
+  "result": "minecraft:iron_nugget",
+  "items": {
+    "minecraft:chainmail_helmet": 10,
+    "minecraft:chainmail_chestplate": 16,
+    "minecraft:chainmail_leggings": 14,
+    "minecraft:chainmail_boots": 8
+  }
+}

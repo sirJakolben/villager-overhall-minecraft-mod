@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "villageroverhaul:block/repair_station" },
+    "powered=true": { "model": "villageroverhaul:block/repair_station" }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:librarian",
+  "tier": "master",
+  "unlock_rank": 2,
+  "base_input": { "item": "minecraft:emerald", "count": 1 },
+  "max_input": { "item": "minecraft:emerald", "count": 1 },
+  "second_input": { "item": "minecraft:book", "count": 1 },
+  "base_output": { "item": "villageroverhaul:tool_book", "count": 1 },
+  "max_output": { "item": "villageroverhaul:tool_book", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

@@ -1,0 +1,262 @@
+﻿[
+    {
+        "index":  1,
+        "name":  "stat_group_right",
+        "file":  "stat_group_right",
+        "visible":  true,
+        "x":  90,
+        "y":  123,
+        "width":  18,
+        "height":  90
+    },
+    {
+        "index":  2,
+        "name":  "stat_group_middle",
+        "file":  "stat_group_middle",
+        "visible":  true,
+        "x":  77,
+        "y":  123,
+        "width":  13,
+        "height":  90
+    },
+    {
+        "index":  3,
+        "name":  "stat_group_left",
+        "file":  "stat_group_left",
+        "visible":  true,
+        "x":  73,
+        "y":  123,
+        "width":  4,
+        "height":  90
+    },
+    {
+        "index":  4,
+        "name":  "passive_ability_group",
+        "file":  "passive_ability_group",
+        "visible":  true,
+        "x":  56,
+        "y":  57,
+        "width":  56,
+        "height":  67
+    },
+    {
+        "index":  5,
+        "name":  "trade_level_button (passive ability kopie)",
+        "file":  "trade_level_button__passive_ability_kopie_",
+        "visible":  true,
+        "x":  86,
+        "y":  60,
+        "width":  18,
+        "height":  13
+    },
+    {
+        "index":  6,
+        "name":  "villager_gui",
+        "file":  "villager_gui",
+        "visible":  true,
+        "x":  104,
+        "y":  52,
+        "width":  278,
+        "height":  166
+    },
+    {
+        "index":  7,
+        "name":  "happiness_background",
+        "file":  "happiness_background",
+        "visible":  true,
+        "x":  92,
+        "y":  129,
+        "width":  247,
+        "height":  126
+    },
+    {
+        "index":  8,
+        "name":  "happiness_current",
+        "file":  "happiness_current",
+        "visible":  true,
+        "x":  94,
+        "y":  129,
+        "width":  5,
+        "height":  66
+    },
+    {
+        "index":  9,
+        "name":  "basic_productivity_background",
+        "file":  "basic_productivity_background",
+        "visible":  false,
+        "x":  78,
+        "y":  129,
+        "width":  11,
+        "height":  79
+    },
+    {
+        "index":  10,
+        "name":  "basic_productivity_current",
+        "file":  "basic_productivity_current",
+        "visible":  false,
+        "x":  81,
+        "y":  129,
+        "width":  5,
+        "height":  66
+    },
+    {
+        "index":  11,
+        "name":  "master_productivity_background",
+        "file":  "master_productivity_background",
+        "visible":  false,
+        "x":  78,
+        "y":  129,
+        "width":  11,
+        "height":  79
+    },
+    {
+        "index":  12,
+        "name":  "master_productivity_current",
+        "file":  "master_productivity_current",
+        "visible":  false,
+        "x":  81,
+        "y":  129,
+        "width":  5,
+        "height":  66
+    },
+    {
+        "index":  13,
+        "name":  "passive_productivity_background (Kopie)",
+        "file":  "passive_productivity_background__Kopie_",
+        "visible":  false,
+        "x":  78,
+        "y":  129,
+        "width":  11,
+        "height":  79
+    },
+    {
+        "index":  14,
+        "name":  "passive_productivity_current (Kopie)",
+        "file":  "passive_productivity_current__Kopie_",
+        "visible":  false,
+        "x":  81,
+        "y":  129,
+        "width":  5,
+        "height":  66
+    },
+    {
+        "index":  15,
+        "name":  "trade_group_bottom",
+        "file":  "trade_group_bottom",
+        "visible":  true,
+        "x":  111,
+        "y":  95,
+        "width":  88,
+        "height":  5
+    },
+    {
+        "index":  16,
+        "name":  "trade_group_sides",
+        "file":  "trade_group_sides",
+        "visible":  true,
+        "x":  111,
+        "y":  74,
+        "width":  88,
+        "height":  21
+    },
+    {
+        "index":  17,
+        "name":  "trade_group_top",
+        "file":  "trade_group_top",
+        "visible":  true,
+        "x":  111,
+        "y":  60,
+        "width":  88,
+        "height":  14
+    },
+    {
+        "index":  18,
+        "name":  "trade_level_button",
+        "file":  "trade_level_button",
+        "visible":  true,
+        "x":  177,
+        "y":  61,
+        "width":  18,
+        "height":  13
+    },
+    {
+        "index":  19,
+        "name":  "trade_level_arrow",
+        "file":  "trade_level_arrow",
+        "visible":  true,
+        "x":  190,
+        "y":  56,
+        "width":  8,
+        "height":  10
+    },
+    {
+        "index":  20,
+        "name":  "skill_point_square",
+        "file":  "skill_point_square",
+        "visible":  true,
+        "x":  348,
+        "y":  66,
+        "width":  15,
+        "height":  15
+    },
+    {
+        "index":  21,
+        "name":  "skill_point_nbr1",
+        "file":  "skill_point_nbr1",
+        "visible":  false,
+        "x":  352,
+        "y":  68,
+        "width":  7,
+        "height":  11
+    },
+    {
+        "index":  22,
+        "name":  "skill_point_nbr2",
+        "file":  "skill_point_nbr2",
+        "visible":  false,
+        "x":  351,
+        "y":  68,
+        "width":  9,
+        "height":  11
+    },
+    {
+        "index":  23,
+        "name":  "skill_point_nbr3",
+        "file":  "skill_point_nbr3",
+        "visible":  false,
+        "x":  351,
+        "y":  68,
+        "width":  8,
+        "height":  10
+    },
+    {
+        "index":  24,
+        "name":  "skill_point_nbr4",
+        "file":  "skill_point_nbr4",
+        "visible":  false,
+        "x":  351,
+        "y":  68,
+        "width":  9,
+        "height":  11
+    },
+    {
+        "index":  25,
+        "name":  "skill_point_nbr5",
+        "file":  "skill_point_nbr5",
+        "visible":  false,
+        "x":  352,
+        "y":  68,
+        "width":  7,
+        "height":  11
+    },
+    {
+        "index":  26,
+        "name":  "skill_point_star",
+        "file":  "skill_point_star",
+        "visible":  true,
+        "x":  356,
+        "y":  75,
+        "width":  13,
+        "height":  13
+    }
+]

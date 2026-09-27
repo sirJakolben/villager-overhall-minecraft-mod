@@ -1,0 +1,20 @@
+{
+  "multipart": [
+    { "when": { "facing": "north" }, "apply": { "model": "villageroverhaul:block/rock_pile_1" } },
+    { "when": { "facing": "east" }, "apply": { "model": "villageroverhaul:block/rock_pile_1", "y": 90 } },
+    { "when": { "facing": "south" }, "apply": { "model": "villageroverhaul:block/rock_pile_1", "y": 180 } },
+    { "when": { "facing": "west" }, "apply": { "model": "villageroverhaul:block/rock_pile_1", "y": 270 } },
+    { "when": { "facing": "north", "rocks": "2|3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_2" } },
+    { "when": { "facing": "east", "rocks": "2|3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_2", "y": 90 } },
+    { "when": { "facing": "south", "rocks": "2|3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_2", "y": 180 } },
+    { "when": { "facing": "west", "rocks": "2|3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_2", "y": 270 } },
+    { "when": { "facing": "north", "rocks": "3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_3" } },
+    { "when": { "facing": "east", "rocks": "3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_3", "y": 90 } },
+    { "when": { "facing": "south", "rocks": "3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_3", "y": 180 } },
+    { "when": { "facing": "west", "rocks": "3|4" }, "apply": { "model": "villageroverhaul:block/rock_pile_3", "y": 270 } },
+    { "when": { "facing": "north", "rocks": "4" }, "apply": { "model": "villageroverhaul:block/rock_pile_4" } },
+    { "when": { "facing": "east", "rocks": "4" }, "apply": { "model": "villageroverhaul:block/rock_pile_4", "y": 90 } },
+    { "when": { "facing": "south", "rocks": "4" }, "apply": { "model": "villageroverhaul:block/rock_pile_4", "y": 180 } },
+    { "when": { "facing": "west", "rocks": "4" }, "apply": { "model": "villageroverhaul:block/rock_pile_4", "y": 270 } }
+  ]
+}

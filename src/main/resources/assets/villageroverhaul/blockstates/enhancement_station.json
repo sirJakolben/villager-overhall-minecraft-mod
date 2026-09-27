@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "villageroverhaul:block/enhancement_station" },
+    "powered=true": { "model": "villageroverhaul:block/enhancement_station" }
+  }
+}

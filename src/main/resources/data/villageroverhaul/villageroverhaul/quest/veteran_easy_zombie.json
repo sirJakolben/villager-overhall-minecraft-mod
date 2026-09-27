@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:weaponsmith",
+  "tier": "basic",
+  "input_variants": ["minecraft:iron_sword", "minecraft:iron_shovel"],
+  "base_input": { "item": "minecraft:iron_sword", "count": 1, "mob": "minecraft:zombie" },
+  "max_input": { "item": "minecraft:iron_sword", "count": 1, "mob": "minecraft:zombie" },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

@@ -1,0 +1,20 @@
+{
+  "pairs": [
+    { "input": "minecraft:white_glazed_terracotta", "output": "minecraft:white_terracotta" },
+    { "input": "minecraft:orange_glazed_terracotta", "output": "minecraft:orange_terracotta" },
+    { "input": "minecraft:magenta_glazed_terracotta", "output": "minecraft:magenta_terracotta" },
+    { "input": "minecraft:light_blue_glazed_terracotta", "output": "minecraft:light_blue_terracotta" },
+    { "input": "minecraft:yellow_glazed_terracotta", "output": "minecraft:yellow_terracotta" },
+    { "input": "minecraft:lime_glazed_terracotta", "output": "minecraft:lime_terracotta" },
+    { "input": "minecraft:pink_glazed_terracotta", "output": "minecraft:pink_terracotta" },
+    { "input": "minecraft:gray_glazed_terracotta", "output": "minecraft:gray_terracotta" },
+    { "input": "minecraft:light_gray_glazed_terracotta", "output": "minecraft:light_gray_terracotta" },
+    { "input": "minecraft:cyan_glazed_terracotta", "output": "minecraft:cyan_terracotta" },
+    { "input": "minecraft:purple_glazed_terracotta", "output": "minecraft:purple_terracotta" },
+    { "input": "minecraft:blue_glazed_terracotta", "output": "minecraft:blue_terracotta" },
+    { "input": "minecraft:brown_glazed_terracotta", "output": "minecraft:brown_terracotta" },
+    { "input": "minecraft:green_glazed_terracotta", "output": "minecraft:green_terracotta" },
+    { "input": "minecraft:red_glazed_terracotta", "output": "minecraft:red_terracotta" },
+    { "input": "minecraft:black_glazed_terracotta", "output": "minecraft:black_terracotta" }
+  ]
+}

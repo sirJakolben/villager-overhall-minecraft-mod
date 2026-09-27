@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "villageroverhaul:rock_path",
+          "functions": [
+            { "function": "minecraft:set_count", "count": 1, "add": false, "conditions": [ { "condition": "minecraft:block_state_property", "block": "villageroverhaul:rock_path", "properties": { "rocks": "1" } } ] },
+            { "function": "minecraft:set_count", "count": 2, "add": false, "conditions": [ { "condition": "minecraft:block_state_property", "block": "villageroverhaul:rock_path", "properties": { "rocks": "2" } } ] },
+            { "function": "minecraft:set_count", "count": 3, "add": false, "conditions": [ { "condition": "minecraft:block_state_property", "block": "villageroverhaul:rock_path", "properties": { "rocks": "3" } } ] },
+            { "function": "minecraft:set_count", "count": 4, "add": false, "conditions": [ { "condition": "minecraft:block_state_property", "block": "villageroverhaul:rock_path", "properties": { "rocks": "4" } } ] },
+            { "function": "minecraft:explosion_decay" }
+          ]
+        }
+      ]
+    }
+  ]
+}
