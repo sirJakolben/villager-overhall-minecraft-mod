@@ -1,0 +1,17 @@
+{
+  "profession": "minecraft:cartographer",
+  "tier": "master",
+  "unlock_rank": 4,
+  "base_input": { "item": "minecraft:emerald", "count": 1 },
+  "max_input": { "item": "minecraft:emerald", "count": 1 },
+  "second_input": { "item": "vo_trade_rework:adventure_map", "count": 1 },
+  "base_output": { "item": "minecraft:filled_map", "count": 1 },
+  "max_output": { "item": "minecraft:filled_map", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1,
+  "explorer_map": {
+    "destination": "minecraft:on_snowy_village_maps",
+    "decoration": "minecraft:village_snowy",
+    "name": "filled_map.village_snowy"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "vo_trade_rework:block/weapon_rack" },
+    "facing=east": { "model": "vo_trade_rework:block/weapon_rack", "y": 90 },
+    "facing=south": { "model": "vo_trade_rework:block/weapon_rack", "y": 180 },
+    "facing=west": { "model": "vo_trade_rework:block/weapon_rack", "y": 270 }
+  }
+}

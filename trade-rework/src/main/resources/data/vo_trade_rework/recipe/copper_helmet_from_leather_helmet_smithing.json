@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:copper_block",
+  "base": "minecraft:leather_helmet",
+  "result": {
+    "id": "minecraft:copper_helmet"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

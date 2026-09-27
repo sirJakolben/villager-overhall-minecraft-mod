@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "vo_trade_rework:block/challenge_station" }
+  }
+}

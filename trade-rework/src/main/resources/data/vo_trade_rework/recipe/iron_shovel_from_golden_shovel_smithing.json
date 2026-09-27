@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:iron_block",
+  "base": "minecraft:golden_shovel",
+  "result": {
+    "id": "minecraft:iron_shovel"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

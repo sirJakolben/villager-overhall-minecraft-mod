@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "vo_trade_rework:block/smelting_station" },
+    "powered=true": { "model": "vo_trade_rework:block/smelting_station" }
+  }
+}

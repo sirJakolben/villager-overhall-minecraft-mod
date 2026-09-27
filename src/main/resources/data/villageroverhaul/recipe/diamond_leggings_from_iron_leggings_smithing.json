@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:diamond_block",
-  "base": "minecraft:iron_leggings",
-  "result": {
-    "id": "minecraft:diamond_leggings"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

@@ -1,0 +1,8 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "vo_trade_rework:cave_lore_scroll_1" } ]
+    }
+  ]
+}

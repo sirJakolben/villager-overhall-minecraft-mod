@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_table",
+  "conditions": [
+    { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:gameplay/fishing" },
+    { "condition": "minecraft:random_chance", "chance": 0.02 }
+  ],
+  "table": "vo_trade_rework:lore_scroll/underwater_lore_scroll_1"
+}

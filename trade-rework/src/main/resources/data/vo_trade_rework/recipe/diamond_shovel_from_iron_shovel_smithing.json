@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:diamond_block",
+  "base": "minecraft:iron_shovel",
+  "result": {
+    "id": "minecraft:diamond_shovel"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

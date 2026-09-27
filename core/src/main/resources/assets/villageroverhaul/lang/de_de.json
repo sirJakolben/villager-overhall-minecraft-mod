@@ -1,0 +1,23 @@
+{
+  "gui.villageroverhaul.happiness.afraid": "Verängstigt: 0 %% (sonst %s %%)",
+  "gui.villageroverhaul.happiness.hero": "Held des Dorfes: 100 %% (sonst %s %%)",
+  "gui.villageroverhaul.happiness": "Glücklichkeit: %s %%",
+  "gui.villageroverhaul.quest_reroll": "Neue Quest würfeln",
+  "gui.villageroverhaul.meter.basic": "Trade Restock: %s %%",
+  "gui.villageroverhaul.meter.basic.none": "Trade Restock: –",
+  "gui.villageroverhaul.meter.master": "Masteries Restock: %s %%",
+  "gui.villageroverhaul.meter.master.none": "Masteries Restock: –",
+  "gui.villageroverhaul.meter.passive": "Passive: %s %%",
+  "message.villageroverhaul.claim.assigned": "%s arbeitet jetzt hier",
+  "message.villageroverhaul.claim.already": "%s arbeitet schon hier",
+  "message.villageroverhaul.claim.settled": "%s hat schon einen festen Beruf",
+  "message.villageroverhaul.claim.cannot_work": "%s kann nicht arbeiten",
+  "message.villageroverhaul.claim.not_workplace": "Das ist kein Arbeitsplatz",
+  "message.villageroverhaul.claim.gone": "Der ausgewählte Dorfbewohner ist nicht mehr da",
+  "message.villageroverhaul.claim.too_far": "Zu weit weg – der Handelsblock darf höchstens %2$s Blöcke vom Arbeitsplatz von %1$s entfernt sein",
+  "message.villageroverhaul.claim.no_workplace": "%s braucht erst einen Arbeitsplatz",
+  "gui.villageroverhaul.upgrade.cost": "Nächstes Upgrade kostet %s Punkt(e) (verfügbar: %s)",
+  "gui.villageroverhaul.upgrade.maxed": "Voll ausgebaut",
+  "block.villageroverhaul.trading_block": "Handelsblock",
+  "item.villageroverhaul.missing_trade": "Noch offen"
+}

@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:cobblestone",
-  "base": "minecraft:wooden_axe",
-  "result": {
-    "id": "minecraft:stone_axe"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

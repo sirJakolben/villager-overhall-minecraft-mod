@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:iron_block",
+  "base": "minecraft:chainmail_leggings",
+  "result": {
+    "id": "minecraft:iron_leggings"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

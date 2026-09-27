@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:diamond_block",
+  "base": "minecraft:iron_helmet",
+  "result": {
+    "id": "minecraft:diamond_helmet"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

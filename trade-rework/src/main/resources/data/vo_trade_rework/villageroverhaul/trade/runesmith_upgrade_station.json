@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:toolsmith",
+  "tier": "basic",
+  "unlock_rank": 4,
+  "base_input": { "item": "minecraft:emerald", "count": 1 },
+  "max_input": { "item": "minecraft:emerald", "count": 1 },
+  "base_output": { "item": "vo_trade_rework:upgrade_station", "count": 1 },
+  "max_output": { "item": "vo_trade_rework:upgrade_station", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "entries": [
+    "vo_trade_rework:overworld_1_structures",
+    "vo_trade_rework:overworld_1_villages",
+    "vo_trade_rework:overworld_1_witch",
+    "vo_trade_rework:overworld_2_structures",
+    "vo_trade_rework:overworld_3_structures",
+    "vo_trade_rework:cave_1_structures",
+    "vo_trade_rework:cave_2_structures",
+    "vo_trade_rework:cave_3_structures",
+    "vo_trade_rework:underwater_1_structures",
+    "vo_trade_rework:underwater_1_fishing",
+    "vo_trade_rework:underwater_2_structures",
+    "vo_trade_rework:underwater_3_elder_guardian",
+    "vo_trade_rework:nether_1_structures",
+    "vo_trade_rework:nether_1_bartering",
+    "vo_trade_rework:nether_2_structures",
+    "vo_trade_rework:nether_3_structures",
+    "vo_trade_rework:nether_3_ancient_debris"
+  ]
+}

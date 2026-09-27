@@ -1,0 +1,17 @@
+{
+  "profession": "minecraft:librarian",
+  "tier": "basic",
+  "quest_pool": "hard",
+  "input_variants": [
+    "vo_trade_rework:overworld_lore_scroll_3",
+    "vo_trade_rework:cave_lore_scroll_3",
+    "vo_trade_rework:underwater_lore_scroll_3",
+    "vo_trade_rework:nether_lore_scroll_3"
+  ],
+  "base_input": { "item": "vo_trade_rework:overworld_lore_scroll_3", "count": 1 },
+  "max_input": { "item": "vo_trade_rework:overworld_lore_scroll_3", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 50 },
+  "max_output": { "item": "minecraft:emerald", "count": 64 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

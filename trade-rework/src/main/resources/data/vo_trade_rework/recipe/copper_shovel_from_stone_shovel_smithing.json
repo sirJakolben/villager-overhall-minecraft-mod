@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:copper_block",
+  "base": "minecraft:stone_shovel",
+  "result": {
+    "id": "minecraft:copper_shovel"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

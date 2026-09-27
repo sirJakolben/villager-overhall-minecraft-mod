@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:diamond_block",
-  "base": "minecraft:iron_hoe",
-  "result": {
-    "id": "minecraft:diamond_hoe"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

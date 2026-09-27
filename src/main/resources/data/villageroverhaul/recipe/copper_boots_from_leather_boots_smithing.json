@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:copper_block",
-  "base": "minecraft:leather_boots",
-  "result": {
-    "id": "minecraft:copper_boots"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

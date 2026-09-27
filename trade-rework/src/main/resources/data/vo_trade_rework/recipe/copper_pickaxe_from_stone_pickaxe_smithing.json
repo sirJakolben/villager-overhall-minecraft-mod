@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:copper_block",
+  "base": "minecraft:stone_pickaxe",
+  "result": {
+    "id": "minecraft:copper_pickaxe"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

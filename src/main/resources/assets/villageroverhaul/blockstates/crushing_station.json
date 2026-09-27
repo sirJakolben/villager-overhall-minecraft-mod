@@ -1,6 +1,0 @@
-{
-  "variants": {
-    "powered=false": { "model": "villageroverhaul:block/crushing_station" },
-    "powered=true": { "model": "villageroverhaul:block/crushing_station" }
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "villageroverhaul:item/nether_lore_scroll_3"
-  }
-}

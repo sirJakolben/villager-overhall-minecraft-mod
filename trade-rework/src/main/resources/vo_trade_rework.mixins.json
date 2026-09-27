@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.villageroverhaul.traderework.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ThrownExperienceBottleMixin",
+    "EnchantmentMenuMixin",
+    "ItemStackMobWeaponNameMixin",
+    "ItemStackBonusDurabilityMixin",
+    "SmithingUpgradeDurabilityMixin",
+    "ChunkGeneratorAccessor",
+    "CrossbowChargeMixin"
+  ],
+  "client": [],
+  "server": []
+}

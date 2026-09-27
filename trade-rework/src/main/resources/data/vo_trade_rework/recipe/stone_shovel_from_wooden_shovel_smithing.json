@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:cobblestone",
+  "base": "minecraft:wooden_shovel",
+  "result": {
+    "id": "minecraft:stone_shovel"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

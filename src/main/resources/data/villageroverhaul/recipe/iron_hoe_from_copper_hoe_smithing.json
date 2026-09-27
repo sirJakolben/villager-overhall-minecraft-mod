@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:iron_block",
-  "base": "minecraft:copper_hoe",
-  "result": {
-    "id": "minecraft:iron_hoe"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

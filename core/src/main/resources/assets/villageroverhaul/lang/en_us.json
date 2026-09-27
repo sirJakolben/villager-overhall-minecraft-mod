@@ -1,0 +1,23 @@
+{
+  "gui.villageroverhaul.happiness.afraid": "Afraid: 0%% (normally %s%%)",
+  "gui.villageroverhaul.happiness.hero": "Hero of the Village: 100%% (normally %s%%)",
+  "gui.villageroverhaul.happiness": "Happiness: %s%%",
+  "gui.villageroverhaul.quest_reroll": "Reroll quest",
+  "gui.villageroverhaul.meter.basic": "Trade Restock: %s%%",
+  "gui.villageroverhaul.meter.basic.none": "Trade Restock: –",
+  "gui.villageroverhaul.meter.master": "Masteries Restock: %s%%",
+  "gui.villageroverhaul.meter.master.none": "Masteries Restock: –",
+  "gui.villageroverhaul.meter.passive": "Passive: %s %%",
+  "message.villageroverhaul.claim.assigned": "%s works here now",
+  "message.villageroverhaul.claim.already": "%s already works here",
+  "message.villageroverhaul.claim.settled": "%s already has a settled profession",
+  "message.villageroverhaul.claim.cannot_work": "%s cannot work",
+  "message.villageroverhaul.claim.not_workplace": "That is not a workplace",
+  "message.villageroverhaul.claim.gone": "The selected villager is gone",
+  "message.villageroverhaul.claim.too_far": "Too far - the Trading Block must be within %2$s blocks of %1$s's workplace",
+  "message.villageroverhaul.claim.no_workplace": "%s needs a workplace first",
+  "gui.villageroverhaul.upgrade.cost": "Next upgrade costs %s point(s) (available: %s)",
+  "gui.villageroverhaul.upgrade.maxed": "Fully upgraded",
+  "block.villageroverhaul.trading_block": "Trading Block",
+  "item.villageroverhaul.missing_trade": "Not designed yet"
+}

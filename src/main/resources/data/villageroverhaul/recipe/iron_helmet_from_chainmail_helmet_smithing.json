@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:iron_block",
-  "base": "minecraft:chainmail_helmet",
-  "result": {
-    "id": "minecraft:iron_helmet"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

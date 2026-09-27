@@ -1,8 +1,0 @@
-{
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [ { "type": "minecraft:item", "name": "villageroverhaul:underwater_lore_scroll_1" } ]
-    }
-  ]
-}

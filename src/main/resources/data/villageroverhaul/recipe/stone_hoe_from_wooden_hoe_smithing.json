@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:cobblestone",
-  "base": "minecraft:wooden_hoe",
-  "result": {
-    "id": "minecraft:stone_hoe"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

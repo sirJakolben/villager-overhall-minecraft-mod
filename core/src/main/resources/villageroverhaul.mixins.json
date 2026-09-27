@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.villageroverhaul.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "VillagerAccessor",
+    "VillagerTradingMixin",
+    "VillagerGossipMixin",
+    "VillagerGoalPackagesMixin",
+    "VillagerLureMixin",
+    "ItemCostMixin",
+    "VillagerWorkSoundMixin"
+  ],
+  "client": [],
+  "server": []
+}

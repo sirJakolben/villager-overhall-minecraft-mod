@@ -38,3 +38,6 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+
+### Split into core + extension (2026-09-28) ###
+run-*/

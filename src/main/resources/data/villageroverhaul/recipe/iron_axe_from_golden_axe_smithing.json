@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:iron_block",
-  "base": "minecraft:golden_axe",
-  "result": {
-    "id": "minecraft:iron_axe"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

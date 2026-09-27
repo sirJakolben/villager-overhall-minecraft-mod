@@ -1,0 +1,17 @@
+{
+  "profession": "minecraft:weaponsmith",
+  "tier": "master",
+  "unlock_rank": 1,
+  "base_input": { "item": "minecraft:diamond", "count": 1 },
+  "max_input": { "item": "minecraft:diamond", "count": 1 },
+  "second_input": { "item": "vo_trade_rework:challenge_map", "count": 1 },
+  "base_output": { "item": "minecraft:filled_map", "count": 1 },
+  "max_output": { "item": "minecraft:filled_map", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1,
+  "explorer_map": {
+    "destination": "minecraft:on_trial_chambers_maps",
+    "decoration": "minecraft:trial_chambers",
+    "name": "filled_map.trial_chambers"
+  }
+}

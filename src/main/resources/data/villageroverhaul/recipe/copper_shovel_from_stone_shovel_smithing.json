@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:copper_block",
-  "base": "minecraft:stone_shovel",
-  "result": {
-    "id": "minecraft:copper_shovel"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

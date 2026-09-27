@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:cobblestone",
+  "base": "minecraft:wooden_spear",
+  "result": {
+    "id": "minecraft:stone_spear"
+  },
+  "template": "vo_trade_rework:upgrade_smithing_template"
+}

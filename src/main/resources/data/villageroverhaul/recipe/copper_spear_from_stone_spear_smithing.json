@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:copper_block",
-  "base": "minecraft:stone_spear",
-  "result": {
-    "id": "minecraft:copper_spear"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}

@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "minecraft:copper_block",
-  "base": "minecraft:leather_leggings",
-  "result": {
-    "id": "minecraft:copper_leggings"
-  },
-  "template": "villageroverhaul:upgrade_smithing_template"
-}
