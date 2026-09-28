@@ -34,7 +34,8 @@ import java.util.function.Predicate;
  * class takes care of the others. Runs from the periodic work scan (every 100 ticks per villager), in this order:
  *
  * 1. Mirror: Vanilla's job site goes into its station (by block).
- * 2. Validate: a workplace whose block is gone, or that no longer fits the profession, is dropped.
+ * 2. Validate: a workplace whose block is gone, or that no longer fits the profession, is dropped - and so is
+ *    one another villager owns (StationOwners: the ticket alone doesn't know its holder).
  * 3. Backup: lost its job site (block broken) but owns another workplace - that one becomes the job site.
  * 4. Acquire: takes the closest free workplace for each station it lacks - skipping any a jobless villager
  *    nearby could take instead (UnemployedPriority).
@@ -63,6 +64,8 @@ public final class StationClaims {
 
         stations = mirrorJobSite(level, profession, stations, jobSite);
         stations = validate(level, profession, stations, jobSite);
+        stations = dropForeign(level, villager, stations, jobSite);
+        jobSite = brain.getMemory(MemoryModuleType.JOB_SITE).filter(pos -> pos.dimension() == level.dimension());
         if (jobSite.isEmpty()) {
             useBackupAsJobSite(level, villager, stations);
         }
@@ -121,6 +124,24 @@ public final class StationClaims {
         return stations;
     }
 
+    /**
+     * A workplace another villager owns (StationOwners) is let go - without releasing the ticket, which is the
+     * owner's. If it was the job site, the memory goes too; the villager then looks for another workplace.
+     */
+    private static Stations dropForeign(ServerLevel level, Villager villager, Stations stations, Optional<GlobalPos> jobSite) {
+        for (Identifier station : List.copyOf(stations.positions().keySet())) {
+            GlobalPos owned = stations.positions().get(station);
+            if (owned.dimension() != level.dimension() || StationOwners.keep(level, villager, owned)) {
+                continue;
+            }
+            stations = stations.with(station, Optional.empty());
+            if (jobSite.equals(Optional.of(owned))) {
+                villager.getBrain().eraseMemory(MemoryModuleType.JOB_SITE);
+            }
+        }
+        return stations;
+    }
+
     private static Predicate<Holder<PoiType>> jobSiteOf(Holder<VillagerProfession> profession) {
         return profession.value().heldJobSite();
     }
@@ -171,7 +192,9 @@ public final class StationClaims {
             }
             Optional<BlockPos> taken = takeClosest(level, villager, profession, station);
             if (taken.isPresent()) {
-                stations = stations.with(station, Optional.of(GlobalPos.of(level.dimension(), taken.get())));
+                GlobalPos pos = GlobalPos.of(level.dimension(), taken.get());
+                StationOwners.claim(villager, pos); // its ticket was free - anyone else listing it has lost it
+                stations = stations.with(station, Optional.of(pos));
                 level.broadcastEntityEvent(villager, (byte) 14); // Vanilla's green "found a workplace" particles
             }
         }

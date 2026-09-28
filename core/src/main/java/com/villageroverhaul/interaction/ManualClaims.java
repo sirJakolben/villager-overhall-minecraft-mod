@@ -6,6 +6,7 @@ import com.villageroverhaul.state.VillagerState;
 import com.villageroverhaul.state.VillagerStateAccess;
 import com.villageroverhaul.station.ProfessionStations;
 import com.villageroverhaul.station.StationClaims;
+import com.villageroverhaul.station.StationOwners;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
@@ -158,7 +159,10 @@ public final class ManualClaims {
         Optional<GlobalPos> replaced = jobSiteSameStation ? jobSite : stations.get(station);
         replaced.filter(old -> old.dimension() == level.dimension()).ifPresent(old -> StationClaims.release(level, old.pos()));
 
+        // Fails when a previous owner out of reach (not displaced) still holds the ticket - the claim wins anyway:
+        // that owner lets go at its next scan without releasing it, so the one ticket stays with one owner.
         level.getPoiManager().take(poi -> true, (poi, p) -> p.equals(pos), pos, 1);
+        StationOwners.claim(villager, target);
         if (jobSiteSameStation) {
             villager.getBrain().setMemory(MemoryModuleType.JOB_SITE, target);
         }
