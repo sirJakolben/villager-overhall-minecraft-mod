@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:mason",
+  "section": "vo_trade_rework:quests",
+  "pool": "hard",
+  "input_variants": ["minecraft:end_stone", "minecraft:end_stone_bricks"],
+  "base_input": { "item": "minecraft:end_stone", "count": 1 },
+  "max_input": { "item": "minecraft:end_stone", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

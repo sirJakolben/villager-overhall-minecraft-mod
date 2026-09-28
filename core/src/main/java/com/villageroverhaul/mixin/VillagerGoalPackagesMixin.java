@@ -6,10 +6,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Pair;
-import com.villageroverhaul.claim.GoToTradingBlock;
-import com.villageroverhaul.claim.PausedAtStation;
-import com.villageroverhaul.claim.UnemployedPriority;
-import com.villageroverhaul.claim.WorkAtStation;
+import com.villageroverhaul.station.GoToTradingBlock;
+import com.villageroverhaul.station.PausedAtStation;
+import com.villageroverhaul.station.UnemployedPriority;
+import com.villageroverhaul.station.WorkAtStation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
@@ -35,10 +35,10 @@ import java.util.function.Predicate;
  * - Core package, the job-site search (AcquirePoi): a villager that already has a profession skips a
  *   free job site while a jobless villager nearby could take it. Only the "is this site OK" test is
  *   extended; jobless villagers search exactly as in Vanilla.
- * - Work package: adds WorkAtStation, and pauses the lectern-bound behaviors (walk back to the job site,
+ * - Work package: adds WorkAtStation, and pauses the job-site-bound behaviors (walk back to the job site,
  *   the work/stroll choice) while the villager works at another station. With no station focus, the
  *   work activity is exactly Vanilla's.
- * - Core package: adds GoToTradingBlock (the Trading Block call, Block B).
+ * - Core package: adds GoToTradingBlock (the Trading Block call).
  */
 @Mixin(VillagerGoalPackages.class)
 public abstract class VillagerGoalPackagesMixin {
@@ -65,7 +65,7 @@ public abstract class VillagerGoalPackagesMixin {
         return original.call(poiType, toValidate, toAcquire, onlyIfAdult, event, test);
     }
 
-    /** Block B: the Trading Block call joins Vanilla's always-active core behaviors, ahead of everything that walks. */
+    /** The Trading Block call joins Vanilla's always-active core behaviors, ahead of everything that walks. */
     @ModifyReturnValue(method = "getCorePackage", at = @At("RETURN"), require = 1)
     private static ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> villageroverhaul$addTradingBlockCall(
             ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> original) {

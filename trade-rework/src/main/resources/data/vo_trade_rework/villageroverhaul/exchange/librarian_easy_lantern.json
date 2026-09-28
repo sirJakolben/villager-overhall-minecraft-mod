@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:librarian",
+  "section": "vo_trade_rework:quests",
+  "input_variants": ["minecraft:lantern", "minecraft:copper_lantern", "minecraft:exposed_copper_lantern", "minecraft:weathered_copper_lantern", "minecraft:oxidized_copper_lantern", "minecraft:jack_o_lantern"],
+  "base_input": { "item": "minecraft:lantern", "count": 1 },
+  "max_input": { "item": "minecraft:lantern", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

@@ -1,7 +1,7 @@
 package com.villageroverhaul.traderework.librarian;
 
-import com.villageroverhaul.core.VillagerStateAccess;
 import com.villageroverhaul.progression.ProgressionService;
+import com.villageroverhaul.state.VillagerStateAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

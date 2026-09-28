@@ -1,12 +1,9 @@
 package com.villageroverhaul.traderework.passive;
 
-import com.villageroverhaul.passive.PassiveWork;
-import com.villageroverhaul.core.state.StationSlot;
-import com.villageroverhaul.core.state.VillagerState;
-import com.villageroverhaul.freedom.VillagerWorkScan;
+import com.villageroverhaul.state.VillagerState;
 import com.villageroverhaul.traderework.mason.CrushingStationBlock;
 import com.villageroverhaul.traderework.mason.CrushingStationBlockEntity;
-import com.villageroverhaul.trade.RestockService;
+import com.villageroverhaul.work.VillagerWorkScan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,13 +20,13 @@ import java.util.Optional;
  * Mason crushes one batch (2026-09-26: up to 4 results of one kind, see CrushingStationBlockEntity.crushBatch),
  * the meter drops to 0, the station pulses redstone and plays the Mason work sound. A higher passive rank
  * means more batches per day: the meter is sized so a full, happy work day fills it
- * BATCHES_PER_DAY_BY_RANK times (RestockService.meterPoints via PassiveWork.stepsPerDay).
+ * BATCHES_PER_DAY_BY_RANK times (PassiveLogic.meterPoints).
  *
  * While it fills the passive meter at the station, the station plays the stone hit sound (markWorked).
  *
  * Cost per work scan: one block entity lookup at a known position and a look at 3 slots - no block scan.
  */
-public final class CrushingWork {
+public final class CrushingWork implements PassiveWork {
 
     /** How close the villager must stand to the station's center to crush - same as the book upgrade (Tweak-Werte.md). */
     public static final double WORK_REACH = 2.0;
@@ -38,15 +35,13 @@ public final class CrushingWork {
     /** Extra ticks the stone sound keeps going past the next expected work scan, so it doesn't stutter. */
     private static final int SOUND_GRACE_TICKS = 20;
 
-    private CrushingWork() {
-    }
-
-    public static int batchesPerDay(int passiveRank) {
+    @Override
+    public int stepsPerDay(int passiveRank) {
         return BATCHES_PER_DAY_BY_RANK[Math.clamp(passiveRank, 0, BATCHES_PER_DAY_BY_RANK.length - 1)];
     }
 
     private static Optional<CrushingStationBlockEntity> station(ServerLevel level, VillagerState state) {
-        Optional<GlobalPos> station = state.stations().passive();
+        Optional<GlobalPos> station = PassiveLogic.station(state);
         if (station.isEmpty() || station.get().dimension() != level.dimension() || !level.isLoaded(station.get().pos())) {
             return Optional.empty();
         }
@@ -54,14 +49,16 @@ public final class CrushingWork {
     }
 
     /** Full passive meter and something to crush in its station - time to walk there. */
-    public static boolean isPending(ServerLevel level, Villager villager, VillagerState state) {
-        return state.dailyProductivity().passive() >= RestockService.meterPoints(villager, StationSlot.PASSIVE, state)
+    @Override
+    public boolean isPending(ServerLevel level, Villager villager, VillagerState state) {
+        return PassiveLogic.isMeterFull(villager, state)
                 && station(level, state).map(crusher -> crusher.hasWork(level)).orElse(false);
     }
 
     /** workTime: the villager is in its WORK activity - it crushes only then. */
-    public static VillagerState apply(ServerLevel level, Villager villager, VillagerState state, boolean workTime) {
-        if (!workTime || !PassiveWork.worksAtPassiveStation(villager, state)) {
+    @Override
+    public VillagerState apply(ServerLevel level, Villager villager, VillagerState state, boolean workTime) {
+        if (!workTime || !PassiveLogic.worksAtStation(villager, state)) {
             return state;
         }
         Optional<CrushingStationBlockEntity> station = station(level, state);
@@ -69,7 +66,7 @@ public final class CrushingWork {
             return state;
         }
         BlockPos pos = station.get().getBlockPos();
-        boolean meterFull = state.dailyProductivity().passive() >= RestockService.meterPoints(villager, StationSlot.PASSIVE, state);
+        boolean meterFull = PassiveLogic.isMeterFull(villager, state);
         if (!meterFull) {
             // Filling the passive meter right here: the station plays the tuff mining sound until the next scan (2026-09-26).
             station.get().markWorked(level.getGameTime() + VillagerWorkScan.SCAN_PERIOD + SOUND_GRACE_TICKS);
@@ -80,10 +77,6 @@ public final class CrushingWork {
         }
         CrushingStationBlock.pulse(level, pos);
         level.playSound(null, pos, SoundEvents.VILLAGER_WORK_MASON, SoundSource.NEUTRAL, 1.0F, 1.0F);
-        return new VillagerState(
-                state.level(), state.xp(), state.unspentUpgradePoints(), state.ranks(),
-                state.questSlotRotations(), state.tradeUsesRemaining(), state.dailyProductivity().with(StationSlot.PASSIVE, 0),
-                state.happiness(), state.lastProcessedDay(), state.questSlotRerollAvailableAtTick(), state.questLog(), state.stations()
-        );
+        return PassiveLogic.emptyMeter(state);
     }
 }

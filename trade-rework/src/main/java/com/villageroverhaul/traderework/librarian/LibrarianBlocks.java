@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * The Librarian's two extra workstations as placeable blocks (2026-09-24). Their Blockbench models are
  * not full cubes, hence noOcclusion (neighbors keep their faces) and hitboxes built from the model's
  * elements (models/block/*.json, in 1/16 block). Both are Librarian job sites like the lectern (see
- * claim/ProfessionStations); owning one opens the Masteries / Passive group. The enchantment station is
+ * TradeReworkSections); owning one opens the Masteries / Passive section. The enchantment station is
  * also a 5-slot book container (EnchantmentStationBlock), the writing station a plain ModelShapedBlock.
  */
 public final class LibrarianBlocks {

@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:mason",
+  "section": "vo_trade_rework:quests",
+  "pool": "hard",
+  "input_variants": ["minecraft:polished_blackstone", "minecraft:polished_basalt", "minecraft:smooth_basalt"],
+  "base_input": { "item": "minecraft:polished_blackstone", "count": 1 },
+  "max_input": { "item": "minecraft:polished_blackstone", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

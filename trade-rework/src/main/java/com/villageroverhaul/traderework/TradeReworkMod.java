@@ -12,6 +12,7 @@ import com.villageroverhaul.traderework.librarian.LoreScrollItem;
 import com.villageroverhaul.traderework.mason.MasonBlockEntities;
 import com.villageroverhaul.traderework.mason.MasonBlocks;
 import com.villageroverhaul.traderework.mason.MasonItems;
+import com.villageroverhaul.traderework.quest.QuestState;
 import com.villageroverhaul.traderework.runesmith.BonusDurability;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlockEntities;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlocks;
@@ -30,8 +31,8 @@ import org.slf4j.Logger;
 
 /**
  * Villager Overhaul: Trade Rework (split off the core 2026-09-28) - the reworked professions with their own
- * trades, quests, master and passive stations. Registers its content, then plugs the professions into the
- * core (TradeReworkProfessions). Loads after the core (neoforge.mods.toml).
+ * trades, quests, masteries and passives. Registers its content, then plugs the professions into the
+ * core (TradeReworkSections). Loads after the core (neoforge.mods.toml).
  */
 @Mod(TradeReworkMod.MODID)
 public class TradeReworkMod {
@@ -41,6 +42,7 @@ public class TradeReworkMod {
 
     public TradeReworkMod(IEventBus modEventBus, ModContainer modContainer) {
         ExplorerMaps.ATTACHMENT_TYPES.register(modEventBus);
+        QuestState.ATTACHMENT_TYPES.register(modEventBus);
         LoreScrollItem.DATA_COMPONENTS.register(modEventBus);
         MobWeapons.DATA_COMPONENTS.register(modEventBus);
         BonusDurability.DATA_COMPONENTS.register(modEventBus);
@@ -64,6 +66,6 @@ public class TradeReworkMod {
         SalvagerBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         SalvagerBlocks.ITEMS.register(modEventBus);
 
-        TradeReworkProfessions.register();
+        TradeReworkSections.register();
     }
 }

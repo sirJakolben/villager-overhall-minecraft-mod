@@ -1,7 +1,7 @@
 package com.villageroverhaul.traderework.veteran;
 
-import com.villageroverhaul.traderework.TradeReworkRegistries;
 import com.villageroverhaul.traderework.TradeReworkMod;
+import com.villageroverhaul.traderework.TradeReworkRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentType;

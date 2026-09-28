@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.List;
 
 /**
- * The Salvager's two stations (Obsidian Salvager.md, 2026-09-27), Salvager job sites (claim/ProfessionStations)
+ * The Salvager's two stations (Obsidian Salvager.md, 2026-09-27), Salvager job sites (TradeReworkSections, core station/ProfessionStations)
  * that open the Masteries and the Passive. The smelting station works (passive/SmeltingWork); the refinement
  * station is still a placeholder without a function.
  */

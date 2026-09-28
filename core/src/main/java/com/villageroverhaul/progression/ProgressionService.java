@@ -1,24 +1,28 @@
 package com.villageroverhaul.progression;
 
-import com.villageroverhaul.core.VillagerStateAccess;
-import com.villageroverhaul.fallback.FallbackCatalog;
-import com.villageroverhaul.fallback.RankCaps;
-import com.villageroverhaul.core.state.GroupRanks;
-import com.villageroverhaul.core.state.VillagerState;
+import com.villageroverhaul.api.SectionDefinition;
+import com.villageroverhaul.section.Sections;
+import com.villageroverhaul.section.VillagerSections;
+import com.villageroverhaul.state.VillagerState;
+import com.villageroverhaul.state.VillagerStateAccess;
+import com.villageroverhaul.vanilla.VanillaCatalog;
+import com.villageroverhaul.vanilla.VanillaRankCaps;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.npc.villager.Villager;
 
+import java.util.Optional;
+
 /**
- * Level/XP and upgrade-point bookkeeping - see README.md (level
- * curve, max level and rank costs decided 2026-09-23, numbers still up for playtest tweaking).
+ * Level/XP and upgrade-point bookkeeping - see README.md (numbers still up for playtest tweaking).
  *
  * Level curve (reworked 2026-09-24): the step from level L to L+1 costs XP_BASE + XP_PER_LEVEL_SQUARED * L²
  * villager XP (400, 409, 436, ..., 3649) - flat early, steep late. At 100 % happiness (30 XP per work
- * check, ~60 checks a day, VillagerWorkScan) that is ~3 in-game days to level 9 (one group fully
- * unlocked) and ~17 days to level 20, the same as the old linear 600 + 100 * L curve.
+ * check, ~60 checks a day, VillagerWorkScan) that is ~3 in-game days to level 9 (one section fully
+ * unlocked) and ~17 days to level 20.
  *
- * Ranks: costs per group live in UpgradeGroup - every group costs 9 points to unlock fully and 20 to
- * max out, and a villager earns exactly 20 points on the way to MAX_LEVEL (reworked 2026-09-24).
- * Master and Passive can only be upgraded once the villager has used that workstation (Stations).
+ * Ranks: every level brings one upgrade point, spent on a section's rank (investPoint). The price of each
+ * rank-up comes from the section (SectionDefinition.upgradeCost), or - for a profession running on its Vanilla
+ * trades - from one shared price line (VanillaRankCaps).
  */
 public final class ProgressionService {
 
@@ -27,11 +31,7 @@ public final class ProgressionService {
     private static final int XP_PER_LEVEL_SQUARED = 9;
     private static final int MAX_UNSPENT_POINTS = 5;
 
-    /**
-     * How many of our own levels map to one Vanilla merchant-tier name (Novice..Master, 1-5) -
-     * placeholder like the rest of this class's numbers, see README.md
-     * section 2 ("wir tweaken es ein bisschen" - level speed/cap still open).
-     */
+    /** How many of our own levels map to one Vanilla merchant-tier name (Novice..Master, 1-5). */
     private static final int LEVELS_PER_MERCHANT_TIER = 5;
 
     private ProgressionService() {
@@ -43,9 +43,9 @@ public final class ProgressionService {
     }
 
     /**
-     * Villager XP for the step from `level` to `level + 1`. Past MAX_LEVEL (only fallback professions get
-     * there, see maxLevel) every step costs as much as the last one, 19 → 20 - the curve stops growing so
-     * their many unlocks stay reachable (2026-09-27).
+     * Villager XP for the step from `level` to `level + 1`. Past MAX_LEVEL (only professions running on their
+     * Vanilla trades get there, see maxLevel) every step costs as much as the last one, 19 → 20 - the curve
+     * stops growing so their many unlocks stay reachable (2026-09-27).
      */
     public static int xpToNextLevel(int level) {
         int curveLevel = Math.min(level, MAX_LEVEL - 1);
@@ -61,7 +61,7 @@ public final class ProgressionService {
         return total;
     }
 
-    /** Progress toward the next level-up, 0..1 - clamped for old saves that banked XP past the step while paused. */
+    /** Progress toward the next level-up, 0..1. */
     public static float xpFraction(VillagerState state, int maxLevel) {
         if (state.level() >= maxLevel) {
             return 1.0F;
@@ -70,57 +70,12 @@ public final class ProgressionService {
     }
 
     /**
-     * A group shows (and can be upgraded) while the villager owns its station - lectern for Basic, master
-     * and passive station - or already has a rank in it (decided 2026-09-24). Quests are always open.
-     */
-    public static boolean isGroupOpen(VillagerState state, UpgradeGroup group) {
-        return switch (group) {
-            case QUEST -> true;
-            case BASIC_TRADE -> state.stations().basic().isPresent() || state.ranks().basicTrade() > 0;
-            case MASTER_TRADE -> state.stations().master().isPresent() || state.ranks().masterTrade() > 0;
-            case PASSIVE -> state.stations().passive().isPresent() || state.ranks().passive() > 0;
-        };
-    }
-
-    /**
-     * isGroupOpen for a real villager: a fallback profession (FallbackCatalog, 2026-09-27) has no master or
-     * passive station - its Masteries are always open, its Passive never.
-     */
-    public static boolean isGroupOpen(Villager villager, VillagerState state, UpgradeGroup group) {
-        if (FallbackCatalog.isFallback(villager)) {
-            return switch (group) {
-                case MASTER_TRADE -> true;
-                case PASSIVE -> false;
-                default -> isGroupOpen(state, group);
-            };
-        }
-        return isGroupOpen(state, group);
-    }
-
-    /** Server: the villager's rank caps - its own for a fallback profession, RankCaps.NONE otherwise. */
-    public static RankCaps rankCaps(Villager villager) {
-        return FallbackCatalog.isFallback(villager) ? RankCaps.of(FallbackCatalog.of(villager)) : RankCaps.NONE;
-    }
-
-    /**
-     * Adds unspent upgrade points directly, ignoring MAX_UNSPENT_POINTS - debug only (/vo grant_points).
-     * Level and XP stay untouched; while above the cap, the villager simply doesn't level.
-     */
-    public static void grantPoints(VillagerStateAccess access, int amount) {
-        VillagerState state = access.getState();
-        access.setState(new VillagerState(
-                state.level(), state.xp(), state.unspentUpgradePoints() + amount,
-                state.ranks(), state.questSlotRotations(), state.tradeUsesRemaining(),
-                state.dailyProductivity(), state.happiness(), state.lastProcessedDay(), state.questSlotRerollAvailableAtTick(), state.questLog(), state.stations()
-        ));
-    }
-
-    /**
-     * Highest level of this villager: MAX_LEVEL - except a fallback profession (FallbackCatalog, 2026-09-27),
-     * which has no level cap, so its many unlocks can all be bought; it only pauses at the point cap.
+     * Highest level of this villager: MAX_LEVEL - except a profession running on its Vanilla trades
+     * (VanillaCatalog), which has no level cap, so its many unlocks can all be bought; it only pauses at the
+     * point cap.
      */
     public static int maxLevel(Villager villager) {
-        return FallbackCatalog.isFallback(villager) ? Integer.MAX_VALUE : MAX_LEVEL;
+        return VanillaCatalog.usedBy(villager) ? Integer.MAX_VALUE : MAX_LEVEL;
     }
 
     /** False at the max level, or at the point cap with the XP bar already full - withXp would drop any XP then. */
@@ -138,8 +93,17 @@ public final class ProgressionService {
     }
 
     /**
-     * Adds XP and levels up while XP allows - never past maxLevel (see maxLevel(Villager)) (further XP is dropped), and never
-     * past MAX_UNSPENT_POINTS unspent upgrade points (XP then stops just below the next level until points are spent).
+     * Adds unspent upgrade points directly, ignoring MAX_UNSPENT_POINTS - debug only (/vo grant_points).
+     * Level and XP stay untouched; while above the cap, the villager simply doesn't level.
+     */
+    public static void grantPoints(VillagerStateAccess access, int amount) {
+        VillagerState state = access.getState();
+        access.setState(state.withProgress(state.level(), state.xp(), state.unspentUpgradePoints() + amount));
+    }
+
+    /**
+     * Adds XP and levels up while XP allows - never past maxLevel (further XP is dropped), and never past
+     * MAX_UNSPENT_POINTS unspent upgrade points (XP then stops just below the next level until points are spent).
      */
     public static VillagerState withXp(VillagerState state, int amount, int maxLevel) {
         int level = state.level();
@@ -161,48 +125,41 @@ public final class ProgressionService {
             // never banks more than MAX_UNSPENT_POINTS - spending points doesn't trigger a burst of level-ups.
             xp = Math.min(xp, xpToNextLevel(level) - 1);
         }
-
-        return new VillagerState(
-                level, xp, unspentUpgradePoints,
-                state.ranks(), state.questSlotRotations(), state.tradeUsesRemaining(),
-                state.dailyProductivity(), state.happiness(), state.lastProcessedDay(), state.questSlotRerollAvailableAtTick(), state.questLog(), state.stations()
-        );
+        return state.withProgress(level, xp, unspentUpgradePoints);
     }
 
-    /** Spends the next upgrade's cost in points on the given group's rank. Returns false if nothing was spent. */
-    public static boolean investPoint(Villager villager, UpgradeGroup group) {
+    /** Points the section's next rank costs for this villager, or -1 once it is maxed. */
+    public static int upgradeCost(Villager villager, VillagerState state, SectionDefinition section) {
+        if (VanillaCatalog.usedBy(villager)) {
+            return VanillaRankCaps.of(VanillaCatalog.of(villager)).upgradeCost(section.id(), state);
+        }
+        return section.upgradeCost(state.rank(section.id()));
+    }
+
+    public enum InvestResult {
+        UPGRADED, UNKNOWN_SECTION, NOT_OPEN, MAXED, NOT_ENOUGH_POINTS
+    }
+
+    /** Spends the next rank's cost in points on the section - only one the villager has, and only while it is open. */
+    public static InvestResult investPoint(Villager villager, Identifier sectionId) {
         VillagerStateAccess access = VillagerStateAccess.of(villager);
         VillagerState state = access.getState();
-        int currentRank = rankOf(state.ranks(), group);
-        int cost = rankCaps(villager).upgradeCost(group, state.ranks());
-        if (cost < 0 || state.unspentUpgradePoints() < cost || !isGroupOpen(villager, state, group)) {
-            return false;
+        Optional<SectionDefinition> section = Sections.get(sectionId).filter(VillagerSections.of(villager)::contains);
+        if (section.isEmpty()) {
+            return InvestResult.UNKNOWN_SECTION;
         }
-
-        access.setState(new VillagerState(
-                state.level(), state.xp(), state.unspentUpgradePoints() - cost,
-                withRank(state.ranks(), group, currentRank + 1),
-                state.questSlotRotations(), state.tradeUsesRemaining(),
-                state.dailyProductivity(), state.happiness(), state.lastProcessedDay(), state.questSlotRerollAvailableAtTick(), state.questLog(), state.stations()
-        ));
-        return true;
-    }
-
-    public static int rankOf(GroupRanks ranks, UpgradeGroup group) {
-        return switch (group) {
-            case QUEST -> ranks.quest();
-            case BASIC_TRADE -> ranks.basicTrade();
-            case MASTER_TRADE -> ranks.masterTrade();
-            case PASSIVE -> ranks.passive();
-        };
-    }
-
-    private static GroupRanks withRank(GroupRanks ranks, UpgradeGroup group, int newRank) {
-        return switch (group) {
-            case QUEST -> new GroupRanks(newRank, ranks.basicTrade(), ranks.masterTrade(), ranks.passive());
-            case BASIC_TRADE -> new GroupRanks(ranks.quest(), newRank, ranks.masterTrade(), ranks.passive());
-            case MASTER_TRADE -> new GroupRanks(ranks.quest(), ranks.basicTrade(), newRank, ranks.passive());
-            case PASSIVE -> new GroupRanks(ranks.quest(), ranks.basicTrade(), ranks.masterTrade(), newRank);
-        };
+        if (!VillagerSections.isOpen(state, section.get())) {
+            return InvestResult.NOT_OPEN;
+        }
+        int cost = upgradeCost(villager, state, section.get());
+        if (cost < 0) {
+            return InvestResult.MAXED;
+        }
+        if (state.unspentUpgradePoints() < cost) {
+            return InvestResult.NOT_ENOUGH_POINTS;
+        }
+        access.setState(state.withProgress(state.level(), state.xp(), state.unspentUpgradePoints() - cost)
+                .withRank(sectionId, state.rank(sectionId) + 1));
+        return InvestResult.UPGRADED;
     }
 }

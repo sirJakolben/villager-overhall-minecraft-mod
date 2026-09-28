@@ -1,6 +1,7 @@
 package com.villageroverhaul.client.ui;
 
 import com.villageroverhaul.VillagerOverhaulMod;
+import com.villageroverhaul.menu.ModMenuTypes;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

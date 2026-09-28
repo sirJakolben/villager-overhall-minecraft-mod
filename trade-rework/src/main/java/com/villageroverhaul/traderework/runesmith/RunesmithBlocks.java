@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * The Runesmith's two stations (Obsidian Runesmith.md; built 2026-09-26 for the old Repair Smith, moved to
  * the Runesmith 2026-09-27), placeholder model and texture for now. Both are Runesmith job sites like the
- * smithing table (claim/ProfessionStations): the upgrade station
+ * smithing table (TradeReworkSections, core station/ProfessionStations): the upgrade station
  * opens the Masteries, the repair station the Passive.
  */
 public final class RunesmithBlocks {

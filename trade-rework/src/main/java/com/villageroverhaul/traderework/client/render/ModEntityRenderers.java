@@ -1,8 +1,8 @@
 package com.villageroverhaul.traderework.client.render;
 
 import com.villageroverhaul.traderework.TradeReworkMod;
-import com.villageroverhaul.traderework.veteran.VeteranBlockEntities;
 import com.villageroverhaul.traderework.librarian.LibrarianEntities;
+import com.villageroverhaul.traderework.veteran.VeteranBlockEntities;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

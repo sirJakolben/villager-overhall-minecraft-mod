@@ -1,2 +1,2 @@
-/** Block E - Leveling, die vier Investitions-Gruppen (Quest/Basic/Master/Passiv) und ihre Freischaltungs-/Rang-Logik. */
+/** Villager level, XP and upgrade points, and spending points on section ranks. */
 package com.villageroverhaul.progression;

@@ -1,4 +1,8 @@
 {
+  "gui.vo_trade_rework.quest_reroll": "Neue Quest würfeln",
+  "section.vo_trade_rework.quests": "Quests",
+  "section.vo_trade_rework.masteries": "Masteries",
+  "section.vo_trade_rework.passive": "Work",
   "entity.vo_trade_rework.villager_experience_orb": "Dorfbewohner-Erfahrungskugel",
   "entity.vo_trade_rework.villager_experience_bottle": "Geworfene Dorfbewohner-Erfahrungsflasche",
   "item.vo_trade_rework.villager_experience_bottle": "Dorfbewohner-Erfahrungsflasche",

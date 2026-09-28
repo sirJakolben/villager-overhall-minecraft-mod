@@ -1,7 +1,7 @@
 package com.villageroverhaul.network;
 
 import com.villageroverhaul.VillagerOverhaulMod;
-import com.villageroverhaul.client.ui.VillagerMenu;
+import com.villageroverhaul.menu.VillagerMenu;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

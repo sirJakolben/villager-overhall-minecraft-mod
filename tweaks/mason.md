@@ -3,7 +3,7 @@
 Zwilling der Mason-Werte aus Obsidian (`Mason.md` Wertetabellen + Brechstation-Teil von `Tweak-Werte.md`), kompakt. Bei Abweichung gilt Obsidian.
 Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 1. Stand: 2026-09-27.
 
-## Basic Trades — `data/vo_trade_rework/villageroverhaul/trade/mason_*.json`
+## Basic Trades — `data/vo_trade_rework/villageroverhaul/exchange/mason_*.json`
 | Rang | Trade | Preis | 2. Slot | Output | Stock |
 |---|---|---|---|---|---|
 | 0 | Sandstein | 1 → 1 Smaragd | – | 1 → 1 | 1 → 1 |
@@ -24,7 +24,7 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | 3 | Diorit | 1 Quarz | Calcit | alle 1 |
 | 4 | Sandstein | 1 Quarz | Quarzblock | alle 1 (Vorschlag: 2 Quarz → 1 Quarz auf Max) |
 
-## Quests — `.../quest/mason_*.json` (alle Werte 1)
+## Quests — `.../exchange/mason_*.json` (Sektion `vo_trade_rework:quests`) (alle Werte 1)
 - Easy (Oberwelt): gemeißelte Blöcke, Ziegel, andere Varianten, polierte Blöcke, Kohle, Stein
 - Hard (Nether, Prismarin, Endstein, Purpur): gemeißelte Nether-Blöcke, Nether-Ziegel, polierte Nether-Blöcke, Quarz, Prismarin, Endstein, Purpur
 - Dauer: glatter Stein

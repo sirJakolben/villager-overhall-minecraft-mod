@@ -1,7 +1,7 @@
 package com.villageroverhaul.traderework.explore;
 
-import com.villageroverhaul.data.ExplorerMap;
 import com.mojang.brigadier.context.CommandContext;
+import com.villageroverhaul.data.ExplorerMap;
 import com.villageroverhaul.traderework.TradeReworkMod;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

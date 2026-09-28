@@ -1,9 +1,9 @@
 package com.villageroverhaul.traderework.trade;
 
-import com.villageroverhaul.api.ExtensionHooks.MapOutput;
 import com.mojang.serialization.Codec;
-import com.villageroverhaul.traderework.TradeReworkMod;
+import com.villageroverhaul.api.ExtensionHooks.MapOutput;
 import com.villageroverhaul.data.ExplorerMap;
+import com.villageroverhaul.traderework.TradeReworkMod;
 import com.villageroverhaul.traderework.explore.FeatureLocator;
 import com.villageroverhaul.traderework.explore.OreVeinLocator;
 import net.minecraft.ChatFormatting;

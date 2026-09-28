@@ -1,7 +1,7 @@
 package com.villageroverhaul.traderework.salvager;
 
-import com.villageroverhaul.traderework.client.ui.TradeReworkMenus;
 import com.villageroverhaul.traderework.TradeReworkRegistries;
+import com.villageroverhaul.traderework.client.ui.TradeReworkMenus;
 import com.villageroverhaul.traderework.runesmith.UpgradeTemplates;
 import com.villageroverhaul.traderework.station.ThreeInThreeOutMenu;
 import net.minecraft.core.BlockPos;

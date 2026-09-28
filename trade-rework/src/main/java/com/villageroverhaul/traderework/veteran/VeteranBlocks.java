@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * The Veteran's station and weapon rack (Obsidian Veteran.md, 2026-09-27), placeholder model and texture for now. A Veteran
- * job site like the grindstone (claim/ProfessionStations) that opens the Masteries - the challenge maps.
+ * job site like the grindstone (TradeReworkSections, core station/ProfessionStations) that opens the Masteries - the challenge maps.
  * The Veteran has no passive station yet.
  */
 public final class VeteranBlocks {

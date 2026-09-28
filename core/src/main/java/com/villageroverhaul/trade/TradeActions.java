@@ -1,94 +1,39 @@
 package com.villageroverhaul.trade;
 
-import com.villageroverhaul.core.ResolvedExchange;
-import com.villageroverhaul.core.VillagerStateAccess;
-import com.villageroverhaul.core.state.DailyProductivity;
-import com.villageroverhaul.core.state.VillagerState;
-import com.villageroverhaul.data.ItemAmount;
-import com.villageroverhaul.data.ItemExchange;
-import com.villageroverhaul.data.ModDataPackRegistries;
-import com.villageroverhaul.fallback.FallbackCatalog;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
-/** Server-side trade execution - the shared core that Block D (quests) reuses, see QuestActions. */
+/**
+ * Executing one offer without the trade screen (/vo trade): the items move here, then the offer's section books
+ * it exactly as after a real trade (SectionLogic.onUse - stock for a trade, rotation for a quest). Real trades go
+ * through Vanilla's result slot instead and are booked by TradeEvents.
+ */
 public final class TradeActions {
 
     public enum Result {
-        SUCCESS, UNKNOWN_TRADE, NOT_UNLOCKED, NO_USES_LEFT, CANNOT_AFFORD
+        SUCCESS, NOT_OFFERED, NO_USES_LEFT, CANNOT_AFFORD
     }
 
     private TradeActions() {
     }
 
-    public static Result executeTrade(Villager villager, Player player, Identifier tradeId) {
-        Registry<ItemExchange> registry = villager.level().registryAccess().lookupOrThrow(ModDataPackRegistries.TRADE);
-        Optional<ItemExchange> maybeExchange = registry.getOptional(ResourceKey.create(ModDataPackRegistries.TRADE, tradeId));
-        if (maybeExchange.isEmpty()) {
-            return Result.UNKNOWN_TRADE;
+    public static Result execute(Villager villager, Player player, Identifier entryId) {
+        Optional<VillagerOffers.Source> source = VillagerOffers.sourceOf(villager, entryId);
+        if (source.isEmpty()) {
+            return Result.NOT_OFFERED;
         }
-        ItemExchange exchange = maybeExchange.get();
-
-        VillagerStateAccess access = VillagerStateAccess.of(villager);
-        VillagerState state = access.getState();
-        if (exchange.profession() != villager.getVillagerData().profession().value() || !exchange.isTradeUnlocked(state)) {
-            return Result.NOT_UNLOCKED;
-        }
-
-        if (currentUsesRemaining(villager, tradeId) <= 0) {
+        ResolvedExchange exchange = source.get().offer().exchange();
+        if (exchange.usesRemaining() <= 0) {
             return Result.NO_USES_LEFT;
         }
-
-        int rank = exchange.tradeGroupRank(state);
-        ItemAmount input = ExchangeScaling.scaleInput(exchange, rank, exchange.tradeGroup());
-        ItemAmount output = ExchangeScaling.scaleOutput(exchange, rank, exchange.tradeGroup());
-
-        if (!ExchangeExecutor.canAfford(player, input, exchange.secondInput())) {
+        if (!ExchangeExecutor.canAfford(player, exchange.input(), exchange.secondInput())) {
             return Result.CANNOT_AFFORD;
         }
-        ExchangeExecutor.execute(player, input, exchange.secondInput(), output);
-        recordUse(villager, tradeId);
+        ExchangeExecutor.execute(player, exchange.input(), exchange.secondInput(), exchange.output());
+        source.get().section().logic().onUse(villager, source.get().section(), source.get().offer());
         return Result.SUCCESS;
-    }
-
-    /**
-     * Bookkeeping only (decrements today's remaining uses) - no item movement. Used both by
-     * executeTrade above (the debug-command path) and by real trades in VillagerMenu, where
-     * Vanilla's MerchantResultSlot already moved the items - see TradeEvents.
-     */
-    public static void recordUse(Villager villager, Identifier tradeId) {
-        VillagerStateAccess access = VillagerStateAccess.of(villager);
-        VillagerState state = access.getState();
-        int usesRemaining = currentUsesRemaining(villager, tradeId);
-        Map<Identifier, Integer> newUses = new HashMap<>(state.tradeUsesRemaining());
-        newUses.put(tradeId, Math.max(0, usesRemaining - 1));
-        // A held full meter of this trade's category refills shortly after the trade, see RestockService.
-        DailyProductivity meters = villager.level().registryAccess().lookupOrThrow(ModDataPackRegistries.TRADE)
-                .getOptional(ResourceKey.create(ModDataPackRegistries.TRADE, tradeId))
-                .map(ItemExchange::tier)
-                .or(() -> FallbackCatalog.of(villager).byId(tradeId).map(FallbackCatalog.Entry::tier))
-                .map(tier -> RestockService.scheduleRelease(state.dailyProductivity(), tier, villager.level().getGameTime()))
-                .orElse(state.dailyProductivity());
-        access.setState(new VillagerState(
-                state.level(), state.xp(), state.unspentUpgradePoints(), state.ranks(),
-                state.questSlotRotations(), newUses, meters, state.happiness(),
-                state.lastProcessedDay(), state.questSlotRerollAvailableAtTick(), state.questLog(), state.stations()
-        ));
-    }
-
-    /** Resolved through TradeProviderImpl so a never-restocked trade gets the same initial stock everywhere. */
-    private static int currentUsesRemaining(Villager villager, Identifier tradeId) {
-        return new TradeProviderImpl().getAvailableTrades(villager).stream()
-                .filter(trade -> trade.id().equals(tradeId))
-                .findFirst()
-                .map(ResolvedExchange::usesRemaining)
-                .orElse(0);
     }
 }

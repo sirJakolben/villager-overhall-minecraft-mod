@@ -1,2 +1,2 @@
-/** Block 0 - Datapack-Registries (trade, quest, skill, passive) und ihre Codecs. */
+/** Data-pack formats: the exchange registry (every section's trades and quests) and its item amounts. */
 package com.villageroverhaul.data;

@@ -1,4 +1,8 @@
 {
+  "gui.vo_trade_rework.quest_reroll": "Reroll quest",
+  "section.vo_trade_rework.quests": "Quests",
+  "section.vo_trade_rework.masteries": "Masteries",
+  "section.vo_trade_rework.passive": "Work",
   "entity.vo_trade_rework.villager_experience_orb": "Villager Experience Orb",
   "entity.vo_trade_rework.villager_experience_bottle": "Thrown Villager Experience Bottle",
   "item.vo_trade_rework.villager_experience_bottle": "Villager Experience Bottle",

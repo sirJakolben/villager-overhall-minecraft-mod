@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * The Mason's blocks (Obsidian Mason.md, 2026-09-26). Rock pile and rock path have their Blockbench models
  * (assets/Mason), all others still use the placeholder model and
  * texture (assets/placeholder_block) - see "Fehlende Texturen und Modelle.md". The two stations are Mason
- * job sites like the stonecutter (claim/ProfessionStations): the metamorph station opens the Masteries,
+ * job sites like the stonecutter (TradeReworkSections, core station/ProfessionStations): the metamorph station opens the Masteries,
  * the crushing station the Passive. The villager statue is a plain decoration block for now; its final form
  * (happiness effect) is still open. The stone statue was dropped 2026-09-27 (it would have copied the armor stand).
  */

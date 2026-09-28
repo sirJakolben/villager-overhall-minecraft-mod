@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:mason",
+  "section": "vo_trade_rework:quests",
+  "pool": "hard",
+  "input_variants": ["minecraft:prismarine", "minecraft:prismarine_bricks", "minecraft:dark_prismarine"],
+  "base_input": { "item": "minecraft:prismarine", "count": 1 },
+  "max_input": { "item": "minecraft:prismarine", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}
