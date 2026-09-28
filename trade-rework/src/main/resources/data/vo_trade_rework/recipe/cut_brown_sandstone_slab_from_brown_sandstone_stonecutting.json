@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "vo_trade_rework:brown_sandstone",
+  "result": {
+    "count": 2,
+    "id": "vo_trade_rework:cut_brown_sandstone_slab"
+  }
+}

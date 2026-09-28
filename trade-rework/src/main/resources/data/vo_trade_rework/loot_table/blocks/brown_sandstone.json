@@ -2,9 +2,20 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1,
-      "entries": [ { "type": "minecraft:item", "name": "vo_trade_rework:brown_sandstone" } ],
-      "conditions": [ { "condition": "minecraft:survives_explosion" } ]
+      "bonus_rolls": 0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "vo_trade_rework:brown_sandstone"
+        }
+      ],
+      "rolls": 1
     }
-  ]
+  ],
+  "random_sequence": "vo_trade_rework:blocks/brown_sandstone"
 }

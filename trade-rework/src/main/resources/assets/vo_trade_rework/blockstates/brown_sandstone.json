@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "vo_trade_rework:block/brown_sandstone" }
+    "": {
+      "model": "vo_trade_rework:block/brown_sandstone"
+    }
   }
 }

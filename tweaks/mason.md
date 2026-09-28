@@ -43,6 +43,12 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | Verhältnis | 1 : 1 (Steinmetz-Varianten im Steinmetz-Verhältnis) |
 - Regeln: Steinmetz-Rezepte rückwärts (automatisch) + `data/vo_trade_rework/vo_trade_rework/crushing/*.json` (crushing, cobbled_forms, smooth_blocks, concrete, glazed_terracotta); jede Steinart → Bruch-Form samt Varianten
 
+## Brauner Sandstein & Sand — `mason/MasonBlocks.java`, Texturen `textures/block/*brown_sand*.png`
+| Wert | Aktuell |
+|---|---|
+| Farbe | Vanilla-Sandstein/Sand mit Farbton 38°, Helligkeit ×0,91 ×0,90 (Birke), Kontrast ×1,3, Sättigung ×1,25, Rotkanal ×1,05 |
+| Staubfarbe brauner Sand | #BD9E77 |
+
 ## Dorfbewohner-Statue — `mason/VillagerStatueBlock.java`, `client/render/GrayscaleTextures.java`
 | Wert | Aktuell |
 |---|---|

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_wall_side",
+  "textures": {
+    "wall": "vo_trade_rework:block/brown_sandstone"
+  }
+}

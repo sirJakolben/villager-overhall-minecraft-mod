@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "vo_trade_rework:chiseled_brown_sandstone"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "vo_trade_rework:blocks/chiseled_brown_sandstone"
+}
