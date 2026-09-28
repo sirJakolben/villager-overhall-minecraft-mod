@@ -12,6 +12,7 @@ import com.villageroverhaul.traderework.librarian.LoreScrollItem;
 import com.villageroverhaul.traderework.mason.MasonBlockEntities;
 import com.villageroverhaul.traderework.mason.MasonBlocks;
 import com.villageroverhaul.traderework.mason.MasonItems;
+import com.villageroverhaul.traderework.mason.VillagerStatueHappiness;
 import com.villageroverhaul.traderework.quest.QuestState;
 import com.villageroverhaul.traderework.runesmith.BonusDurability;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlockEntities;
@@ -55,6 +56,7 @@ public class TradeReworkMod {
         MasonBlocks.BLOCKS.register(modEventBus);
         MasonBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         MasonItems.ITEMS.register(modEventBus);
+        VillagerStatueHappiness.POI_TYPES.register(modEventBus);
         RunesmithBlocks.BLOCKS.register(modEventBus);
         RunesmithBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         RunesmithItems.ITEMS.register(modEventBus);

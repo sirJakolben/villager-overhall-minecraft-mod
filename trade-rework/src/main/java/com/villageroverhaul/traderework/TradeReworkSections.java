@@ -8,6 +8,7 @@ import com.villageroverhaul.traderework.cartographer.CartographerBlocks;
 import com.villageroverhaul.traderework.librarian.ExperienceBottles;
 import com.villageroverhaul.traderework.librarian.LibrarianBlocks;
 import com.villageroverhaul.traderework.mason.MasonBlocks;
+import com.villageroverhaul.traderework.mason.VillagerStatueHappiness;
 import com.villageroverhaul.traderework.passive.BookUpgradeWork;
 import com.villageroverhaul.traderework.passive.CrushingWork;
 import com.villageroverhaul.traderework.passive.PassiveLogic;
@@ -102,6 +103,8 @@ public final class TradeReworkSections {
         ExtensionHooks.registerExchangeExtension(QuestEntry.TYPE);
         ExtensionHooks.registerExchangeExtension(ExplorerMap.TYPE);
         ExtensionHooks.registerExchangeExtension(VillagerStatueOutput.TYPE);
+
+        ExtensionHooks.registerHappinessElement(VillagerStatueHappiness.ELEMENT);
 
         ExtensionHooks.setMobWeaponComponent(MobWeapons.MOB_WEAPON);
         ExtensionHooks.setPlayerXpCost(ExperienceBottles::playerXpCost);

@@ -45,6 +45,7 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 | Dorfzentrum (Glocke) | 20 % | 2 Tage |
 | Villager-Kontakt | 20 + 10 + 10 % | je 3 Tage |
 | Begleiter (Tag `happiness_companions`) | 10 + 10 % | je 3 Tage |
+| Extension-Elemente (`api/HappinessElement`): Dorfbewohner-Statue ≤ 8 Blöcke | 10 % | 2 Tage |
 - Je Element auf 5 % aufgerundet, Summe max. 100 % · Angst → 0 %, Held des Dorfes → 100 % (vorübergehend)
 
 ## Handel & Restock — `work/RestockService.java`

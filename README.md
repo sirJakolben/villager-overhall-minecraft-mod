@@ -87,7 +87,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 ### Handel und Fenster
 | Was | Dateien |
 |---|---|
-| Villager-Klick öffnet eigenes Fenster (Vanilla-Schritte bleiben) | `mixin/VillagerTradingMixin.java`, `mixin/VillagerAccessor.java` |
+| Villager-Klick öffnet eigenes Fenster (Vanilla-Schritte bleiben; „Nein“ nur ohne offene Sektion, nicht schon bei null Angeboten) | `mixin/VillagerTradingMixin.java`, `mixin/VillagerAccessor.java` |
 | Handelsliste aus Zustand + Sektions-Logiken, Rang-Rabatt als Vanilla-Sonderpreis, höherer Ertrag: Base-Menge durchgestrichen oben rechts am Ergebnis (`section/RowView.java`) | `trade/VillagerOffers.java`, `trade/ExchangeScaling.java`, `trade/ResolvedExchange.java` |
 | Menü (Vanilla-Merchant-Slots, XP-Preis per Haken `ExtensionHooks.playerXpCost`, Kreativ-Mittelklick) | `menu/VillagerMenu.java`, `menu/ModMenuTypes.java` |
 | Fenster (Sektionen in einer Schleife, Plakette, Leisten für n Sektionen, Rang-Buttons, Scrollen) | `client/ui/VillagerScreen.java`, `client/ui/RankButtonWidget.java`, `client/ui/VillagerGuiTextures.java` |
@@ -111,6 +111,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 | Fokus-Wahl zwischen Sektionen, Morgen-Station | `station/StationFocus.java` |
 | Eigenes Arbeitsgeräusch nur, während eine Listen-Sektion ihre Leiste füllt | `mixin/VillagerWorkSoundMixin.java`, `RestockService.makesWorkSound` |
 | Glücklichkeit berechnen / Villager-Kontakt erkennen | `happiness/HappinessCalculator.java`, `happiness/HappinessTracker.java`, `mixin/VillagerGossipMixin.java` |
+| Glücks-Elemente von Erweiterungen (Gewicht, Timer, Beobachter; im Scan gefragt, bis heute gesehen) | `api/HappinessElement.java`, `happiness/HappinessElements.java`, Tage in `state/Happiness.extraDays` |
 | Begleiter-Liste | `data/villageroverhaul/tags/entity_type/happiness_companions.json` |
 
 ### Arbeitsplätze, Claim, Handelsblock
@@ -178,6 +179,7 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Steinchen `rock_pile` + Wegsteine `rock_path` (je bis 4, wie Bücherstapel; Wegsteine 1 px tiefer für Trampelpfade, Teppich-Halt) | `mason/RockPileBlock.java`, `mason/RockPathBlock.java` |
 | Brechstation (3 + 3 Slots, Trichter wie Ofen, Komparator, Redstone-Puls) | `mason/CrushingStationBlock.java`, `mason/CrushingStationBlockEntity.java`, Fenster `station/ThreeInThreeOutMenu.java` + `client/ui/ThreeInThreeOutScreen.java` |
 | Dorfbewohner-Statuen (je Typ ein Block, Figur beim Setzen gewürfelt, 2 Blöcke hoch wie Tür, grau gerendert auf Rüstungsständer-Platte; Mason-Trade liefert die Statue seines Typs) | `mason/VillagerStatueBlock.java`, `mason/StatueFigure.java`, `mason/VillagerStatueBlockEntity.java`, Trade `trade/VillagerStatueOutput.java`, Grafik `client/render/VillagerStatueRenderer.java`, `VillagerStatueSpecialRenderer.java` (Item), `VillagerStatueFigure.java`, `GrayscaleTextures.java` |
+| Statuen machen glücklich (+10 %, 8 Blöcke, 2 Tage; Statuen sind POIs, Abfrage statt Block-Scan) | `mason/VillagerStatueHappiness.java` |
 | Brech-Regeln (Steinmetz-Rezepte rückwärts + Datapack-Regeln) | `mason/CrushingRecipes.java`, `mason/CrushingRule.java`, `data/vo_trade_rework/vo_trade_rework/crushing/*.json` |
 | Passive: Brechen (Batches à 4 einer Sorte, Rang 5: 6, Rang 6: 8, 8–32 pro Tag, Gang zur Station) | `passive/CrushingWork.java` |
 | Placeholder für Blöcke ohne Grafik | `models/block/placeholder_block.json`, `textures/block/placeholder_texture.png` (Quelle `assets/placeholder_block/`) |
@@ -221,7 +223,7 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Basic 0 Eisenketten, 1 Eisengitter, 4 Veredelungs- + Schmelzstation, 5 Kupferader-Karte, 6 Eisenader-Karte | `exchange/salvager_*.json` |
 | Veredelungsstation (Master, noch ohne Funktion) + Schmelzstation (Passive) | `salvager/SalvagerBlocks.java`, `TradeReworkSections.java` |
 | Schmelzstation (3 + 3 wie die Brechstation, Trichter, Komparator, Redstone-Puls, Hochofen-Knistern; WORKING: Tiegel mit animiertem geschmolzenem Metall nur beim Arbeiten) | `salvager/SmeltingStationBlock.java`, Modelle `smelting_station.json` / `smelting_station_working.json`, Lava-Blasen `salvager/SalvagerParticles.java` + `client/render/MoltenBubbleParticle.java`, `salvager/SmeltingStationBlockEntity.java`, `salvager/SalvagerBlockEntities.java` |
-| Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil + Scraps) | `passive/SmeltingWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`salvager/SalvageRule.java`) |
+| Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil bleibt im Input-Slot, Scraps in den Output; Trichter unten zieht Output + übrig gebliebene Diamant-Teile) | `passive/SmeltingWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`salvager/SalvageRule.java`) |
 | Berufsname „Verwerter“ | `entity.minecraft.villager.armorer` in `lang/*.json` |
 
 ### Entdeckerkarten als Trade-Output (gemeinsam für alle Berufe)

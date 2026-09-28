@@ -6,17 +6,21 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * When each happiness element was last observed (as a day number, see DayClock) - see
  * README.md (reworked 2026-09-23). Bed and meeting point are one
  * day value each; villager contacts and companions (cats, golems, allays) are small lists of
- * different entities, each with its own last-seen day. percent is the resulting 0-100 score,
+ * different entities, each with its own last-seen day; extraDays holds the last day of each element an
+ * extension registered (api/HappinessElement, e.g. villager statues), by its id. percent is the resulting 0-100 score,
  * recomputed by the server (HappinessCalculator) and stored here so the client can show it without
  * a day clock.
  *
@@ -28,7 +32,8 @@ import java.util.UUID;
  * Every field is optional in the codec, so older saves (earlier layouts of this record under other
  * keys) load as "never observed" instead of failing.
  */
-public record Happiness(long lastBedDay, long lastMeetingPointDay, List<Encounter> contacts, List<Encounter> companions, int percent, int mood) {
+public record Happiness(long lastBedDay, long lastMeetingPointDay, List<Encounter> contacts, List<Encounter> companions,
+                        Map<Identifier, Long> extraDays, int percent, int mood) {
 
     /** Day value for "never observed" - far enough in the past that every element counts as expired. */
     public static final long NEVER = -1000L;
@@ -38,7 +43,7 @@ public record Happiness(long lastBedDay, long lastMeetingPointDay, List<Encounte
     /** mood value for "no momentary override" - see mood(). */
     public static final int NO_MOOD = -1;
 
-    public static final Happiness EMPTY = new Happiness(NEVER, NEVER, List.of(), List.of(), 0, NO_MOOD);
+    public static final Happiness EMPTY = new Happiness(NEVER, NEVER, List.of(), List.of(), Map.of(), 0, NO_MOOD);
 
     /** One recent encounter with a specific entity (another villager, or a companion), with the day it last happened. */
     public record Encounter(UUID entity, long day) {
@@ -59,6 +64,7 @@ public record Happiness(long lastBedDay, long lastMeetingPointDay, List<Encounte
             Codec.LONG.optionalFieldOf("last_meeting_point_day", NEVER).forGetter(Happiness::lastMeetingPointDay),
             Encounter.CODEC.listOf().optionalFieldOf("contacts", List.of()).forGetter(Happiness::contacts),
             Encounter.CODEC.listOf().optionalFieldOf("companions", List.of()).forGetter(Happiness::companions),
+            Codec.unboundedMap(Identifier.CODEC, Codec.LONG).optionalFieldOf("extra_days", Map.of()).forGetter(Happiness::extraDays),
             Codec.INT.optionalFieldOf("percent", 0).forGetter(Happiness::percent),
             Codec.INT.optionalFieldOf("mood", NO_MOOD).forGetter(Happiness::mood)
     ).apply(instance, Happiness::new));
@@ -68,33 +74,46 @@ public record Happiness(long lastBedDay, long lastMeetingPointDay, List<Encounte
             ByteBufCodecs.VAR_LONG, Happiness::lastMeetingPointDay,
             Encounter.STREAM_CODEC.apply(ByteBufCodecs.list()), Happiness::contacts,
             Encounter.STREAM_CODEC.apply(ByteBufCodecs.list()), Happiness::companions,
+            ByteBufCodecs.<ByteBuf, Identifier, Long, Map<Identifier, Long>>map(HashMap::new, Identifier.STREAM_CODEC, ByteBufCodecs.VAR_LONG), Happiness::extraDays,
             ByteBufCodecs.VAR_INT, Happiness::percent,
             ByteBufCodecs.VAR_INT, Happiness::mood,
             Happiness::new
     );
 
     public Happiness withBed(long day) {
-        return new Happiness(day, lastMeetingPointDay, contacts, companions, percent, mood);
+        return new Happiness(day, lastMeetingPointDay, contacts, companions, extraDays, percent, mood);
     }
 
     public Happiness withMeetingPoint(long day) {
-        return new Happiness(lastBedDay, day, contacts, companions, percent, mood);
+        return new Happiness(lastBedDay, day, contacts, companions, extraDays, percent, mood);
     }
 
     public Happiness withContact(UUID villager, long day) {
-        return new Happiness(lastBedDay, lastMeetingPointDay, recordEncounter(contacts, villager, day, MAX_CONTACTS), companions, percent, mood);
+        return new Happiness(lastBedDay, lastMeetingPointDay, recordEncounter(contacts, villager, day, MAX_CONTACTS), companions, extraDays, percent, mood);
     }
 
     public Happiness withCompanion(UUID companion, long day) {
-        return new Happiness(lastBedDay, lastMeetingPointDay, contacts, recordEncounter(companions, companion, day, MAX_COMPANIONS), percent, mood);
+        return new Happiness(lastBedDay, lastMeetingPointDay, contacts, recordEncounter(companions, companion, day, MAX_COMPANIONS), extraDays, percent, mood);
+    }
+
+    /** Records that an extension's element (api/HappinessElement) was observed on day. */
+    public Happiness withExtra(Identifier element, long day) {
+        Map<Identifier, Long> updated = new HashMap<>(extraDays);
+        updated.put(element, day);
+        return new Happiness(lastBedDay, lastMeetingPointDay, contacts, companions, Map.copyOf(updated), percent, mood);
+    }
+
+    /** The day an extension's element was last observed, NEVER if not yet. */
+    public long lastExtraDay(Identifier element) {
+        return extraDays.getOrDefault(element, NEVER);
     }
 
     public Happiness withPercent(int newPercent) {
-        return new Happiness(lastBedDay, lastMeetingPointDay, contacts, companions, newPercent, mood);
+        return new Happiness(lastBedDay, lastMeetingPointDay, contacts, companions, extraDays, newPercent, mood);
     }
 
     public Happiness withMood(int newMood) {
-        return new Happiness(lastBedDay, lastMeetingPointDay, contacts, companions, percent, newMood);
+        return new Happiness(lastBedDay, lastMeetingPointDay, contacts, companions, extraDays, percent, newMood);
     }
 
     /** What happiness counts as right now: the momentary mood if there is one, otherwise the long-term percent. */

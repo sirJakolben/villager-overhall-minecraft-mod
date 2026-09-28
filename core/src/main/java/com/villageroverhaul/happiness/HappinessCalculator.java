@@ -1,5 +1,6 @@
 package com.villageroverhaul.happiness;
 
+import com.villageroverhaul.api.HappinessElement;
 import com.villageroverhaul.state.Happiness;
 
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ import java.util.List;
  * - companions (cats, golems, allays - the happiness_companions entity tag): 10 % each for two (max 20 %)
  *
  * Weights add up to 110 % (bed 30, meeting point 20, contacts 40, companions 20), so a villager can
- * still reach 100 % with one element partly missing. All numbers: Obsidian Tweak-Werte.md.
+ * still reach 100 % with one element partly missing. Extensions add elements of their own on top
+ * (api/HappinessElement, e.g. the Trade Rework's villager statues, 10 %) - the total stays capped at 100 %. All numbers: Obsidian Tweak-Werte.md.
  */
 public final class HappinessCalculator {
 
@@ -45,13 +47,16 @@ public final class HappinessCalculator {
         return Math.min(100, breakdown(happiness, today).stream().mapToInt(Part::value).sum());
     }
 
-    /** Every element with its current contribution, in a fixed order; contacts and companions newest first. */
+    /** Every element with its current contribution, in a fixed order; contacts and companions newest first, extensions' elements last. */
     public static List<Part> breakdown(Happiness happiness, long today) {
         List<Part> parts = new ArrayList<>();
         parts.add(part("bed", BED_WEIGHT, happiness.lastBedDay(), BED_TIMER_DAYS, today));
         parts.add(part("meeting point", MEETING_POINT_WEIGHT, happiness.lastMeetingPointDay(), MEETING_POINT_TIMER_DAYS, today));
         slots(parts, "villager contact", CONTACT_WEIGHTS, happiness.contacts(), CONTACT_TIMER_DAYS, today);
         slots(parts, "companion", COMPANION_WEIGHTS, happiness.companions(), COMPANION_TIMER_DAYS, today);
+        for (HappinessElement element : HappinessElements.all()) {
+            parts.add(part(element.id().toString(), element.weight(), happiness.lastExtraDay(element.id()), element.timerDays(), today));
+        }
         return parts;
     }
 

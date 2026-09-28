@@ -1,6 +1,7 @@
 package com.villageroverhaul.traderework.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.villageroverhaul.traderework.mason.StatueFigure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -60,13 +61,21 @@ public final class VillagerStatueFigure {
         basePlate = models.bakeLayer(ModelLayers.ARMOR_STAND).getChild("base_plate");
     }
 
+    /**
+     * figureTurn turns only the villager, in degrees around the model's up axis - the plate stays square to
+     * the pose stack, so a diagonal statue still sits on a straight plate. A PENDING figure shows just the plate.
+     */
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, ResourceKey<VillagerType> type, StatueFigure figure,
-                       int lightCoords, int overlayCoords, int outlineColor, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
+                       float figureTurn, int lightCoords, int overlayCoords, int outlineColor, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         collector.submitModelPart(basePlate, poseStack, RenderTypes.entityCutout(GrayscaleTextures.of(ARMOR_STAND)), lightCoords,
                 overlayCoords, null, -1, crumbling);
+        if (figure == StatueFigure.PENDING) {
+            return;
+        }
 
         poseStack.pushPose();
         poseStack.translate(0.0F, -PLATE_HEIGHT, 0.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(figureTurn));
         boolean isBaby = figure.isBaby();
         VillagerModel model = isBaby ? baby : adult;
         collector.submitModel(model, POSE, poseStack, model.renderType(GrayscaleTextures.of(isBaby ? BABY_SKIN : ADULT_SKIN)),

@@ -42,3 +42,10 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | Partikel beim Füllen (je Geräusch-Takt) | 3 Input über den Klingen, 2 Ergebnis aus dem Auspuff (Rückseite, Ausrichtung wie Steinmetz), Schub 1,5 |
 | Verhältnis | 1 : 1 (Steinmetz-Varianten im Steinmetz-Verhältnis) |
 - Regeln: Steinmetz-Rezepte rückwärts (automatisch) + `data/vo_trade_rework/vo_trade_rework/crushing/*.json` (crushing, cobbled_forms, smooth_blocks, concrete, glazed_terracotta); jede Steinart → Bruch-Form samt Varianten
+
+## Dorfbewohner-Statue — `mason/VillagerStatueBlock.java`, `client/render/GrayscaleTextures.java`
+| Wert | Aktuell |
+|---|---|
+| Kontrast der grauen Texturen | 0,55 (45 % weniger als das Original) |
+| Rauschen | ±3 % des Grauwertbereichs je Pixel (weißes Rauschen, fest pro Textur) |
+| Drehstufen | 16 (wie Mob-Köpfe) |

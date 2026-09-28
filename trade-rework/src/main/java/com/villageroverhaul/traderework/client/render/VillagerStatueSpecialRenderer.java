@@ -31,7 +31,7 @@ public class VillagerStatueSpecialRenderer implements NoDataSpecialModelRenderer
 
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
-        figure.submit(poseStack, collector, villagerType, StatueFigure.NONE, lightCoords, overlayCoords, outlineColor, null);
+        figure.submit(poseStack, collector, villagerType, StatueFigure.NONE, 0.0F, lightCoords, overlayCoords, outlineColor, null);
     }
 
     @Override

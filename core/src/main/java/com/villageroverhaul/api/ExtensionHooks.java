@@ -1,6 +1,7 @@
 package com.villageroverhaul.api;
 
 import com.villageroverhaul.data.ExchangeExtensions;
+import com.villageroverhaul.happiness.HappinessElements;
 import com.villageroverhaul.section.Sections;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.entity.EntityType;
@@ -40,6 +41,11 @@ public final class ExtensionHooks {
     /** Extra entry data under "extensions" - see ExchangeExtensionType. */
     public static void registerExchangeExtension(ExchangeExtensionType<?> type) {
         ExchangeExtensions.register(type);
+    }
+
+    /** An extra happiness element (e.g. a decoration nearby) - see HappinessElement. */
+    public static void registerHappinessElement(HappinessElement element) {
+        HappinessElements.register(element);
     }
 
     /**

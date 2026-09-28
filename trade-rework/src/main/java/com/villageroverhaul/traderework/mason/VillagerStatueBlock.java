@@ -7,10 +7,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.VillagerType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -19,7 +17,6 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,6 +25,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -37,11 +36,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * A grey stone villager on an armor stand's base plate (2026-09-28, Mason trade). One block per villager
  * type (desert, taiga, ...) - the Mason sells the one of his own biome (trade/VillagerStatueOutput). Who it
- * shows is rolled on placing (StatueFigure, kept in FIGURE): an adult stands two blocks high like a door
- * (HALF, only the lower half draws and drops), a child fits into the lower block and leaves the upper one
- * free. Placing always needs two free blocks - the figure is only known after it. Faces the player like the
- * copper golem statue. Drawn by client/render/VillagerStatueRenderer from the villager's own model and
- * textures, turned grey.
+ * shows is rolled by the server on placing (StatueFigure, kept in FIGURE; PENDING until then): an adult
+ * stands two blocks high like a door (HALF, only the lower half draws and drops), a child fits into the lower
+ * block and leaves the upper one free. Placing always needs two free blocks - the figure is only known after
+ * it. Faces the player in 16 directions like a mob head; the base plate stays square to the block. Drawn by
+ * client/render/VillagerStatueRenderer from the villager's own model and textures, turned grey.
  *
  * Hitboxes are the villager's own (0.6 x 1.95 blocks, a child half of that) standing on the 12 x 1 x 12 px plate.
  */
@@ -52,7 +51,9 @@ public class VillagerStatueBlock extends BaseEntityBlock {
             propertiesCodec()
     ).apply(instance, VillagerStatueBlock::new));
 
-    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    /** 16 directions like a mob head (2026-09-28) - the statue can also stand diagonally. */
+    public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
+    private static final int ROTATIONS = RotationSegment.getMaxSegmentIndex() + 1;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     public static final EnumProperty<StatueFigure> FIGURE = EnumProperty.create("figure", StatueFigure.class);
 
@@ -70,9 +71,9 @@ public class VillagerStatueBlock extends BaseEntityBlock {
         super(properties);
         this.villagerType = villagerType;
         registerDefaultState(stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
+                .setValue(ROTATION, 0)
                 .setValue(HALF, DoubleBlockHalf.LOWER)
-                .setValue(FIGURE, StatueFigure.NONE));
+                .setValue(FIGURE, StatueFigure.PENDING));
     }
 
     public ResourceKey<VillagerType> villagerType() {
@@ -86,7 +87,7 @@ public class VillagerStatueBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HALF, FIGURE);
+        builder.add(ROTATION, HALF, FIGURE);
     }
 
     @Override
@@ -96,13 +97,17 @@ public class VillagerStatueBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (state.getValue(FIGURE).isBaby()) {
+        StatueFigure figure = state.getValue(FIGURE);
+        if (figure == StatueFigure.PENDING) {
+            return PLATE;
+        }
+        if (figure.isBaby()) {
             return BABY;
         }
         return state.getValue(HALF) == DoubleBlockHalf.LOWER ? ADULT_LOWER : ADULT_UPPER;
     }
 
-    /** Rolls the figure; the server's roll wins, the client's guess is replaced by the block update. */
+    /** Placed not rolled yet (PENDING) - the server rolls in onPlace, so both sides place the same state. */
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
@@ -111,15 +116,30 @@ public class VillagerStatueBlock extends BaseEntityBlock {
             return null;
         }
         return defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection().getOpposite())
-                .setValue(FIGURE, StatueFigure.random(level.getRandom()));
+                // The player's view turned around: the statue looks back at them, in 22.5 degree steps.
+                .setValue(ROTATION, RotationSegment.convertToSegment(context.getRotation() + 180.0F));
     }
 
-    /** An adult gets its upper half, a child doesn't. */
+    /**
+     * Server only, for every way a statue gets set (player, /setblock, structures): rolls the figure of a new
+     * statue and gives an adult its upper half. Without room above (only possible outside player placing) it
+     * becomes a child. The new state reaches the client as one block update - it never shows a figure of its own.
+     */
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity by, ItemStack itemStack) {
-        if (!state.getValue(FIGURE).isBaby()) {
-            level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), Block.UPDATE_ALL);
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        if (level.isClientSide() || state.getValue(HALF) != DoubleBlockHalf.LOWER || state.getValue(FIGURE) != StatueFigure.PENDING) {
+            return;
+        }
+        StatueFigure figure = StatueFigure.random(level.getRandom());
+        BlockPos above = pos.above();
+        boolean roomAbove = above.getY() <= level.getMaxY() && level.getBlockState(above).canBeReplaced();
+        if (!figure.isBaby() && !roomAbove) {
+            figure = StatueFigure.BABY;
+        }
+        BlockState rolled = state.setValue(FIGURE, figure);
+        level.setBlock(pos, rolled, Block.UPDATE_ALL);
+        if (!figure.isBaby()) {
+            level.setBlock(above, rolled.setValue(HALF, DoubleBlockHalf.UPPER), Block.UPDATE_ALL);
         }
     }
 
@@ -129,11 +149,16 @@ public class VillagerStatueBlock extends BaseEntityBlock {
                                      BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         DoubleBlockHalf half = state.getValue(HALF);
         boolean towardsOtherHalf = directionToNeighbour == (half == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN);
-        if (towardsOtherHalf && !state.getValue(FIGURE).isBaby()
+        if (towardsOtherHalf && standsAsPair(state.getValue(FIGURE))
                 && !(neighbourState.is(this) && neighbourState.getValue(HALF) != half)) {
             return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
+    }
+
+    /** Only a rolled adult has two halves - a child and a not yet rolled statue stand alone. */
+    private static boolean standsAsPair(StatueFigure figure) {
+        return !figure.isBaby() && figure != StatueFigure.PENDING;
     }
 
     /**
@@ -156,12 +181,12 @@ public class VillagerStatueBlock extends BaseEntityBlock {
 
     @Override
     protected BlockState rotate(BlockState state, Rotation rotation) {
-        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+        return state.setValue(ROTATION, rotation.rotate(state.getValue(ROTATION), ROTATIONS));
     }
 
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
-        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+        return state.setValue(ROTATION, mirror.mirror(state.getValue(ROTATION), ROTATIONS));
     }
 
     @Override

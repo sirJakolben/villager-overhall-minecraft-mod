@@ -1,7 +1,9 @@
 package com.villageroverhaul.work;
 
 import com.villageroverhaul.VillagerOverhaulMod;
+import com.villageroverhaul.api.HappinessElement;
 import com.villageroverhaul.happiness.HappinessCalculator;
+import com.villageroverhaul.happiness.HappinessElements;
 import com.villageroverhaul.progression.ProgressionService;
 import com.villageroverhaul.section.VillagerSections;
 import com.villageroverhaul.state.Happiness;
@@ -37,7 +39,8 @@ import java.util.Optional;
  * Happiness: records which elements were observed today (bed = has a home, meeting point = near its
  * bell, companions = up to two different entities from the happiness_companions tag nearby). Each
  * element is only looked up until it was satisfied today, so the companion entity search stops once
- * two companions were seen that day. Villager contact comes from the gossip hook instead, see
+ * two companions were seen that day. Extensions' elements (api/HappinessElement) are asked the same way:
+ * only until they said yes today. Villager contact comes from the gossip hook instead, see
  * HappinessTracker. Mood: fear and Hero of the Village temporarily override happiness, see currentMood.
  *
  * Stations: each scan first lets StationClaims validate and claim the villager's stations.
@@ -148,6 +151,11 @@ public final class VillagerWorkScan {
         }
         if (happiness.lastMeetingPointDay() != today && isNear(villager, brain.getMemory(MemoryModuleType.MEETING_POINT), MEETING_POINT_RADIUS)) {
             happiness = happiness.withMeetingPoint(today);
+        }
+        for (HappinessElement element : HappinessElements.all()) {
+            if (happiness.lastExtraDay(element.id()) != today && element.observer().observe(level, villager)) {
+                happiness = happiness.withExtra(element.id(), today);
+            }
         }
         if (happiness.companions().stream().filter(companion -> companion.day() == today).count() < Happiness.MAX_COMPANIONS) {
             List<Entity> nearby = level.getEntities(villager, villager.getBoundingBox().inflate(COMPANION_RADIUS),
