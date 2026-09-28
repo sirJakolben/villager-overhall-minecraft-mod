@@ -80,3 +80,9 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 | Wert | Aktuell |
 |---|---|
 | Reichweite / Ziel-Toleranz / Ziel-Kegel | 20 Blöcke / 0,5 / 6° |
+
+## Heilen & Brauen — `world/`
+| Wert | Aktuell |
+|---|---|
+| Natürlicher Zombie wird Zombie-Villager | 20 % (Vanilla: Zombie 95 : Zombie-Villager 5 → ~24 % statt 5 %) |
+| Lohenstaub in Dorf-Brauständen (nur neu generierte Chunks) | 1–3 |

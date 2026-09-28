@@ -19,6 +19,7 @@ import com.villageroverhaul.traderework.runesmith.RunesmithBlocks;
 import com.villageroverhaul.traderework.runesmith.RunesmithItems;
 import com.villageroverhaul.traderework.salvager.SalvagerBlockEntities;
 import com.villageroverhaul.traderework.salvager.SalvagerBlocks;
+import com.villageroverhaul.traderework.salvager.SalvagerParticles;
 import com.villageroverhaul.traderework.trade.ExplorerMaps;
 import com.villageroverhaul.traderework.veteran.MobWeapons;
 import com.villageroverhaul.traderework.veteran.VeteranBlockEntities;
@@ -65,6 +66,7 @@ public class TradeReworkMod {
         SalvagerBlocks.BLOCKS.register(modEventBus);
         SalvagerBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         SalvagerBlocks.ITEMS.register(modEventBus);
+        SalvagerParticles.PARTICLE_TYPES.register(modEventBus);
 
         TradeReworkSections.register();
     }

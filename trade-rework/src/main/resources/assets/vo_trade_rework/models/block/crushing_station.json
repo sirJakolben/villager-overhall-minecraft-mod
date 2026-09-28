@@ -1,1 +1,64 @@
-{ "parent": "vo_trade_rework:block/placeholder_block" }
+{
+	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/block",
+	"textures": {
+		"0": "vo_trade_rework:block/crushing_station",
+		"1": "vo_trade_rework:block/crushing_blades",
+		"particle": "vo_trade_rework:block/crushing_station"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 15, 2],
+			"faces": {
+				"north": {"uv": [0, 0, 4, 3.75], "texture": "#0", "cullface": "north"},
+				"east": {"uv": [7, 10.5, 7.5, 14.25], "texture": "#0", "cullface": "east"},
+				"south": {"uv": [0, 3.75, 4, 7.5], "texture": "#0"},
+				"west": {"uv": [7.5, 10.5, 8, 14.25], "texture": "#0", "cullface": "west"},
+				"up": {"uv": [11, 6, 15, 6.5], "texture": "#0"},
+				"down": {"uv": [11, 6.5, 15, 7], "texture": "#0", "cullface": "down"}
+			}
+		},
+		{
+			"from": [0, 0, 2],
+			"to": [16, 12, 14],
+			"faces": {
+				"north": {"uv": [0, 7.5, 4, 10.5], "texture": "#0"},
+				"east": {"uv": [8, 6, 11, 9], "texture": "#0", "cullface": "east"},
+				"south": {"uv": [4, 7.5, 8, 10.5], "texture": "#0"},
+				"west": {"uv": [8, 9, 11, 12], "texture": "#0", "cullface": "west"},
+				"up": {"uv": [8, 0, 12, 3], "texture": "#0"},
+				"down": {"uv": [8, 3, 12, 6], "texture": "#0", "cullface": "down"}
+			}
+		},
+		{
+			"from": [0, 0, 14],
+			"to": [16, 15, 16],
+			"faces": {
+				"north": {"uv": [4, 0, 8, 3.75], "texture": "#0"},
+				"east": {"uv": [11, 8, 11.5, 11.75], "texture": "#0", "cullface": "east"},
+				"south": {"uv": [4, 3.75, 8, 7.5], "texture": "#0", "cullface": "south"},
+				"west": {"uv": [0, 11.5, 0.5, 15.25], "texture": "#0", "cullface": "west"},
+				"up": {"uv": [11, 7, 15, 7.5], "texture": "#0"},
+				"down": {"uv": [11, 7.5, 15, 8], "texture": "#0", "cullface": "down"}
+			}
+		},
+		{
+			"from": [1, 12, 1],
+			"to": [1, 16, 15],
+			"faces": {
+				"east": {"uv": [0, 10.5, 3.5, 11.5], "texture": "#0"},
+				"west": {"uv": [3.5, 10.5, 7, 11.5], "texture": "#0"}
+			}
+		},
+		{
+			"name": "crushing_blades",
+			"from": [2, 12.1, 4],
+			"to": [14, 12.1, 12],
+			"faces": {
+				"up": {"uv": [0, 0, 12, 8], "texture": "#1"},
+				"down": {"uv": [0, 8, 12, 16], "texture": "#1"}
+			}
+		}
+	]
+}

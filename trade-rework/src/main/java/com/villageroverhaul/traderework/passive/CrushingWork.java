@@ -17,12 +17,12 @@ import java.util.Optional;
  * The Mason's passive at work (Obsidian Mason.md, "Passive Ability - Brechstation"), the same rhythm as
  * the Librarian's book upgrade (BookUpgradeWork): once the passive meter is full and the crushing station
  * has something to crush, the focus jumps to the station; standing right at it during work time, the
- * Mason crushes one batch (2026-09-26: up to 4 results of one kind, see CrushingStationBlockEntity.crushBatch),
+ * Mason crushes one batch (2026-09-26: up to 4 results of one kind, 6 on passive rank 5, 8 on rank 6 - see CrushingStationBlockEntity.crushBatch),
  * the meter drops to 0, the station pulses redstone and plays the Mason work sound. A higher passive rank
  * means more batches per day: the meter is sized so a full, happy work day fills it
  * BATCHES_PER_DAY_BY_RANK times (PassiveLogic.meterPoints).
  *
- * While it fills the passive meter at the station, the station plays the stone hit sound (markWorked).
+ * While it fills the passive meter at the station, the station plays the stone hit sound (markWorked) - only if it has something to crush.
  *
  * Cost per work scan: one block entity lookup at a known position and a look at 3 slots - no block scan.
  */
@@ -32,6 +32,8 @@ public final class CrushingWork implements PassiveWork {
     public static final double WORK_REACH = 2.0;
     /** Batches per full, happy work day, by passive rank 0..6 (Tweak-Werte.md) - sizes the passive meter. */
     private static final int[] BATCHES_PER_DAY_BY_RANK = {8, 12, 16, 20, 24, 28, 32};
+    /** Results per batch, by passive rank 0..6 (Tweak-Werte.md) - a batch still makes only one kind. */
+    private static final int[] BATCH_SIZE_BY_RANK = {4, 4, 4, 4, 4, 6, 8};
     /** Extra ticks the stone sound keeps going past the next expected work scan, so it doesn't stutter. */
     private static final int SOUND_GRACE_TICKS = 20;
 
@@ -72,7 +74,7 @@ public final class CrushingWork implements PassiveWork {
             station.get().markWorked(level.getGameTime() + VillagerWorkScan.SCAN_PERIOD + SOUND_GRACE_TICKS);
             return state;
         }
-        if (station.get().crushBatch(level) == 0) {
+        if (station.get().crushBatch(level, BATCH_SIZE_BY_RANK[Math.clamp(PassiveLogic.rank(state), 0, BATCH_SIZE_BY_RANK.length - 1)]) == 0) {
             return state;
         }
         CrushingStationBlock.pulse(level, pos);

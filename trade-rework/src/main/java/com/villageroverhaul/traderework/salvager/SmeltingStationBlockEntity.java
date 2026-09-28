@@ -19,6 +19,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -87,7 +88,13 @@ public class SmeltingStationBlockEntity extends BaseContainerBlockEntity impleme
     /** Every WORK_SOUND_INTERVAL ticks while worked: the blast furnace crackle. */
     void serverTick(ServerLevel level, BlockPos pos) {
         long time = level.getGameTime();
-        if (time < workedUntil && time % WORK_SOUND_INTERVAL == 0) {
+        boolean worked = time < workedUntil;
+        BlockState state = getBlockState();
+        if (state.getValue(SmeltingStationBlock.WORKING) != worked) {
+            // Only at the start and end of a work phase: the crucible switches between empty and molten metal.
+            level.setBlock(pos, state.setValue(SmeltingStationBlock.WORKING, worked), Block.UPDATE_CLIENTS);
+        }
+        if (worked && time % WORK_SOUND_INTERVAL == 0) {
             level.playSound(null, pos, SoundEvents.BLASTFURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, WORK_SOUND_VOLUME, 1.0F);
         }
     }

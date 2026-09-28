@@ -18,6 +18,7 @@ import com.villageroverhaul.traderework.quest.QuestLogic;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlocks;
 import com.villageroverhaul.traderework.salvager.SalvagerBlocks;
 import com.villageroverhaul.traderework.trade.ExplorerMap;
+import com.villageroverhaul.traderework.trade.VillagerStatueOutput;
 import com.villageroverhaul.traderework.veteran.MobWeapons;
 import com.villageroverhaul.traderework.veteran.VeteranBlocks;
 import net.minecraft.resources.Identifier;
@@ -100,6 +101,7 @@ public final class TradeReworkSections {
 
         ExtensionHooks.registerExchangeExtension(QuestEntry.TYPE);
         ExtensionHooks.registerExchangeExtension(ExplorerMap.TYPE);
+        ExtensionHooks.registerExchangeExtension(VillagerStatueOutput.TYPE);
 
         ExtensionHooks.setMobWeaponComponent(MobWeapons.MOB_WEAPON);
         ExtensionHooks.setPlayerXpCost(ExperienceBottles::playerXpCost);

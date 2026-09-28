@@ -86,6 +86,8 @@ public record QuestState(Map<Integer, Integer> rotations, Map<Integer, Long> rer
             () -> AttachmentType.builder(() -> EMPTY)
                     .serialize(MAP_CODEC)
                     .sync(STREAM_CODEC)
+                    // Also carried through a zombie conversion and back (NeoForge copies it then), like the core's state.
+                    .copyOnDeath()
                     .build()
     );
 

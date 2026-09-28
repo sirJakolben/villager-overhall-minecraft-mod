@@ -1,5 +1,10 @@
 # Villager Overhaul + Trade Rework
 
+> **Temporär – Terminal-Befehle** (im Projekt-Hauptordner):
+> - Bauen (beide Mods, Jars in `core/build/libs/` + `trade-rework/build/libs/`): `./gradlew build`
+> - Spiel starten, Kern + Trade Rework (Ordner `run/`): `./gradlew :trade-rework:runClient`
+> - Spiel starten, nur Kern (Ordner `run-core/`): `./gradlew :core:runClient`
+
 Kompakter Überblick: was die zwei Mods können und wo es im Code steht. Zum Wiederfinden, nicht zum Durchlesen.
 Seit 2026-09-28 zwei Mods in einem Gradle-Projekt: **Villager Overhaul** (Kern, `core/`, Mod-ID `villageroverhaul`) und **Villager Overhaul: Trade Rework** (Extension, `trade-rework/`, Mod-ID `vo_trade_rework`, braucht den Kern).
 Offenes steht in [active-development.md](active-development.md), Zahlen in [tweaks/](tweaks/), Arbeitsregeln in [villager-overhaul-projektrahmen.md](villager-overhaul-projektrahmen.md).
@@ -18,6 +23,8 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 - **Mehrere Arbeitsplätze** pro Villager (Vanilla-Arbeitsblock + registrierte Stationen), die er selbst sucht und besetzt
 - **Claim per Smaragd**, Anlocken mit Smaragd, **Handelsblock** ruft den Villager per Redstone herbei
 - **Beruf wird fest**, sobald gehandelt wurde oder XP da ist
+- **Zombie-Umwandlung**: Level, Punkte, Ränge und Bestand überstehen Villager → Zombie → geheilt (Arbeitsplätze werden neu gesucht)
+- **Heilen leichter**: 20 % der natürlich spawnenden Zombies kommen als Zombie-Villager; Braustände in Dörfern (Tempel) starten mit 1–3 Lohenstaub
 
 ### Extension (Trade Rework)
 
@@ -32,6 +39,7 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 ## Technische Basis
 
 - NeoForge 26.1.0.19-beta, Minecraft 26.1, Java 25, ModDevGradle 2.x, Mojang-Namen (kein Parchment), keine Fremd-Libs
+- **Lizenz**: CC0-1.0 (gemeinfrei, beide Mods) – [LICENSE](LICENSE), `mod_license` in `gradle.properties`
 - **Gradle-Multiprojekt**: `core/` und `trade-rework/`, gemeinsame `gradle.properties` im Wurzelordner (Extension-Werte `ext_mod_*`); die Extension kompiliert gegen den Kern (`compileOnly`) und lädt ihn im Entwicklungsstart aus dessen Source-Set (mods-Block)
 - **Starts**: `:trade-rework:runClient` = Kern + Extension im alten `run/` (Test-Welten); `:core:runClient` = Kern allein in `run-core/`; `runGameTestServer` in beiden = Ladetest ohne Fenster (`run-gametest*/`)
 - 26.1-Eigenheiten: `ResourceLocation` heißt `Identifier`; Screens rendern über `GuiGraphicsExtractor` / `extractBackground`
@@ -70,6 +78,8 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 |---|---|
 | Villager-Zustand (Level, XP, Punkte, Ränge je Sektion, Bestand je Eintrag, Leisten, Glück, Stationen) | `state/VillagerState.java`, `state/Productivity.java`, `state/Stations.java`, `state/Happiness.java` |
 | Attachment + automatischer Sync | `state/ModAttachments.java`, `state/AttachmentVillagerStateAccess.java`, `state/VillagerStateAccess.java` |
+| Zustand übersteht Zombie-Umwandlung und Heilen (ohne Arbeitsplätze) | `state/VillagerConversion.java` |
+| Mehr Zombie-Villager, Lohenstaub in Dorf-Brauständen | `world/ZombieVillagerSpawns.java`, `world/VillageBrewingStands.java` |
 | Datapack-Registry `exchange` (alle Trades und Quests aller Sektionen) | `data/ModDataPackRegistries.java`, `data/ItemExchange.java` (`section`, optional `pool`), `data/ItemAmount.java` |
 | Einträge | keine im Kern – liefert die Extension (`data/vo_trade_rework/villageroverhaul/exchange/`) |
 | Spieltag | `work/DayClock.java` |
@@ -127,6 +137,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 
 ### Debug (`/vo`, angeschauter Villager)
 - `debug/DebugCommands.java`: `state` (`progression`, `productivity`, `happiness`, `sections`, `raw`), `grant_xp`, `grant_points`, `invest <sektion>`, `list`, `trade <eintrag>` (Trade oder Quest), `action <sektion> <slot> <aktion>` (z. B. Quest-Reroll = Aktion 0), `restock`, `reset` (Level, Punkte, Ränge, Bestand, Leisten, Quest-Slots zurück; Glück + Stationen bleiben)
+- `data/villageroverhaul/timeline/work_time_marker.json`: `/time set work` (Tick 2000, Beginn der Villager-Arbeitszeit) – nur ein Time Marker, kein Java
 
 ## Trade Rework – wo steht was
 
@@ -164,8 +175,9 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Trades / Quests | `data/vo_trade_rework/villageroverhaul/exchange/mason_*.json` (Feld `section`, Quests mit `pool`) |
 | Steinchen `rock_pile` + Wegsteine `rock_path` (je bis 4, wie Bücherstapel; Wegsteine 1 px tiefer für Trampelpfade, Teppich-Halt) | `mason/RockPileBlock.java`, `mason/RockPathBlock.java` |
 | Brechstation (3 + 3 Slots, Trichter wie Ofen, Komparator, Redstone-Puls) | `mason/CrushingStationBlock.java`, `mason/CrushingStationBlockEntity.java`, Fenster `station/ThreeInThreeOutMenu.java` + `client/ui/ThreeInThreeOutScreen.java` |
+| Dorfbewohner-Statuen (je Typ ein Block, Figur beim Setzen gewürfelt, 2 Blöcke hoch wie Tür, grau gerendert auf Rüstungsständer-Platte; Mason-Trade liefert die Statue seines Typs) | `mason/VillagerStatueBlock.java`, `mason/StatueFigure.java`, `mason/VillagerStatueBlockEntity.java`, Trade `trade/VillagerStatueOutput.java`, Grafik `client/render/VillagerStatueRenderer.java`, `VillagerStatueSpecialRenderer.java` (Item), `VillagerStatueFigure.java`, `GrayscaleTextures.java` |
 | Brech-Regeln (Steinmetz-Rezepte rückwärts + Datapack-Regeln) | `mason/CrushingRecipes.java`, `mason/CrushingRule.java`, `data/vo_trade_rework/vo_trade_rework/crushing/*.json` |
-| Passive: Brechen (Batches à 4 einer Sorte, 8–32 pro Tag, Gang zur Station) | `passive/CrushingWork.java` |
+| Passive: Brechen (Batches à 4 einer Sorte, Rang 5: 6, Rang 6: 8, 8–32 pro Tag, Gang zur Station) | `passive/CrushingWork.java` |
 | Placeholder für Blöcke ohne Grafik | `models/block/placeholder_block.json`, `textures/block/placeholder_texture.png` (Quelle `assets/placeholder_block/`) |
 
 ### Runesmith (Vanilla-Toolsmith; bis 2026-09-27 beim Repair Smith)
@@ -206,7 +218,7 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 |---|---|
 | Basic 0 Eisenketten, 1 Eisengitter, 4 Veredelungs- + Schmelzstation, 5 Kupferader-Karte, 6 Eisenader-Karte | `exchange/salvager_*.json` |
 | Veredelungsstation (Master, noch ohne Funktion) + Schmelzstation (Passive) | `salvager/SalvagerBlocks.java`, `TradeReworkSections.java` |
-| Schmelzstation (3 + 3 wie die Brechstation, Trichter, Komparator, Redstone-Puls, Hochofen-Knistern) | `salvager/SmeltingStationBlock.java`, `salvager/SmeltingStationBlockEntity.java`, `salvager/SalvagerBlockEntities.java` |
+| Schmelzstation (3 + 3 wie die Brechstation, Trichter, Komparator, Redstone-Puls, Hochofen-Knistern; WORKING: Tiegel mit animiertem geschmolzenem Metall nur beim Arbeiten) | `salvager/SmeltingStationBlock.java`, Modelle `smelting_station.json` / `smelting_station_working.json`, Lava-Blasen `salvager/SalvagerParticles.java` + `client/render/MoltenBubbleParticle.java`, `salvager/SmeltingStationBlockEntity.java`, `salvager/SalvagerBlockEntities.java` |
 | Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil + Scraps) | `passive/SmeltingWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`salvager/SalvageRule.java`) |
 | Berufsname „Verwerter“ | `entity.minecraft.villager.armorer` in `lang/*.json` |
 

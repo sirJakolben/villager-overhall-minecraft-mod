@@ -33,10 +33,12 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | Wert | Aktuell |
 |---|---|
 | Slots | 3 Input + 3 Output |
-| Batch-Größe | 4 Ergebnisse, nur eine Sorte pro Batch |
+| Batch-Größe, Rang 0–6 | 4, 4, 4, 4, 4, 6, 8 Ergebnisse, nur eine Sorte pro Batch |
 | Batches pro Tag, Rang 0–6 | 8, 12, 16, 20, 24, 28, 32 |
 | Reichweite | 2 Blöcke |
 | Redstone-Puls | 2 Ticks |
-| Tuff-Abbaugeräusch beim Füllen / Nachlauf | alle 4 Ticks (Vanilla-Abbautakt), Lautstärke 0,75 / 20 Ticks |
+| Tuff-Abbaugeräusch beim Füllen (nur wenn etwas brechbar drin ist) / Nachlauf | alle 4 Ticks (Vanilla-Abbautakt), Lautstärke 0,75 / 20 Ticks |
+| Klingen-Animation | 3 Frames à 2 Ticks, nur während der Arbeit (Zustand `working`, `crushing_blades_moving.png.mcmeta`) |
+| Partikel beim Füllen (je Geräusch-Takt) | 3 Input über den Klingen, 2 Ergebnis aus dem Auspuff (Rückseite, Ausrichtung wie Steinmetz), Schub 1,5 |
 | Verhältnis | 1 : 1 (Steinmetz-Varianten im Steinmetz-Verhältnis) |
 - Regeln: Steinmetz-Rezepte rückwärts (automatisch) + `data/vo_trade_rework/vo_trade_rework/crushing/*.json` (crushing, cobbled_forms, smooth_blocks, concrete, glazed_terracotta); jede Steinart → Bruch-Form samt Varianten
