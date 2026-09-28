@@ -89,7 +89,9 @@ public final class VillagerOffers {
         List<RowView> rows = built.sources().stream()
                 .map(source -> new RowView(source.offer().slot(), source.offer().exchange().baseOutputCount()))
                 .toList();
-        PacketDistributor.sendToPlayer(player, new VillagerOffersPayload(menu.containerId, villager.getOffers(), built.sections(), rows));
+        // A snapshot, not the live list: the packet is encoded later on the network thread, while the server thread
+        // may already be rebuilding the live list in place (fill) - that crashed the connection (2026-09-29).
+        PacketDistributor.sendToPlayer(player, new VillagerOffersPayload(menu.containerId, villager.getOffers().copy(), built.sections(), rows));
     }
 
     /**
