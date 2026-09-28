@@ -10,6 +10,7 @@ import com.villageroverhaul.station.StationOwners;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -39,6 +40,9 @@ public final class ManualClaims {
 
     /** How far around a block the previous owner is searched - well past Vanilla's 48-block job-site reach. */
     private static final int OWNER_SEARCH_RADIUS = 64;
+    /** Stars over a claimed block - as many as Vanilla shows around the villager - and their spread in blocks. */
+    private static final int CLAIM_PARTICLES = 5;
+    private static final double CLAIM_PARTICLE_SPREAD = 0.3;
 
     private ManualClaims() {
     }
@@ -91,8 +95,18 @@ public final class ManualClaims {
 
         displaceOwner(level, pos, villager);
         takeWorkplace(level, villager, pos);
-        level.broadcastEntityEvent(villager, (byte) 14); // Vanilla's green "found a workplace" particles
+        showClaimParticles(level, villager, pos);
         return Optional.of(Component.translatable("message.villageroverhaul.claim.assigned", name));
+    }
+
+    /**
+     * Vanilla's green "found a workplace" stars (entity event 14) around the villager - and the same stars over the
+     * claimed block (2026-09-28), so both ends of the assignment light up.
+     */
+    private static void showClaimParticles(ServerLevel level, Villager villager, BlockPos pos) {
+        level.broadcastEntityEvent(villager, (byte) 14);
+        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                CLAIM_PARTICLES, CLAIM_PARTICLE_SPREAD, CLAIM_PARTICLE_SPREAD, CLAIM_PARTICLE_SPREAD, 0.0);
     }
 
     private static void assignTradingBlock(ServerLevel level, Villager villager, BlockPos pos) {
@@ -103,7 +117,7 @@ public final class ManualClaims {
             }
         }
         setStations(villager, VillagerStateAccess.of(villager).getState().stations().withTradingBlock(Optional.of(target)));
-        level.broadcastEntityEvent(villager, (byte) 14); // Vanilla's green star particles, no message
+        showClaimParticles(level, villager, pos); // no message
     }
 
     private static boolean ownsWorkplace(Villager villager, ServerLevel level, BlockPos pos) {
