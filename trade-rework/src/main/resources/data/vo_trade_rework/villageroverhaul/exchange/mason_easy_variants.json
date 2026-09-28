@@ -1,11 +1,13 @@
 {
   "profession": "minecraft:mason",
   "section": "vo_trade_rework:quests",
-  "input_variants": ["minecraft:stone_brick_stairs", "minecraft:stone_brick_slab", "minecraft:stone_brick_wall", "minecraft:cobblestone_stairs", "minecraft:cobblestone_slab", "minecraft:cobblestone_wall", "minecraft:sandstone_stairs", "minecraft:sandstone_slab", "minecraft:sandstone_wall", "minecraft:cut_sandstone", "minecraft:cut_red_sandstone", "minecraft:deepslate_tiles", "minecraft:cracked_deepslate_tiles"],
   "base_input": { "item": "minecraft:stone_brick_stairs", "count": 1 },
   "max_input": { "item": "minecraft:stone_brick_stairs", "count": 1 },
   "base_output": { "item": "minecraft:emerald", "count": 1 },
   "max_output": { "item": "minecraft:emerald", "count": 1 },
   "base_max_uses": 1,
-  "max_max_uses": 1
+  "max_max_uses": 1,
+  "extensions": {
+    "vo_trade_rework:quest": { "input_variants": ["minecraft:stone_brick_stairs", "minecraft:stone_brick_slab", "minecraft:stone_brick_wall", "minecraft:cobblestone_stairs", "minecraft:cobblestone_slab", "minecraft:cobblestone_wall", "minecraft:sandstone_stairs", "minecraft:sandstone_slab", "minecraft:sandstone_wall", "minecraft:cut_sandstone", "minecraft:cut_red_sandstone", "minecraft:deepslate_tiles", "minecraft:cracked_deepslate_tiles"] }
+  }
 }

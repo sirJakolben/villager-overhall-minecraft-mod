@@ -206,7 +206,7 @@ public final class QuestLogic implements SectionLogic {
     }
 
     private static String poolOf(ItemExchange exchange) {
-        return exchange.pool().orElse(QuestSlots.EASY);
+        return QuestEntry.of(exchange).pool();
     }
 
     /**
@@ -216,7 +216,7 @@ public final class QuestLogic implements SectionLogic {
      */
     private static Item pickVariant(ItemExchange exchange, int seed, Set<Item> permanentItems) {
         List<Item> variants = poolOf(exchange).equals(QuestSlots.PERMANENT)
-                ? (exchange.inputVariants().isEmpty() ? List.of(exchange.baseInput().item()) : exchange.inputVariants())
+                ? variantsOf(exchange)
                 : allowedVariants(exchange, permanentItems);
         return variants.get(Math.floorMod(HashCommon.murmurHash3(seed), variants.size()));
     }
@@ -230,7 +230,7 @@ public final class QuestLogic implements SectionLogic {
         for (SectionEntries.Entry entry : entries) {
             if (poolOf(entry.exchange()).equals(QuestSlots.PERMANENT)) {
                 items.add(entry.exchange().baseInput().item());
-                items.addAll(entry.exchange().inputVariants());
+                items.addAll(QuestEntry.of(entry.exchange()).inputVariants());
             }
         }
         return items;
@@ -242,13 +242,18 @@ public final class QuestLogic implements SectionLogic {
      * that variant.
      */
     private static List<Item> allowedVariants(ItemExchange exchange, Set<Item> permanentItems) {
-        List<Item> variants = exchange.inputVariants().isEmpty() ? List.of(exchange.baseInput().item()) : exchange.inputVariants();
-        return variants.stream().filter(item -> !permanentItems.contains(item)).toList();
+        return variantsOf(exchange).stream().filter(item -> !permanentItems.contains(item)).toList();
+    }
+
+    /** The items a quest may ask for: its input_variants, or just its base input. */
+    private static List<Item> variantsOf(ItemExchange exchange) {
+        List<Item> variants = QuestEntry.of(exchange).inputVariants();
+        return variants.isEmpty() ? List.of(exchange.baseInput().item()) : variants;
     }
 
     /** Same for input_enchantment_variants - scrambled once more so it doesn't move in lockstep with pickVariant. */
     private static Optional<ResourceKey<Enchantment>> pickEnchantmentVariant(ItemExchange exchange, int seed) {
-        List<ResourceKey<Enchantment>> variants = exchange.inputEnchantmentVariants();
+        List<ResourceKey<Enchantment>> variants = QuestEntry.of(exchange).inputEnchantmentVariants();
         if (variants.isEmpty()) {
             return exchange.baseInput().enchantment();
         }

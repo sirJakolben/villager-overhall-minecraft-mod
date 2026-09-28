@@ -1,9 +1,8 @@
 package com.villageroverhaul.trade;
 
-import com.villageroverhaul.api.ExtensionHooks;
+import com.villageroverhaul.api.ResultOverride;
 import com.villageroverhaul.api.SectionDefinition;
 import com.villageroverhaul.api.SectionOffer;
-import com.villageroverhaul.data.ExplorerMap;
 import com.villageroverhaul.data.ItemExchange;
 import com.villageroverhaul.data.ModDataPackRegistries;
 import com.villageroverhaul.menu.VillagerMenu;
@@ -138,17 +137,17 @@ public final class VillagerOffers {
      * updateSpecialPrices. Vanilla resets specialPriceDiff to 0 when trading stops, which is why the
      * list is rebuilt each time trading starts (VillagerTradingMixin).
      *
-     * An explorer-map entry shows the real map once found, a placeholder before, and is sold out if nothing
-     * was found (api/ExtensionHooks.explorerMap).
+     * An entry extension that is a ResultOverride (e.g. the Trade Rework's explorer maps) replaces the result and
+     * may show the offer sold out.
      */
     private static MerchantOffer toOffer(Villager villager, Registry<ItemExchange> registry, ResolvedExchange exchange) {
         int uses = Math.max(0, exchange.maxUses() - exchange.usesRemaining());
         ItemStack result = exchange.resultStack().map(ItemStack::copy).orElseGet(() -> exchange.output().toStack(villager.registryAccess()));
-        Optional<ExplorerMap> explorerMap = registry.getOptional(exchange.id()).flatMap(ItemExchange::explorerMap);
-        if (explorerMap.isPresent()) {
-            ExtensionHooks.MapOutput map = ExtensionHooks.explorerMap(villager, exchange.id(), explorerMap.get());
-            result = map.stack();
-            if (map.soldOut()) {
+        Optional<ResultOverride> override = registry.getOptional(exchange.id()).flatMap(VillagerOffers::resultOverride);
+        if (override.isPresent()) {
+            ResultOverride.Output output = override.get().resultFor(villager, exchange.id());
+            result = output.stack();
+            if (output.soldOut()) {
                 uses = exchange.maxUses();
             }
         }
@@ -163,5 +162,12 @@ public final class VillagerOffers {
         );
         offer.setSpecialPriceDiff(exchange.input().count() - exchange.basePrice().count());
         return offer;
+    }
+
+    private static Optional<ResultOverride> resultOverride(ItemExchange exchange) {
+        return exchange.extensions().values().values().stream()
+                .filter(ResultOverride.class::isInstance)
+                .map(ResultOverride.class::cast)
+                .findFirst();
     }
 }

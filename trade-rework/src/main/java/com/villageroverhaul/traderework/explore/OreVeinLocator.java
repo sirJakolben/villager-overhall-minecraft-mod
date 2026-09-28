@@ -1,6 +1,5 @@
 package com.villageroverhaul.traderework.explore;
 
-import com.villageroverhaul.data.ExplorerMap.VeinType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;

@@ -9,9 +9,11 @@
   "max_output": { "item": "minecraft:filled_map", "count": 1 },
   "base_max_uses": 1,
   "max_max_uses": 1,
-  "explorer_map": {
-    "destination": "minecraft:on_snowy_village_maps",
-    "decoration": "minecraft:village_snowy",
-    "name": "filled_map.village_snowy"
+  "extensions": {
+    "vo_trade_rework:explorer_map": {
+      "destination": "minecraft:on_snowy_village_maps",
+      "decoration": "minecraft:village_snowy",
+      "name": "filled_map.village_snowy"
+    }
   }
 }

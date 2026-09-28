@@ -9,9 +9,11 @@
   "max_output": { "item": "minecraft:filled_map", "count": 1 },
   "base_max_uses": 1,
   "max_max_uses": 1,
-  "explorer_map": {
-    "destination": "minecraft:on_trial_chambers_maps",
-    "decoration": "minecraft:trial_chambers",
-    "name": "filled_map.trial_chambers"
+  "extensions": {
+    "vo_trade_rework:explorer_map": {
+      "destination": "minecraft:on_trial_chambers_maps",
+      "decoration": "minecraft:trial_chambers",
+      "name": "filled_map.trial_chambers"
+    }
   }
 }

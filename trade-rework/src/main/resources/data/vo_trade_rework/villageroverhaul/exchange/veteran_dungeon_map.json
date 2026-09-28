@@ -9,10 +9,12 @@
   "max_output": { "item": "minecraft:filled_map", "count": 1 },
   "base_max_uses": 1,
   "max_max_uses": 1,
-  "explorer_map": {
-    "feature": ["minecraft:monster_room", "minecraft:monster_room_deep"],
-    "verify_block": "minecraft:spawner",
-    "decoration": "minecraft:red_x",
-    "name": "filled_map.vo_trade_rework.dungeon"
+  "extensions": {
+    "vo_trade_rework:explorer_map": {
+      "feature": ["minecraft:monster_room", "minecraft:monster_room_deep"],
+      "verify_block": "minecraft:spawner",
+      "decoration": "minecraft:red_x",
+      "name": "filled_map.vo_trade_rework.dungeon"
+    }
   }
 }

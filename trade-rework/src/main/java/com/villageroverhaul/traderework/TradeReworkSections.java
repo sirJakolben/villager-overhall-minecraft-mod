@@ -13,10 +13,11 @@ import com.villageroverhaul.traderework.passive.CrushingWork;
 import com.villageroverhaul.traderework.passive.PassiveLogic;
 import com.villageroverhaul.traderework.passive.RepairWork;
 import com.villageroverhaul.traderework.passive.SmeltingWork;
+import com.villageroverhaul.traderework.quest.QuestEntry;
 import com.villageroverhaul.traderework.quest.QuestLogic;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlocks;
 import com.villageroverhaul.traderework.salvager.SalvagerBlocks;
-import com.villageroverhaul.traderework.trade.ExplorerMaps;
+import com.villageroverhaul.traderework.trade.ExplorerMap;
 import com.villageroverhaul.traderework.veteran.MobWeapons;
 import com.villageroverhaul.traderework.veteran.VeteranBlocks;
 import net.minecraft.resources.Identifier;
@@ -97,9 +98,11 @@ public final class TradeReworkSections {
         ExtensionHooks.registerSection(MASTERIES);
         ExtensionHooks.registerSection(PASSIVE);
 
+        ExtensionHooks.registerExchangeExtension(QuestEntry.TYPE);
+        ExtensionHooks.registerExchangeExtension(ExplorerMap.TYPE);
+
         ExtensionHooks.setMobWeaponComponent(MobWeapons.MOB_WEAPON);
         ExtensionHooks.setPlayerXpCost(ExperienceBottles::playerXpCost);
-        ExtensionHooks.setExplorerMaps(ExplorerMaps::outputFor);
     }
 
     private static void masterStation(ResourceKey<VillagerProfession> profession, ResourceKey<PoiType> jobSite, Supplier<? extends Block> block) {

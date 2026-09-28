@@ -16,7 +16,7 @@ import net.minecraft.world.entity.npc.villager.VillagerProfession;
  */
 public final class QuestSlots {
 
-    /** An entry's "pool" (data/ItemExchange) - an entry without one is easy. */
+    /** An entry's quest pool (QuestEntry) - an entry without one is easy. */
     public static final String EASY = "easy";
     public static final String HARD = "hard";
     public static final String PERMANENT = "permanent";
