@@ -18,8 +18,9 @@ import java.util.Optional;
  * While TradingBlockCall says so (powered block, or a right-click visit), the villager walks to
  * its Trading Block and stays next to it.
  * Added to Vanilla's core behaviors (VillagerGoalPackagesMixin), which run in every activity - it keeps
- * the walk target on the block, and Vanilla's strolls and walks to work or the meeting point only start
- * without a walk target, so they wait. No teleport: an unreachable block just isn't reached.
+ * the walk target on the block. Most of Vanilla's walks only start without a walk target, so they wait; the
+ * ones that overwrite it anyway - strolling around the job site or the bell, socializing - are paused while
+ * called (station/PausedWhileAway). No teleport: an unreachable block just isn't reached.
  */
 public class GoToTradingBlock extends Behavior<Villager> {
 

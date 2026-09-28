@@ -119,7 +119,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 | Stationen als Vanilla-Arbeitsort (POI) je Beruf, welche Station ein Block ist, Morgen-Priorität | `station/ProfessionStations.java` |
 | Stationen suchen/prüfen/besetzen, Arbeitslose zuerst | `station/StationClaims.java`, `station/UnemployedPriority.java`, `mixin/VillagerGoalPackagesMixin.java` |
 | Ein Besitzer pro Station (Index; wer zuerst da ist, behält sie, Smaragd-Claim gewinnt; der andere lässt los ohne Ticket-Freigabe) | `station/StationOwners.java` |
-| Hinlaufen, Vanilla-Arbeitsblock-Verhalten pausieren | `station/WorkAtStation.java`, `station/PausedAtStation.java` |
+| Hinlaufen, Vanilla-Verhalten am Arbeitsblock/an der Glocke pausieren (auch beim Handelsblock-Ruf) | `station/WorkAtStation.java`, `station/PausedWhileAway.java` |
 | Claim per Smaragd, Verdrängen | `station/EmeraldClaimTool.java`, `station/ManualClaims.java` |
 | Anlocken mit Smaragd | `station/EmeraldLure.java`, `mixin/VillagerLureMixin.java` |
 | Handelsblock (Redstone-Ruf, Besuch per Rechtsklick) | `station/TradingBlock.java`, `station/TradingBlockCall.java`, `station/GoToTradingBlock.java`, `station/TradingBlocks.java`, Rezept `data/villageroverhaul/recipe/trading_block.json` |

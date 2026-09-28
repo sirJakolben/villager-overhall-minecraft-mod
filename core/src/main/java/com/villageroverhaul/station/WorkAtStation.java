@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * Vanilla's WorkAtPoi for our stations: while StationFocus names a station, the villager walks there
  * and works at it - looks at it and plays its profession's work sound now and then. Added to Vanilla's
- * work activity by VillagerGoalPackagesMixin; the job-site-bound behaviors pause meanwhile (PausedAtStation).
+ * work activity by VillagerGoalPackagesMixin; the job-site-bound behaviors pause meanwhile (PausedWhileAway).
  * Work XP, productivity and the first-use unlock are booked by the periodic work scan, not here.
  */
 public class WorkAtStation extends Behavior<Villager> {

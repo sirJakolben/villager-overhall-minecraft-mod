@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Pair;
 import com.villageroverhaul.interaction.GoToTradingBlock;
-import com.villageroverhaul.station.PausedAtStation;
+import com.villageroverhaul.station.PausedWhileAway;
 import com.villageroverhaul.station.UnemployedPriority;
 import com.villageroverhaul.station.WorkAtStation;
 import net.minecraft.core.BlockPos;
@@ -36,8 +36,9 @@ import java.util.function.Predicate;
  *   free job site while a jobless villager nearby could take it. Only the "is this site OK" test is
  *   extended; jobless villagers search exactly as in Vanilla.
  * - Work package: adds WorkAtStation, and pauses the job-site-bound behaviors (walk back to the job site,
- *   the work/stroll choice) while the villager works at another station. With no station focus, the
- *   work activity is exactly Vanilla's.
+ *   the work/stroll choice) while the villager works at another station or is called to its Trading Block.
+ *   With no station focus and no call, the work activity is exactly Vanilla's.
+ * - Meet package: the bell-bound behaviors pause while it is called to its Trading Block.
  * - Core package: adds GoToTradingBlock (the Trading Block call).
  */
 @Mixin(VillagerGoalPackages.class)
@@ -45,6 +46,8 @@ public abstract class VillagerGoalPackagesMixin {
 
     /** Vanilla's walk-to-job-site behavior is the work package's only priority-2 entry. */
     private static final int JOB_SITE_WALK_PRIORITY = 2;
+    /** The meet package's bell-bound entries: the stroll/socialize choice and the walk to the bell. */
+    private static final int MEETING_WALK_PRIORITY = 2;
     /** Just before Vanilla's walk-to-job-site, so a station's walk target wins. */
     private static final int WORK_AT_STATION_PRIORITY = 1;
     /** Same as Vanilla's panic trigger and door handling - before the walk-target sink (1) acts on it. */
@@ -81,9 +84,24 @@ public abstract class VillagerGoalPackagesMixin {
         ImmutableList.Builder<Pair<Integer, ? extends BehaviorControl<? super Villager>>> builder = ImmutableList.builder();
         for (Pair<Integer, ? extends BehaviorControl<? super Villager>> entry : original) {
             boolean lecternBound = entry.getSecond() instanceof RunOne<?> || entry.getFirst() == JOB_SITE_WALK_PRIORITY;
-            builder.add(lecternBound ? Pair.of(entry.getFirst(), new PausedAtStation(entry.getSecond())) : entry);
+            builder.add(lecternBound ? Pair.of(entry.getFirst(), PausedWhileAway.atStation(entry.getSecond())) : entry);
         }
         builder.add(Pair.of(WORK_AT_STATION_PRIORITY, new WorkAtStation()));
+        return builder.build();
+    }
+
+    /**
+     * Meet package: the stroll/socialize choice at the bell and the walk to it (both priority 2) pause while the
+     * villager is called to its Trading Block - strolling and socializing set their walk target even over ours.
+     */
+    @ModifyReturnValue(method = "getMeetPackage", at = @At("RETURN"), require = 1)
+    private static ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> villageroverhaul$pauseMeetingWhenCalled(
+            ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> original) {
+        ImmutableList.Builder<Pair<Integer, ? extends BehaviorControl<? super Villager>>> builder = ImmutableList.builder();
+        for (Pair<Integer, ? extends BehaviorControl<? super Villager>> entry : original) {
+            boolean bellBound = entry.getFirst() == MEETING_WALK_PRIORITY;
+            builder.add(bellBound ? Pair.of(entry.getFirst(), PausedWhileAway.called(entry.getSecond())) : entry);
+        }
         return builder.build();
     }
 }
