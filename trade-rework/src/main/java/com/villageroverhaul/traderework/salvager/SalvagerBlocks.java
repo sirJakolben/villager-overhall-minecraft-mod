@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.List;
 
 /**
- * The Salvager's two stations (Obsidian Salvager.md, 2026-09-27), Salvager job sites (claim/ProfessionStations)
+ * The Salvager's two stations (Obsidian Salvager.md, 2026-09-27), Salvager job sites (TradeReworkSections, core station/ProfessionStations)
  * that open the Masteries and the Passive. The smelting station works (passive/SmeltingWork); the refinement
  * station is still a placeholder without a function.
  */
@@ -31,7 +31,8 @@ public final class SalvagerBlocks {
             properties -> properties.mapColor(MapColor.METAL).strength(2.5F).sound(SoundType.METAL));
     /** Passive workstation: metal gear back to ingots (SmeltingStationBlockEntity, passive/SmeltingWork). */
     public static final DeferredBlock<SmeltingStationBlock> SMELTING_STATION = BLOCKS.registerBlock("smelting_station", SmeltingStationBlock::new,
-            properties -> properties.mapColor(MapColor.METAL).strength(2.5F).sound(SoundType.METAL));
+            properties -> properties.mapColor(MapColor.METAL).strength(2.5F).sound(SoundType.METAL).noOcclusion()
+                    .lightLevel(state -> state.getValue(SmeltingStationBlock.WORKING) ? SmeltingStationBlock.WORKING_LIGHT : 0));
 
     public static final DeferredItem<BlockItem> REFINEMENT_STATION_ITEM = ITEMS.registerSimpleBlockItem(REFINEMENT_STATION);
     public static final DeferredItem<BlockItem> SMELTING_STATION_ITEM = ITEMS.registerSimpleBlockItem(SMELTING_STATION);

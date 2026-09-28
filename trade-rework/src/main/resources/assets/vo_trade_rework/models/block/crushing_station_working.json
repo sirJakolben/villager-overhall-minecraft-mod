@@ -1,0 +1,6 @@
+{
+	"parent": "vo_trade_rework:block/crushing_station",
+	"textures": {
+		"1": "vo_trade_rework:block/crushing_blades_moving"
+	}
+}

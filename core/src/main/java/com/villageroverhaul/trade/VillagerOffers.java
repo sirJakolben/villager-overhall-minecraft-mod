@@ -1,16 +1,20 @@
 package com.villageroverhaul.trade;
 
-import com.villageroverhaul.api.ExtensionHooks;
-import com.villageroverhaul.client.ui.VillagerMenu;
-import com.villageroverhaul.core.QuestOffer;
-import com.villageroverhaul.core.ResolvedExchange;
-import com.villageroverhaul.data.ExplorerMap;
+import com.villageroverhaul.api.ResultOverride;
+import com.villageroverhaul.api.SectionDefinition;
+import com.villageroverhaul.api.SectionOffer;
 import com.villageroverhaul.data.ItemExchange;
 import com.villageroverhaul.data.ModDataPackRegistries;
+import com.villageroverhaul.menu.VillagerMenu;
 import com.villageroverhaul.mixin.VillagerAccessor;
 import com.villageroverhaul.network.VillagerOffersPayload;
 import com.villageroverhaul.progression.ProgressionService;
-import com.villageroverhaul.quest.QuestProviderImpl;
+import com.villageroverhaul.section.RowView;
+import com.villageroverhaul.section.SectionView;
+import com.villageroverhaul.section.VillagerSections;
+import com.villageroverhaul.state.VillagerState;
+import com.villageroverhaul.state.VillagerStateAccess;
+import com.villageroverhaul.work.RestockService;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,38 +26,32 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Projects our VillagerState (the single source of truth for uses, ranks, quest rotations) onto the
- * villager's own Vanilla MerchantOffers list. Keeping our trades in that exact list is what lets
- * Vanilla's own features act on them unchanged: Hero of the Village discounts (updateSpecialPrices),
- * the villager holding offer items (ShowTradesToPlayer), the "no offers" head shake, MerchantContainer's
- * out-of-stock check and the whole result-slot/shift-click machinery.
+ * Projects our VillagerState (the single source of truth for stock and ranks) and the section logics onto the
+ * villager's own Vanilla MerchantOffers list. Keeping our offers in that exact list is what lets Vanilla's own
+ * features act on them unchanged: Hero of the Village discounts (updateSpecialPrices), the villager holding
+ * offer items (ShowTradesToPlayer), the "no offers" head shake, MerchantContainer's out-of-stock check and the
+ * whole result-slot/shift-click machinery.
  *
- * The list is a derived view, never the other way round: rank changes rescale cost/output/max uses,
- * which MerchantOffer can't express (those fields are final), so the view is rebuilt on every state
- * change - see AttachmentVillagerStateAccess.setState. Order is fixed: quests, then basic trades, then
- * master trades, each in unlock order - VillagerOffersPayload carries the section sizes to the client.
+ * The list is a derived view, never the other way round: rank changes rescale cost/output/max uses, which
+ * MerchantOffer can't express (those fields are final), so the view is rebuilt on every state change - see
+ * AttachmentVillagerStateAccess.setState. Order: the open sections in section order, each with its logic's
+ * rows - VillagerOffersPayload carries the sections to the client.
  *
- * priceMultiplier is 0, which disables Vanilla's gossip-reputation discount and demand surcharge
- * while leaving Hero of the Village (based only on the base cost) intact. xp is 0, so Vanilla's
- * trade XP never levels the villager - leveling goes through our own work-based progression.
+ * priceMultiplier is 0, which disables Vanilla's gossip-reputation discount and demand surcharge while leaving
+ * Hero of the Village (based only on the base cost) intact. xp is 0, so Vanilla's trade XP never levels the
+ * villager - leveling goes through our own work-based progression.
  */
 public final class VillagerOffers {
 
-    public sealed interface Source permits TradeSource, QuestSource {
+    /** Which section and row a live offer stands for. */
+    public record Source(SectionDefinition section, SectionOffer offer) {
     }
 
-    public record TradeSource(Identifier tradeId) implements Source {
-    }
-
-    public record QuestSource(int slot) implements Source {
-    }
-
-    private record Built(MerchantOffers offers, List<Source> sources, int questCount, int basicCount) {
+    private record Built(MerchantOffers offers, List<Source> sources, List<SectionView> sections) {
     }
 
     private VillagerOffers() {
@@ -88,18 +86,16 @@ public final class VillagerOffers {
 
     public static void sendTo(ServerPlayer player, VillagerMenu menu, Villager villager) {
         Built built = build(villager);
-        List<Integer> questSlots = built.sources().stream()
-                .filter(source -> source instanceof QuestSource)
-                .map(source -> ((QuestSource) source).slot())
+        List<RowView> rows = built.sources().stream()
+                .map(source -> new RowView(source.offer().slot(), source.offer().exchange().baseOutputCount()))
                 .toList();
-        PacketDistributor.sendToPlayer(player, new VillagerOffersPayload(
-                menu.containerId, villager.getOffers(), questSlots, built.basicCount(), ProgressionService.rankCaps(villager)));
+        PacketDistributor.sendToPlayer(player, new VillagerOffersPayload(menu.containerId, villager.getOffers(), built.sections(), rows));
     }
 
     /**
-     * Which trade/quest a live offer object stands for, by identity (MerchantOffer has no id). Valid
-     * because the live list is always rebuilt from the current state, so rebuilding the sources from
-     * that same state yields the same order.
+     * Which section row a live offer object stands for, by identity (MerchantOffer has no id). Valid because the
+     * live list is always rebuilt from the current state, so rebuilding the sources from that same state yields
+     * the same order.
      */
     public static Optional<Source> sourceOf(Villager villager, MerchantOffer offer) {
         int index = villager.getOffers().indexOf(offer);
@@ -107,42 +103,31 @@ public final class VillagerOffers {
         return index >= 0 && index < sources.size() ? Optional.of(sources.get(index)) : Optional.empty();
     }
 
+    /** The current row offering this entry, in any open section. */
+    public static Optional<Source> sourceOf(Villager villager, Identifier entryId) {
+        return build(villager).sources().stream().filter(source -> source.offer().exchange().id().equals(entryId)).findFirst();
+    }
+
     private static Built build(Villager villager) {
+        VillagerState state = VillagerStateAccess.of(villager).getState();
         MerchantOffers offers = new MerchantOffers();
         List<Source> sources = new ArrayList<>();
+        List<SectionView> views = new ArrayList<>();
+        Registry<ItemExchange> registry = villager.level().registryAccess().lookupOrThrow(ModDataPackRegistries.EXCHANGE);
 
-        List<QuestOffer> quests = new QuestProviderImpl().getCurrentOffers(villager);
-        for (QuestOffer quest : quests) {
-            // No uses left = today's quest limit is used up, the row shows greyed out.
-            ItemStack questResult = quest.exchange().resultStack().map(ItemStack::copy).orElseGet(() -> quest.exchange().output().toStack(villager.registryAccess()));
-            offers.add(toOffer(villager, quest.exchange(), questResult, 1 - quest.exchange().usesRemaining(), 1));
-            sources.add(new QuestSource(quest.slot()));
-        }
-
-        List<ResolvedExchange> trades = new ArrayList<>(new TradeProviderImpl().getAvailableTrades(villager));
-        // Stable sort: only moves master trades behind basic ones, keeping TradeProviderImpl's unlock order within each.
-        trades.sort(Comparator.comparing((ResolvedExchange e) -> e.tier() == ItemExchange.Tier.MASTER));
-        Registry<ItemExchange> registry = villager.level().registryAccess().lookupOrThrow(ModDataPackRegistries.TRADE);
-        int basicCount = 0;
-        for (ResolvedExchange trade : trades) {
-            int uses = Math.max(0, trade.maxUses() - trade.usesRemaining());
-            ItemStack result = trade.resultStack().map(ItemStack::copy).orElseGet(() -> trade.output().toStack(villager.registryAccess()));
-            Optional<ExplorerMap> explorerMap = registry.getOptional(trade.id()).flatMap(ItemExchange::explorerMap);
-            if (explorerMap.isPresent()) {
-                // Explorer map: the real map once found, a placeholder before, sold out if nothing was found.
-                ExtensionHooks.MapOutput map = ExtensionHooks.explorerMap(villager, trade.id(), explorerMap.get());
-                result = map.stack();
-                if (map.soldOut()) {
-                    uses = trade.maxUses();
-                }
+        for (SectionDefinition section : VillagerSections.open(villager, state)) {
+            List<SectionOffer> rows = section.display() == SectionDefinition.Display.LIST
+                    ? section.logic().offers(villager, state, section)
+                    : List.of();
+            for (SectionOffer row : rows) {
+                offers.add(toOffer(villager, registry, row.exchange()));
+                sources.add(new Source(section, row));
             }
-            offers.add(toOffer(villager, trade, result, uses, trade.maxUses()));
-            sources.add(new TradeSource(trade.id()));
-            if (trade.tier() == ItemExchange.Tier.BASIC) {
-                basicCount++;
-            }
+            boolean showsMeter = section.meterVisible() && VillagerSections.stationOf(state, section).isPresent();
+            views.add(new SectionView(section.id(), rows.size(), ProgressionService.upgradeCost(villager, state, section),
+                    showsMeter ? RestockService.meterPoints(villager, state, section) : 0));
         }
-        return new Built(offers, sources, quests.size(), basicCount);
+        return new Built(offers, sources, views);
     }
 
     /**
@@ -151,18 +136,38 @@ public final class VillagerOffers {
      * struck through like a cured-zombie discount. Hero of the Village then adds on top in
      * updateSpecialPrices. Vanilla resets specialPriceDiff to 0 when trading stops, which is why the
      * list is rebuilt each time trading starts (VillagerTradingMixin).
+     *
+     * An entry extension that is a ResultOverride (e.g. the Trade Rework's explorer maps) replaces the result and
+     * may show the offer sold out.
      */
-    private static MerchantOffer toOffer(Villager villager, ResolvedExchange exchange, ItemStack result, int uses, int maxUses) {
+    private static MerchantOffer toOffer(Villager villager, Registry<ItemExchange> registry, ResolvedExchange exchange) {
+        int uses = Math.max(0, exchange.maxUses() - exchange.usesRemaining());
+        ItemStack result = exchange.resultStack().map(ItemStack::copy).orElseGet(() -> exchange.output().toStack(villager.registryAccess()));
+        Optional<ResultOverride> override = registry.getOptional(exchange.id()).flatMap(VillagerOffers::resultOverride);
+        if (override.isPresent()) {
+            ResultOverride.Output output = override.get().resultFor(villager, exchange.id());
+            result = output.stack();
+            if (output.soldOut()) {
+                uses = exchange.maxUses();
+            }
+        }
         MerchantOffer offer = new MerchantOffer(
                 RequiredEnchantmentCost.of(exchange.basePrice(), villager.registryAccess()),
                 exchange.secondInput().map(second -> new ItemCost(second.item(), second.count())),
                 result,
                 uses,
-                maxUses,
+                exchange.maxUses(),
                 0,
                 0.0F
         );
         offer.setSpecialPriceDiff(exchange.input().count() - exchange.basePrice().count());
         return offer;
+    }
+
+    private static Optional<ResultOverride> resultOverride(ItemExchange exchange) {
+        return exchange.extensions().values().values().stream()
+                .filter(ResultOverride.class::isInstance)
+                .map(ResultOverride.class::cast)
+                .findFirst();
     }
 }

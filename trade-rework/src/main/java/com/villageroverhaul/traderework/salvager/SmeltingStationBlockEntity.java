@@ -1,7 +1,7 @@
 package com.villageroverhaul.traderework.salvager;
 
-import com.villageroverhaul.traderework.client.ui.TradeReworkMenus;
 import com.villageroverhaul.traderework.TradeReworkRegistries;
+import com.villageroverhaul.traderework.client.ui.TradeReworkMenus;
 import com.villageroverhaul.traderework.runesmith.UpgradeTemplates;
 import com.villageroverhaul.traderework.station.ThreeInThreeOutMenu;
 import net.minecraft.core.BlockPos;
@@ -19,21 +19,20 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
  * The smelting station's inventory (Salvager passive, Obsidian Salvager.md, 2026-09-27): slots 0-2 take metal
  * gear (only what a salvage rule lists - no diamond, wood, stone, leather), 3-5 collect what comes out.
- * Hopper rules like the crushing station: from above or the sides into the input, a hopper below pulls only
- * from the output. Smelting happens when the owning Salvager works here (passive/SmeltingWork calls
+ * Hopper rules like the crushing station: from above or the sides into the input, a hopper below pulls
+ * from the output and takes the diamond pieces a netherite piece leaves in the input - never gear still to melt. Smelting happens when the owning Salvager works here (passive/SmeltingWork calls
  * smeltStep): one piece per step.
  *
  * Yield (payout): the rule's full amount x the rank share (SHARE_BY_RANK) x the piece's condition (durability
@@ -53,6 +52,7 @@ public class SmeltingStationBlockEntity extends BaseContainerBlockEntity impleme
     public static final float WORK_SOUND_VOLUME = 0.6F;
     private static final int[] INPUT = {0, 1, 2};
     private static final int[] OUTPUT = {3, 4, 5};
+    private static final int[] ALL = {0, 1, 2, 3, 4, 5};
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private long workedUntil;
@@ -87,7 +87,13 @@ public class SmeltingStationBlockEntity extends BaseContainerBlockEntity impleme
     /** Every WORK_SOUND_INTERVAL ticks while worked: the blast furnace crackle. */
     void serverTick(ServerLevel level, BlockPos pos) {
         long time = level.getGameTime();
-        if (time < workedUntil && time % WORK_SOUND_INTERVAL == 0) {
+        boolean worked = time < workedUntil;
+        BlockState state = getBlockState();
+        if (state.getValue(SmeltingStationBlock.WORKING) != worked) {
+            // Only at the start and end of a work phase: the crucible switches between empty and molten metal.
+            level.setBlock(pos, state.setValue(SmeltingStationBlock.WORKING, worked), Block.UPDATE_CLIENTS);
+        }
+        if (worked && time % WORK_SOUND_INTERVAL == 0) {
             level.playSound(null, pos, SoundEvents.BLASTFURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, WORK_SOUND_VOLUME, 1.0F);
         }
     }
@@ -105,8 +111,9 @@ public class SmeltingStationBlockEntity extends BaseContainerBlockEntity impleme
     }
 
     /**
-     * Smelts the first input piece whose results fit into the output (slot order). False if nothing could be
-     * smelted - empty input or the output too full.
+     * Smelts the first input piece whose payout fits into the output (slot order). False if nothing could be
+     * smelted - empty input or the output too full. A downgraded piece (netherite -> diamond) takes the molten
+     * piece's place in its input slot; no rule melts diamond gear, so it just waits there to be taken out.
      */
     public boolean smeltStep(int passiveRank) {
         if (level == null) {
@@ -118,10 +125,10 @@ public class SmeltingStationBlockEntity extends BaseContainerBlockEntity impleme
             if (rule.isEmpty()) {
                 continue;
             }
-            List<ItemStack> results = results(rule.get(), piece, passiveRank);
-            if (fitsIntoOutput(results)) {
-                results.forEach(this::addToOutput);
-                items.set(slot, ItemStack.EMPTY);
+            ItemStack payout = new ItemStack(rule.get().result(), payout(rule.get().items().get(piece.getItem()), passiveRank, piece));
+            if (fitsIntoOutput(payout)) {
+                addToOutput(payout);
+                items.set(slot, kept(rule.get(), piece));
                 setChanged();
                 return true;
             }
@@ -129,29 +136,23 @@ public class SmeltingStationBlockEntity extends BaseContainerBlockEntity impleme
         return false;
     }
 
-    private static List<ItemStack> results(SalvageRule rule, ItemStack piece, int passiveRank) {
-        List<ItemStack> results = new ArrayList<>();
+    /** What stays of the piece: its downgrade with enchantments, name and trim, durability carried over relatively - else nothing. */
+    private static ItemStack kept(SalvageRule rule, ItemStack piece) {
         Item downgrade = rule.downgrade().get(piece.getItem());
-        if (downgrade != null) {
-            ItemStack kept = piece.transmuteCopy(downgrade, 1);
-            UpgradeTemplates.rescaleDurability(piece, kept);
-            results.add(kept);
+        if (downgrade == null) {
+            return ItemStack.EMPTY;
         }
-        results.add(new ItemStack(rule.result(), payout(rule.items().get(piece.getItem()), passiveRank, piece)));
-        return results;
+        ItemStack kept = piece.transmuteCopy(downgrade, 1);
+        UpgradeTemplates.rescaleDurability(piece, kept);
+        return kept;
     }
 
-    private boolean fitsIntoOutput(List<ItemStack> results) {
+    private boolean fitsIntoOutput(ItemStack payout) {
         NonNullList<ItemStack> copy = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
         for (int out : OUTPUT) {
             copy.set(out, items.get(out).copy());
         }
-        for (ItemStack result : results) {
-            if (!add(copy, result.copy())) {
-                return false;
-            }
-        }
-        return true;
+        return add(copy, payout.copy());
     }
 
     private void addToOutput(ItemStack result) {
@@ -193,17 +194,17 @@ public class SmeltingStationBlockEntity extends BaseContainerBlockEntity impleme
 
     @Override
     public int[] getSlotsForFace(Direction side) {
-        return side == Direction.DOWN ? OUTPUT : INPUT;
+        return side == Direction.DOWN ? ALL : INPUT;
     }
 
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
-        return canPlaceItem(slot, stack);
+        return side != Direction.DOWN && canPlaceItem(slot, stack);
     }
 
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
-        return slot >= INPUT_SLOTS;
+        return slot >= INPUT_SLOTS || level != null && ruleFor(level, stack).isEmpty();
     }
 
     @Override

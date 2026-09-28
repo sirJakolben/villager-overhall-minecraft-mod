@@ -4,7 +4,7 @@
     "textures":  {
                      "0":  "villageroverhaul:block/trading_block_staff",
                      "1":  "villageroverhaul:block/trading_block",
-                     "particle":  "villageroverhaul:block/trading_block"
+                     "particle":  "minecraft:block/spruce_planks"
                  },
     "elements":  [
                      {

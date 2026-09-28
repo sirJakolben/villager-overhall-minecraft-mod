@@ -1,28 +1,34 @@
 # Villager Overhaul + Trade Rework
 
+> **Temporär – Terminal-Befehle** (im Projekt-Hauptordner):
+> - Bauen (beide Mods, Jars in `core/build/libs/` + `trade-rework/build/libs/`): `./gradlew build`
+> - Spiel starten, Kern + Trade Rework (Ordner `run/`): `./gradlew :trade-rework:runClient`
+> - Spiel starten, nur Kern (Ordner `run-core/`): `./gradlew :core:runClient`
+
 Kompakter Überblick: was die zwei Mods können und wo es im Code steht. Zum Wiederfinden, nicht zum Durchlesen.
 Seit 2026-09-28 zwei Mods in einem Gradle-Projekt: **Villager Overhaul** (Kern, `core/`, Mod-ID `villageroverhaul`) und **Villager Overhaul: Trade Rework** (Extension, `trade-rework/`, Mod-ID `vo_trade_rework`, braucht den Kern).
 Offenes steht in [active-development.md](active-development.md), Zahlen in [tweaks/](tweaks/), Arbeitsregeln in [villager-overhaul-projektrahmen.md](villager-overhaul-projektrahmen.md).
-Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28.
+Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (Sektions-Umbau).
 
 ## Features
 
 ### Kern (Villager Overhaul)
 
-- **Jeder Beruf läuft mit seinen Vanilla-Trades auf unserem System** (Nicht-Implementierungsregel): Smaragd-Trades → Dauer-Quests, letzte 4 → Masteries, Rest → Basic Trades, jedes Upgrade schaltet den nächsten Eintrag frei, danach 4 Preis-Upgrades; keine Level-Grenze; nur der Vanilla-Arbeitsblock als Station, Passive ausgeblendet
-- **Villager leveln durch Arbeit**, nicht durch Handel: Arbeits-XP je nach Glücklichkeit, ein Punkt pro Level (Level 0–20 für Berufe der Extension)
-- **Vier Upgrade-Gruppen** (Quests, Basic Trades, Master Trades, Passive): Punkte schalten frei und verbessern Preise, Mengen, Bestand
-- **Eigenes Handelsfenster** mit Quests, Trades, Masteries, Leisten und Upgrade-Buttons, aber Vanilla-Handelsmechanik darunter
-- **Quests**: Items abgeben gegen Smaragde, Easy/Hard/Dauer-Plätze, Tageslimit, Reroll mit Wartezeit
-- **Restock über Produktivitätsleisten** statt Vanilla-Restock, abhängig von Arbeit und Glücklichkeit
+- **Jeder Beruf läuft mit seinen Vanilla-Trades auf unserem System** (auch Berufe anderer Mods): Smaragd-Trades → Sektion **Quests**, alles andere → Sektion **Trades**; beide restocken normal am Vanilla-Arbeitsblock; jedes Upgrade schaltet den nächsten Eintrag frei, danach 4 Preis-Upgrades; keine Level-Grenze
+- **Villager leveln durch Arbeit**, nicht durch Handel: Arbeits-XP je nach Glücklichkeit, ein Punkt pro Level, keine Level-Grenze (auch nicht für Berufe der Extension)
+- **Sektionen**: jede Gruppe im Handelsfenster hat eigenen Rang, eigenen Upgrade-Button, eigene Leiste und optional eine Station; Punkte schalten frei und verbessern Preise, Mengen, Bestand. Der Kern bringt Quests + Trades mit, Extensions registrieren weitere
+- **Eigenes Handelsfenster** mit den Sektionen, Leisten und Upgrade-Buttons, aber Vanilla-Handelsmechanik darunter
+- **Restock über Leisten** (eine pro Sektion) statt Vanilla-Restock, abhängig von Arbeit und Glücklichkeit
 - **Glücklichkeit** aus Bett, Dorfzentrum, Villager-Kontakt, Begleitern; Angst/Held überlagern
-- **Bis zu drei Arbeitsplätze** pro Villager (Basic, Master, Passive), die er selbst sucht und besetzt
+- **Mehrere Arbeitsplätze** pro Villager (Vanilla-Arbeitsblock + registrierte Stationen), die er selbst sucht und besetzt
 - **Claim per Smaragd**, Anlocken mit Smaragd, **Handelsblock** ruft den Villager per Redstone herbei
 - **Beruf wird fest**, sobald gehandelt wurde oder XP da ist
+- **Zombie-Umwandlung**: Level, Punkte, Ränge und Bestand überstehen Villager → Zombie → geheilt (Arbeitsplätze werden neu gesucht)
+- **Heilen leichter**: 20 % der natürlich spawnenden Zombies kommen als Zombie-Villager; Braustände in Dörfern (Tempel) starten mit 1–3 Lohenstaub
 
 ### Extension (Trade Rework)
 
-- Eigene Trades, Quests, Master- und Passive-Stationen für sechs Berufe; alle anderen Berufe bleiben auf der Nicht-Implementierungsregel des Kerns
+- Eigene Sektionen **Quests** (Easy/Hard/Dauer-Plätze, Tageslimit, Reroll mit Wartezeit), **Masteries** (Master-Station) und **Passive** (Plakette oben links, Passiv-Station) plus eigene Einträge für sechs Berufe; alle anderen Berufe laufen mit ihren Vanilla-Trades auf dem Kern
 - **Librarian** komplett: Laterne, Namensschild, Bücherstapel, XP abfüllen, Villager-XP-Flasche, Schreib- und Verbesserungsstation, vier Spezialbücher, Buch-Upgrades als Passive, Lore-Schriftrollen
 - **Mason** (Grundgerüst, Placeholder-Grafik): Sandsteine inkl. neuem braunem Sandstein, Steinchen, Wegsteine, Dorfbewohner-Statue (Deko), Veredelung mit Kohle/Quarz statt Smaragden, Metamorph- und Brechstation, Brech-Passive (Varianten eine Stufe zurück), Quests, Geoden-Karte
 - **Runesmith** (Vanilla-Toolsmith, Teil-Gerüst, Placeholder-Grafik): Bücher Haltbarkeit I + Reparatur, eine Upgrade-Vorlage (Vanilla-Schmiede-Rezepte, 1 Block der Zielstufe), Upgrade- und Reparaturstation, Reparieren + Polster als Passive
@@ -33,114 +39,127 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28.
 ## Technische Basis
 
 - NeoForge 26.1.0.19-beta, Minecraft 26.1, Java 25, ModDevGradle 2.x, Mojang-Namen (kein Parchment), keine Fremd-Libs
+- **Lizenz**: CC0-1.0 (gemeinfrei, beide Mods) – [LICENSE](LICENSE), `mod_license` in `gradle.properties`
 - **Gradle-Multiprojekt**: `core/` und `trade-rework/`, gemeinsame `gradle.properties` im Wurzelordner (Extension-Werte `ext_mod_*`); die Extension kompiliert gegen den Kern (`compileOnly`) und lädt ihn im Entwicklungsstart aus dessen Source-Set (mods-Block)
 - **Starts**: `:trade-rework:runClient` = Kern + Extension im alten `run/` (Test-Welten); `:core:runClient` = Kern allein in `run-core/`; `runGameTestServer` in beiden = Ladetest ohne Fenster (`run-gametest*/`)
 - 26.1-Eigenheiten: `ResourceLocation` heißt `Identifier`; Screens rendern über `GuiGraphicsExtractor` / `extractBackground`
-- **Falle:** Datapack-Einträge liegen unter `data/<Namespace der Datei>/<Namespace der Registry>/<registry>/` – Trades der Extension also in `data/vo_trade_rework/villageroverhaul/trade/` (Registry gehört dem Kern), Brech-Regeln in `data/vo_trade_rework/vo_trade_rework/crushing/`
+- **Falle:** Datapack-Einträge liegen unter `data/<Namespace der Datei>/<Namespace der Registry>/<registry>/` – Einträge der Extension also in `data/vo_trade_rework/villageroverhaul/exchange/` (Registry gehört dem Kern), Brech-Regeln in `data/vo_trade_rework/vo_trade_rework/crushing/`
 
 ## Grundentscheidungen
 
-- **Kern + Extension** (2026-09-28): der Kern kennt keinen Beruf und kein Extension-Item; die Extension hängt sich über `api/ExtensionHooks` ein (Stationen, Passive, zweiter Hard-Platz, Mob-Waffen-Markierung, XP-Preis, Entdeckerkarten). Ohne Einträge dort gilt für jeden Beruf die Nicht-Implementierungsregel
+- **Kern + Extension** (2026-09-28): der Kern kennt keinen Beruf und kein Extension-Item; die Extension hängt sich über `api/ExtensionHooks` ein – Sektionen und Stationen registrieren, dazu Mob-Waffen-Markierung, XP-Preis, Entdeckerkarten. Der Kern registriert seine zwei Sektionen auf demselben Weg
+- **Sektionen statt fester Gruppen** (Umbau 2026-09-28): eine Sektion = Id, Titel, Reihenfolge, Upgrade-Kosten, Darstellung (`LIST` | `BADGE`), optional Station, eigene Leiste (sichtbar oder versteckt), optional eigene Logik (`api/SectionLogic`, Standard = normaler Trade mit Restock). Einträge nennen ihre Sektion (`section`), Stationen werden je Beruf registriert, mehrere Sektionen dürfen dieselbe Station haben (ihre Leisten füllen sich gemeinsam). Alte Saves wurden dabei bewusst nicht migriert (Villager starten neu)
+- **Sichtbarkeit**: eine Sektion gehört zum Villager, wenn sie für seinen Beruf Einträge oder eine registrierte Station hat; sie ist offen, wenn sie keine Station braucht, die Station besetzt ist oder schon Ränge da sind (`section/VillagerSections`)
 - **Kein eigener Entity-Typ**: Zustand als Data Attachment am Vanilla-Villager → Spawning, Zucht, Raids, Heilen bleiben Vanilla
 - **Vanilla-Erhalt**: so spät und so eng wie möglich eingreifen (Daten > Events > Mixin, `@WrapOperation` statt Methoden-Abbruch) – Regeln im Projektrahmen
 - **Leitprinzip**: keine Vanilla-Spielweise funktionslos machen, nur ineffizienter (eingesperrter Villager arbeitet schwächer, nie null)
 - **Keine Zufallsmechaniken** bei Villager-Entscheidungen (Fokus, Quests deterministisch)
-- **Werte als Datapack**: Trades/Quests als JSON, Balancing ohne Neukompilieren
-- **Nicht-Implementierungsregel** (2026-09-27): jeder Beruf ohne eigenes Design (Vanilla oder andere Mods) läuft trotzdem auf unserem System – Vanilla-Trades: Smaragd-Trades → Dauer-Quests, letzte 4 → Masteries, Rest → Basic Trades, jedes Upgrade = nächster Eintrag, keine Level-Caps, Masteries ohne Station sichtbar, Passive ausgeblendet (Projektrahmen)
-- **Handelsliste = Ansicht** des eigenen Zustands: Vanillas `MerchantOffers` wird aus `VillagerState` neu gebaut
-- **Sichtbarkeit der Bereiche**: Trades / Masteries / Passive nur, solange die zugehörige Station (Lesepult / Schreib- / Verbesserungsstation) besetzt ist oder schon Ränge da sind; Quests immer (`ProgressionService.isGroupOpen`)
+- **Werte als Datapack**: Einträge als JSON, Balancing ohne Neukompilieren
+- **Handelsliste = Ansicht** des eigenen Zustands: Vanillas `MerchantOffers` wird aus `VillagerState` und den Sektions-Logiken neu gebaut
 - **Claim**: verdrängter Villager behält Level, Punkte und Beruf; **kein Teleport** zum Handelsblock (Panik, Raid, Schlaf haben Vorrang)
-- Verworfen: generisches Skill-/Modifier-System, Countdown-Glücklichkeitszähler, morgendlicher Tages-Restock, „erste Benutzung“-Flag für Stationen, SmartBrainLib
+- Verworfen: generisches Skill-/Modifier-System, Countdown-Glücklichkeitszähler, morgendlicher Tages-Restock, „erste Benutzung“-Flag für Stationen, SmartBrainLib, geteilte Leisten zwischen Sektionen
 
 ## Kern – wo steht was
 
 Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `core/src/main/resources/`.
 
+### Sektionen und Stationen
+| Was | Dateien |
+|---|---|
+| Schnittstelle für Extensions: Sektion, Station, Sektions-Logik, Zeile | `api/SectionDefinition.java`, `api/StationDefinition.java`, `api/SectionLogic.java`, `api/SectionOffer.java`, `api/ExtensionHooks.java` |
+| Registrierte Sektionen/Stationen, Einträge je Beruf + Sektion (Cache je Registry) | `section/Sections.java`, `section/SectionEntries.java` |
+| Die zwei Kern-Sektionen Quests + Trades | `section/CoreSections.java` |
+| Welche Sektionen ein Villager hat, offen, bearbeitbar | `section/VillagerSections.java` |
+| Standard-Verhalten (alle freigeschalteten Einträge, Bestand, Nachfüllen) | `section/StandardSection.java` |
+| Was das Fenster über eine Sektion erfährt | `section/SectionView.java` |
+
 ### Zustand, Sync, Registries
 | Was | Dateien |
 |---|---|
-| Villager-Zustand (Level, XP, Punkte, Ränge, Bestände, Leisten, Glück, Quest-Log, Stationen) | `core/state/VillagerState.java` + Records in `core/state/` |
-| Attachment + automatischer Sync | `core/ModAttachments.java`, `core/AttachmentVillagerStateAccess.java`, `core/VillagerStateAccess.java` |
-| Datapack-Registries `trade`, `quest`, `passive` | `data/ModDataPackRegistries.java`, `data/ItemExchange.java`, `data/ItemAmount.java`, `data/PassiveAbilityDefinition.java` |
-| Trade-/Quest-Dateien | keine im Kern – liefert die Extension (`data/vo_trade_rework/villageroverhaul/trade/`, `.../quest/`) |
-| Spieltag | `core/DayClock.java` |
+| Villager-Zustand (Level, XP, Punkte, Ränge je Sektion, Bestand je Eintrag, Leisten, Glück, Stationen) | `state/VillagerState.java`, `state/Productivity.java`, `state/Stations.java`, `state/Happiness.java` |
+| Attachment + automatischer Sync | `state/ModAttachments.java`, `state/AttachmentVillagerStateAccess.java`, `state/VillagerStateAccess.java` |
+| Zustand übersteht Zombie-Umwandlung und Heilen (ohne Arbeitsplätze) | `state/VillagerConversion.java` |
+| Mehr Zombie-Villager, Lohenstaub in Dorf-Brauständen | `world/ZombieVillagerSpawns.java`, `world/VillageBrewingStands.java` |
+| Datapack-Registry `exchange` (alle Trades und Quests aller Sektionen) | `data/ModDataPackRegistries.java`, `data/ItemExchange.java` (`section`, optional `pool`), `data/ItemAmount.java` |
+| Einträge | keine im Kern – liefert die Extension (`data/vo_trade_rework/villageroverhaul/exchange/`) |
+| Spieltag | `work/DayClock.java` |
 
 ### Handel und Fenster
 | Was | Dateien |
 |---|---|
-| Villager-Klick öffnet eigenes Fenster (Vanilla-Schritte bleiben) | `mixin/VillagerTradingMixin.java`, `mixin/VillagerAccessor.java` |
-| Handelsliste aus Zustand, Rang-Rabatt als Vanilla-Sonderpreis | `trade/VillagerOffers.java`, `trade/TradeProviderImpl.java`, `trade/ExchangeScaling.java` |
-| Menü (Vanilla-Merchant-Slots, XP-Preis per Haken `ExtensionHooks.playerXpCost`, Kreativ-Mittelklick) | `client/ui/VillagerMenu.java` |
-| Fenster (Abschnitte, Leisten, Upgrade-Buttons, Scrollen, Reroll-Button + Tage-Timer) | `client/ui/VillagerScreen.java`, `client/ui/TradeLevelButtonWidget.java`, `client/ui/RerollButtonWidget.java`, `client/ui/VillagerGuiTextures.java` |
-| Netzwerk | `network/*Payload.java`, `network/ModPayloads.java` |
-| Trade gebucht (Bestand, Quest-Rotation, Berufsbindung) | `trade/TradeEvents.java`, `trade/TradeActions.java`, `trade/ExchangeExecutor.java` |
+| Villager-Klick öffnet eigenes Fenster (Vanilla-Schritte bleiben; „Nein“ nur ohne offene Sektion, nicht schon bei null Angeboten) | `mixin/VillagerTradingMixin.java`, `mixin/VillagerAccessor.java` |
+| Handelsliste aus Zustand + Sektions-Logiken, Rang-Rabatt als Vanilla-Sonderpreis, höherer Ertrag: Base-Menge durchgestrichen oben rechts am Ergebnis (`section/RowView.java`) | `trade/VillagerOffers.java`, `trade/ExchangeScaling.java`, `trade/ResolvedExchange.java` |
+| Menü (Vanilla-Merchant-Slots, XP-Preis per Haken `ExtensionHooks.playerXpCost`, Kreativ-Mittelklick) | `menu/VillagerMenu.java`, `menu/ModMenuTypes.java` |
+| Fenster (Sektionen in einer Schleife, Plakette, Leisten für n Sektionen, Rang-Buttons, Scrollen) | `client/ui/VillagerScreen.java`, `client/ui/RankButtonWidget.java`, `client/ui/VillagerGuiTextures.java` |
+| Zeilen-Aussehen je Sektion (Pfeil/Ergebnis-Position, Zusatz-Widget wie Reroll) | `client/ui/SectionClientLogic.java` (nur Client) |
+| Netzwerk (u. a. Sektions-Aktion für Zeilen-Buttons) | `network/*Payload.java`, `network/ModPayloads.java` |
+| Trade gebucht (über die Sektions-Logik, Berufsbindung), Debug-Handel | `trade/TradeEvents.java`, `trade/TradeActions.java`, `trade/ExchangeExecutor.java` |
 | Kosten „Item mit Verzauberung, jede Stufe“ | `trade/RequiredEnchantmentCost.java`, `mixin/ItemCostMixin.java` |
 | Zweiter Bezahl-Slot | Feld `second_input` in `ItemExchange` |
-
-### Quests
-| Was | Dateien |
-|---|---|
-| Plätze, Tageslimit, Hard/Dauer-Quest (per Haken zweiter Hard-Platz statt Dauer-Quest, Slot 4, +3 Limit auf Rang 9 – Extension: Veteran) | `quest/QuestSlots.java` |
-| Angebot, Varianten (`input_variants`, `input_enchantment_variants`), Dauer-Quest-Item nie in anderen Pools | `quest/QuestProviderImpl.java` |
-| Abschluss, Pause, Reroll + Wartezeit | `quest/QuestActions.java` |
 
 ### Progression
 | Was | Dateien |
 |---|---|
-| Level-Kurve, Punkte-Puffer, Investieren, Gruppe offen? | `progression/ProgressionService.java` |
-| Upgrade-Kosten, Voll-Freischalt-Rang | `progression/UpgradeGroup.java` |
-| Beruf fest nach Handel/XP | `core/ProfessionLock.java` |
+| Level-Kurve, Punkte-Puffer, Upgrade-Kosten, Investieren in eine Sektion | `progression/ProgressionService.java` |
+| Beruf fest nach Handel/XP | `station/ProfessionLock.java` |
 
 ### Arbeit, Restock, Glücklichkeit
 | Was | Dateien |
 |---|---|
-| Periodischer Scan (alle 100 Ticks): Glück, Stationen, Arbeits-XP, Leisten, Passive | `freedom/VillagerWorkScan.java` |
-| Passive je Beruf (fragt die Extension-Haken; ohne Eintrag keine Passive, Leistengröße 1 Schritt/Tag) | `passive/PassiveWork.java` |
-| Eigenes Arbeitsgeräusch nur, während eine Trade-Leiste sich füllt; an der Passive-Station stumm (die Station macht die Geräusche) | `mixin/VillagerWorkSoundMixin.java`, `RestockService.isFillingTradeMeter` |
-| Leisten, Nachschub, Fokus-Wahl, Passiv-Leistengröße | `trade/RestockService.java`, `core/state/DailyProductivity.java` |
-| Glücklichkeit berechnen / Villager-Kontakt erkennen | `freedom/HappinessCalculator.java`, `freedom/HappinessTracker.java`, `mixin/VillagerGossipMixin.java` |
+| Periodischer Scan (alle 100 Ticks): Glück, Stationen, Arbeits-XP, Leisten, eigene Arbeit der Sektionen | `work/VillagerWorkScan.java` |
+| Leisten je Sektion, Nachschub, Tagesstart (vergessene Einträge aus dem Bestand), Freigabe nach Handel | `work/RestockService.java`, `state/Productivity.java` |
+| Fokus-Wahl zwischen Sektionen, Morgen-Station | `station/StationFocus.java` |
+| Eigenes Arbeitsgeräusch nur, während eine Listen-Sektion ihre Leiste füllt | `mixin/VillagerWorkSoundMixin.java`, `RestockService.makesWorkSound` |
+| Glücklichkeit berechnen / Villager-Kontakt erkennen | `happiness/HappinessCalculator.java`, `happiness/HappinessTracker.java`, `mixin/VillagerGossipMixin.java` |
+| Glücks-Elemente von Erweiterungen (Gewicht, Timer, Beobachter; im Scan gefragt, bis heute gesehen) | `api/HappinessElement.java`, `happiness/HappinessElements.java`, Tage in `state/Happiness.extraDays` |
 | Begleiter-Liste | `data/villageroverhaul/tags/entity_type/happiness_companions.json` |
 
 ### Arbeitsplätze, Claim, Handelsblock
 | Was | Dateien |
 |---|---|
-| Stationen als Vanilla-Arbeitsort (POI) je Beruf – Einträge kommen aus der Extension | `claim/ProfessionStations.java` |
-| Stationen suchen/prüfen/besetzen, Arbeitslose zuerst | `claim/StationClaims.java`, `claim/UnemployedPriority.java`, `mixin/VillagerGoalPackagesMixin.java` |
-| Wo er arbeitet, Hinlaufen, Lesepult pausieren | `claim/StationFocus.java`, `claim/WorkAtStation.java`, `claim/PausedAtStation.java` |
-| Claim per Smaragd, Verdrängen | `claim/EmeraldClaimTool.java`, `claim/ManualClaims.java` |
-| Anlocken mit Smaragd | `claim/EmeraldLure.java`, `mixin/VillagerLureMixin.java` |
-| Handelsblock (Redstone-Ruf, Besuch per Rechtsklick) | `claim/TradingBlock.java`, `claim/TradingBlockCall.java`, `claim/GoToTradingBlock.java`, `claim/ClaimBlocks.java`, Rezept `data/villageroverhaul/recipe/trading_block.json` |
+| Stationen als Vanilla-Arbeitsort (POI) je Beruf, welche Station ein Block ist, Morgen-Priorität | `station/ProfessionStations.java` |
+| Stationen suchen/prüfen/besetzen, Arbeitslose zuerst | `station/StationClaims.java`, `station/UnemployedPriority.java`, `mixin/VillagerGoalPackagesMixin.java` |
+| Ein Besitzer pro Station (Index; wer zuerst da ist, behält sie, Smaragd-Claim gewinnt; der andere lässt los ohne Ticket-Freigabe) | `station/StationOwners.java` |
+| Hinlaufen, Vanilla-Verhalten am Arbeitsblock/an der Glocke pausieren (auch beim Handelsblock-Ruf) | `station/WorkAtStation.java`, `station/PausedWhileAway.java` |
+| Claim per Smaragd, Verdrängen | `station/EmeraldClaimTool.java`, `station/ManualClaims.java` |
+| Anlocken mit Smaragd | `station/EmeraldLure.java`, `mixin/VillagerLureMixin.java` |
+| Handelsblock (Redstone-Ruf, Besuch per Rechtsklick) | `station/TradingBlock.java`, `station/TradingBlockCall.java`, `station/GoToTradingBlock.java`, `station/TradingBlocks.java`, Rezept `data/villageroverhaul/recipe/trading_block.json` |
 
-### Nicht-Implementierungsregel (nicht designte Berufe, Mod-Kompatibilität)
+### Vanilla-Trades (Berufe ohne eigene Einträge, Mod-Kompatibilität)
 | Was | Dateien |
 |---|---|
-| Erkennen (keine eigenen Stationen, Trades, Quests; hat Vanilla-Trade-Sets), Vanilla-Trades würfeln (Seed je Villager + Trade), Farbvarianten > 3 → eine, Aufteilung Quests / Basic / Masteries, im Speicher gecacht (Datapack-Reload leert) | `fallback/FallbackCatalog.java` |
-| Rang-Obergrenzen je Gruppe (letzter Freischalt-Rang + 4 Preis-Upgrades), Punkte-Kosten auf einer gemeinsamen Linie 1 → 5 über alle Upgrades, an den Client geschickt; Preis-Stufen (Quest-Menge, Smaragd-Preis unstapelbar, Menge stapelbar, Max-Bestand 50 → 300 %) in `fallback/FallbackScaling.java` | `fallback/RankCaps.java`, `network/VillagerOffersPayload.java`, `progression/ProgressionService.investPoint/isGroupOpen(villager, …)` |
-| Einbau: Trades, Bestand, Quests (Dauer-Quest-Slots ab 100), exaktes Vanilla-Ergebnis, Basic-Station = Vanilla-Arbeitsblock, Masteries-Bereich immer offen, keine Level-Grenze (`ProgressionService.maxLevel`) | `trade/TradeProviderImpl.java`, `trade/RestockService.java`, `trade/TradeActions.java`, `quest/QuestProviderImpl.java`, `quest/QuestSlots.java`, `core/ResolvedExchange.resultStack`, `claim/StationClaims.java`, `client/ui/VillagerScreen.java` |
+| Erkennen (keine eigenen Stationen oder Einträge, hat Vanilla-Trade-Sets), Vanilla-Trades würfeln (Seed je Villager + Trade), Farbvarianten > 3 → eine, Aufteilung Quests / Trades, im Speicher gecacht (Datapack-Reload leert) | `vanilla/VanillaCatalog.java` |
+| Preis-Stufen (Smaragd-Belohnung: verlangte Menge, unstapelbar: Smaragd-Preis, stapelbar: Menge, Max-Bestand 50 → 300 %) | `vanilla/VanillaScaling.java` |
+| Rang-Obergrenzen je Sektion (letzter Freischalt-Rang + 4 Preis-Upgrades), Punkte-Kosten auf einer gemeinsamen Linie 1 → 5 | `vanilla/VanillaRankCaps.java` |
 
 ### Platzhalter für fehlende Trades
 | Was | Dateien |
 |---|---|
 | Leere Ränge zeigen eine komplett leere, deaktivierte Zeile – kein Preis, kein Pfeil, kein Ergebnis, kein Tooltip, nicht anklickbar (`client/ui/VillagerScreen.isEmptyRow`) – Datei löschen, sobald der echte Trade steht | Item `trade/MissingTrade.java` (`villageroverhaul:missing_trade`); die `*_todo_basic_<rang>.json` / `*_todo_master_<rang>.json` liegen in der Extension |
 
-### Andockstellen für die Extension
-| Was | Dateien |
-|---|---|
-| Alle Haken an einer Stelle (Stationen, Passive, zweiter Hard-Platz, Mob-Waffen-Markierung, XP-Preis, Entdeckerkarten); ohne Extension neutral | `api/ExtensionHooks.java` |
-| Datenformat der Entdeckerkarten (inkl. Erzader-Arten) bleibt im Kern, die Suche macht die Extension | `data/ExplorerMap.java`, Feld `explorer_map` in `data/ItemExchange.java` |
-
 ### Debug (`/vo`, angeschauter Villager)
-- `core/DebugCommands.java`: `state` (`progression`, `productivity`, `happiness`, `quests`, `trades`, `raw`), `grant_xp`, `grant_points`, `invest <gruppe>`, `list <registry>`, `trade <id>`, `quest_complete`, `quest_reroll`, `restock`
+- `debug/DebugCommands.java`: `state` (`progression`, `productivity`, `happiness`, `sections`, `raw`), `grant_xp`, `grant_points`, `invest <sektion>`, `list`, `trade <eintrag>` (Trade oder Quest), `action <sektion> <slot> <aktion>` (z. B. Quest-Reroll = Aktion 0), `restock`, `reset` (Level, Punkte, Ränge, Bestand, Leisten, Quest-Slots zurück; Glück + Stationen bleiben)
+- `data/villageroverhaul/timeline/work_time_marker.json`: `/time set work` (Tick 1400, Beginn der Villager-Arbeitszeit) – nur ein Time Marker, kein Java
+- `data/minecraft/timeline/villager_schedule.json`: Vanillas Villager-Tagesablauf überschrieben – Arbeit Tick 1400–9600 statt 2000–9000 (30 s früher, 30 s länger), sonst Vanilla
 
 ## Trade Rework – wo steht was
 
-Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, Daten relativ zu `trade-rework/src/main/resources/`. Einstieg: `TradeReworkMod.java` (Registrierung), `TradeReworkProfessions.java` (alle Haken in den Kern), `TradeReworkRegistries.java` (`crushing`, `salvage`, `mob_weapon`), Mixins in `vo_trade_rework.mixins.json`.
+Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, Daten relativ zu `trade-rework/src/main/resources/`. Einstieg: `TradeReworkMod.java` (Registrierung), `TradeReworkSections.java` (Stationen, Sektionen Quests/Masteries/Passive, übrige Haken), `TradeReworkRegistries.java` (`crushing`, `salvage`, `mob_weapon`), Mixins in `vo_trade_rework.mixins.json`.
+
+### Sektionen der Extension
+| Was | Dateien |
+|---|---|
+| Stationen (Master-, Passiv-Station je Beruf), Sektionen Quests / Masteries / Passive, übrige Haken | `TradeReworkSections.java` |
+| Quests: Plätze, Tageslimit, Hard/Dauer-Quest (Veteran: zweiter Hard-Platz statt Dauer-Quest, Slot 4, +3 Limit auf Rang 9), Auswahl, Varianten (`input_variants`, `input_enchantment_variants`), Dauer-Quest-Item nie in anderen Pools, Abschluss, Pause, Reroll + Wartezeit | `quest/QuestSlots.java`, `quest/QuestLogic.java` |
+| Quest-Zustand (Rotation, Reroll-Zeit, Tageszähler, Pausen) als eigenes, synchronisiertes Attachment | `quest/QuestState.java` |
+| Quest-Zeilen im Fenster (Reroll-Button + Tage-Timer) | `client/ui/QuestClientLogic.java`, `client/ui/RerollButtonWidget.java`, Registrierung `client/ui/TradeReworkClient.java` |
+| Passive: Leiste je Beruf, Schritt an der Passiv-Station | `passive/PassiveLogic.java`, `passive/PassiveWork.java` + je Beruf `passive/*Work.java` |
 
 ### Librarian
 | Was | Dateien |
 |---|---|
 | Items, Blöcke, Block-Entities | `librarian/LibrarianItems.java`, `librarian/LibrarianBlocks.java`, `librarian/LibrarianBlockEntities.java` |
-| Trades / Quests | `data/vo_trade_rework/villageroverhaul/trade/librarian_*.json`, `.../quest/librarian_*.json` |
+| Trades / Quests | `data/vo_trade_rework/villageroverhaul/exchange/librarian_*.json` (Feld `section`, Quests mit `pool`) |
 | Bücherstapel (bis 4 Bücher) | `librarian/BookPileBlock.java` |
 | Stations-Blöcke mit Modell-Hitbox | `librarian/ModelShapedBlock.java`, `librarian/EnchantmentStationBlock.java` |
 | Erfahrungsfläschchen = 55 XP, Abfüll-Trade | `librarian/ExperienceBottles.java`, `mixin/ThrownExperienceBottleMixin.java` |
@@ -156,18 +175,20 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Was | Dateien |
 |---|---|
 | Blöcke, Block-Entity, Items | `mason/MasonBlocks.java`, `mason/MasonBlockEntities.java`, `mason/MasonItems.java` |
-| Trades / Quests | `data/vo_trade_rework/villageroverhaul/trade/mason_*.json`, `.../quest/mason_*.json` |
+| Trades / Quests | `data/vo_trade_rework/villageroverhaul/exchange/mason_*.json` (Feld `section`, Quests mit `pool`) |
 | Steinchen `rock_pile` + Wegsteine `rock_path` (je bis 4, wie Bücherstapel; Wegsteine 1 px tiefer für Trampelpfade, Teppich-Halt) | `mason/RockPileBlock.java`, `mason/RockPathBlock.java` |
 | Brechstation (3 + 3 Slots, Trichter wie Ofen, Komparator, Redstone-Puls) | `mason/CrushingStationBlock.java`, `mason/CrushingStationBlockEntity.java`, Fenster `station/ThreeInThreeOutMenu.java` + `client/ui/ThreeInThreeOutScreen.java` |
+| Dorfbewohner-Statuen (je Typ ein Block, Figur beim Setzen gewürfelt, 2 Blöcke hoch wie Tür, grau gerendert auf Rüstungsständer-Platte; Mason-Trade liefert die Statue seines Typs) | `mason/VillagerStatueBlock.java`, `mason/StatueFigure.java`, `mason/VillagerStatueBlockEntity.java`, Trade `trade/VillagerStatueOutput.java`, Grafik `client/render/VillagerStatueRenderer.java`, `VillagerStatueSpecialRenderer.java` (Item), `VillagerStatueFigure.java`, `GrayscaleTextures.java` |
+| Statuen machen glücklich (+10 %, 8 Blöcke, 2 Tage; Statuen sind POIs, Abfrage statt Block-Scan) | `mason/VillagerStatueHappiness.java` |
 | Brech-Regeln (Steinmetz-Rezepte rückwärts + Datapack-Regeln) | `mason/CrushingRecipes.java`, `mason/CrushingRule.java`, `data/vo_trade_rework/vo_trade_rework/crushing/*.json` |
-| Passive: Brechen (Batches à 4 einer Sorte, 8–32 pro Tag, Gang zur Station) | `passive/CrushingWork.java` |
+| Passive: Brechen (Batches à 4 einer Sorte, Rang 5: 6, Rang 6: 8, 8–32 pro Tag, Gang zur Station) | `passive/CrushingWork.java` |
 | Placeholder für Blöcke ohne Grafik | `models/block/placeholder_block.json`, `textures/block/placeholder_texture.png` (Quelle `assets/placeholder_block/`) |
 
 ### Runesmith (Vanilla-Toolsmith; bis 2026-09-27 beim Repair Smith)
 | Was | Dateien |
 |---|---|
 | Blöcke, Block-Entity, Items (Upgrade- + Reparaturstation, eine Upgrade-Vorlage) | `runesmith/RunesmithBlocks.java`, `runesmith/RunesmithBlockEntities.java`, `runesmith/RunesmithItems.java` |
-| Trades (Stationen Basic 4, Vorlage Master 1, Bücher Haltbarkeit I Master 3 + Reparatur Master 4 – Smaragd + Buch → Buch Stufe I) | `data/vo_trade_rework/villageroverhaul/trade/runesmith_*.json`; Buch-Output über Feld `enchantment` im Output (Kern: `data/ItemAmount.toStack`) |
+| Trades (Stationen Basic 4, Vorlage Master 1, Bücher Haltbarkeit I Master 3 + Reparatur Master 4 – Smaragd + Buch → Buch Stufe I) | `data/vo_trade_rework/villageroverhaul/exchange/runesmith_*.json`; Buch-Output über Feld `enchantment` im Output (Kern: `data/ItemAmount.toStack`) |
 | Upgrade-Rezepte (Vanilla `smithing_transform`, Vorlage + Teil + 1 Block der Zielstufe), Haltbarkeit relativ übernehmen | `data/vo_trade_rework/recipe/*_smithing.json`, `runesmith/UpgradeTemplates.java`, `mixin/SmithingUpgradeDurabilityMixin.java` |
 | Reparaturstation (3 + 3, Trichter, Komparator, Redstone-Puls, Schleifstein-Geräusch) | `runesmith/RepairStationBlock.java`, `runesmith/RepairStationBlockEntity.java` |
 | Passive: Reparieren (Schritte je Rang) | `passive/RepairWork.java` |
@@ -178,31 +199,31 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 ### Veteran (Vanilla-Weaponsmith; bis 2026-09-27 „Repair Smith“)
 | Was | Dateien |
 |---|---|
-| Challengestation (Master-Workstation, noch keine Passive-Station) | `veteran/VeteranBlocks.java`, `veteran/VeteranItems.java`, `TradeReworkProfessions.java` (`Entry.NO_STATION`) |
-| Trades / Quests | `data/vo_trade_rework/villageroverhaul/trade/veteran_*.json`, `.../quest/veteran_*.json` |
+| Challengestation (Master-Workstation, noch keine Passive-Station) | `veteran/VeteranBlocks.java`, `veteran/VeteranItems.java`, `TradeReworkSections.java` |
+| Trades / Quests | `data/vo_trade_rework/villageroverhaul/exchange/veteran_*.json` (Feld `section`, Quests mit `pool`) |
 | Mob-Waffen: Markierung, Drop-Chance, Treffer-/Pfeil-Effekt, kürzere Abklingzeit (Liste an Client synchronisiert) | `veteran/MobWeapons.java`, `veteran/MobWeaponEvents.java`, `veteran/MobWeaponDefinition.java`, Liste `data/vo_trade_rework/vo_trade_rework/mob_weapon/*.json` |
 | Mob-Waffen-Name („Zombie-Eisenschwert“) + Tooltip „+ Applies … effect“ | `mixin/ItemStackMobWeaponNameMixin.java`, `veteran/MobWeaponTooltip.java`, Sprachschlüssel `item.vo_trade_rework.mob_weapon(.effect)` |
 | Quest verlangt Mob-Waffe | Kern: Feld `mob` in `data/ItemAmount.java`, `trade/RequiredEnchantmentCost.of`; Markierung über `ExtensionHooks.setMobWeaponComponent` |
 | Berufsname „Veteran“ | `entity.minecraft.villager.weaponsmith` in `lang/*.json` |
-| Karten-Trades: Basic 5 Außenposten, Basic 6 Verlies (beide Abenteuerkarte; Verlies aus dem Weltseed + Spawner-Nachprüfung), Master 1–4 Trial Chamber / Anwesen / Monument / Antike Stadt (Diamant + Herausforderungskarte) | `trade/veteran_*_map.json`, eigene Struktur-Tags `data/vo_trade_rework/tags/worldgen/structure/on_*_maps.json` |
-| Basic 0 Fernglas, 1 Rahmen, 2 Waffenständer | `trade/veteran_*.json` |
+| Karten-Trades: Basic 5 Außenposten, Basic 6 Verlies (beide Abenteuerkarte; Verlies aus dem Weltseed + Spawner-Nachprüfung), Master 1–4 Trial Chamber / Anwesen / Monument / Antike Stadt (Diamant + Herausforderungskarte) | `exchange/veteran_*_map.json`, eigene Struktur-Tags `data/vo_trade_rework/tags/worldgen/structure/on_*_maps.json` |
+| Basic 0 Fernglas, 1 Rahmen, 2 Waffenständer | `exchange/veteran_*.json` |
 | Waffenständer: Wand-Block, eine Waffe (Tag `weapon_rack_weapons`), Rechtsklick aufhängen/abnehmen, Waffe gezeichnet | `veteran/WeaponRackBlock.java`, `WeaponRackBlockEntity.java`, `VeteranBlockEntities.java`, `client/render/WeaponRackRenderer.java` |
 | Piglin-Armbrust spannt 20 % schneller (Feld `charge_reduction`, Tooltip) | `mixin/CrossbowChargeMixin.java`, `mob_weapon/piglin.json`, `veteran/MobWeaponTooltip.java` |
 
 ### Cartographer (Vanilla, Teil-Gerüst)
 | Was | Dateien |
 |---|---|
-| Erkundungsstation (Master-Workstation, noch keine Passive-Station) | `cartographer/CartographerBlocks.java`, `TradeReworkProfessions.java` |
+| Erkundungsstation (Master-Workstation, noch keine Passive-Station) | `cartographer/CartographerBlocks.java`, `TradeReworkSections.java` |
 | Abenteuer- + Herausforderungskarte (Items, Textur = Vanilla-Karte) | `cartographer/CartographerItems.java`, Modelle `models/item/adventure_map.json`, `challenge_map.json` |
-| Trades: Basic 4 Erkundungsstation, Basic 5/6 die zwei Karten, Master 0–4 Dorfkarten Ebene/Wüste/Savanne/Taiga/Schnee | `trade/cartographer_*.json` |
+| Trades: Basic 4 Erkundungsstation, Basic 5/6 die zwei Karten, Master 0–4 Dorfkarten Ebene/Wüste/Savanne/Taiga/Schnee | `exchange/cartographer_*.json` |
 
 ### Salvager (Vanilla-Armorer, Basic Trades + Schmelz-Passive)
 | Was | Dateien |
 |---|---|
-| Basic 0 Eisenketten, 1 Eisengitter, 4 Veredelungs- + Schmelzstation, 5 Kupferader-Karte, 6 Eisenader-Karte | `trade/salvager_*.json` |
-| Veredelungsstation (Master, noch ohne Funktion) + Schmelzstation (Passive) | `salvager/SalvagerBlocks.java`, `TradeReworkProfessions.java` |
-| Schmelzstation (3 + 3 wie die Brechstation, Trichter, Komparator, Redstone-Puls, Hochofen-Knistern) | `salvager/SmeltingStationBlock.java`, `salvager/SmeltingStationBlockEntity.java`, `salvager/SalvagerBlockEntities.java` |
-| Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil + Scraps) | `passive/SmeltingWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`salvager/SalvageRule.java`) |
+| Basic 0 Eisenketten, 1 Eisengitter, 4 Veredelungs- + Schmelzstation, 5 Kupferader-Karte, 6 Eisenader-Karte | `exchange/salvager_*.json` |
+| Veredelungsstation (Master, noch ohne Funktion) + Schmelzstation (Passive) | `salvager/SalvagerBlocks.java`, `TradeReworkSections.java` |
+| Schmelzstation (3 + 3 wie die Brechstation, Trichter, Komparator, Redstone-Puls, Hochofen-Knistern; WORKING: Tiegel mit animiertem geschmolzenem Metall nur beim Arbeiten) | `salvager/SmeltingStationBlock.java`, Modelle `smelting_station.json` / `smelting_station_working.json`, Lava-Blasen `salvager/SalvagerParticles.java` + `client/render/MoltenBubbleParticle.java`, `salvager/SmeltingStationBlockEntity.java`, `salvager/SalvagerBlockEntities.java` |
+| Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil bleibt im Input-Slot, Scraps in den Output; Trichter unten zieht Output + übrig gebliebene Diamant-Teile) | `passive/SmeltingWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`salvager/SalvageRule.java`) |
 | Berufsname „Verwerter“ | `entity.minecraft.villager.armorer` in `lang/*.json` |
 
 ### Entdeckerkarten als Trade-Output (gemeinsam für alle Berufe)

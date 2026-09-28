@@ -3,7 +3,7 @@
 Zwilling der Mason-Werte aus Obsidian (`Mason.md` Wertetabellen + Brechstation-Teil von `Tweak-Werte.md`), kompakt. Bei Abweichung gilt Obsidian.
 Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 1. Stand: 2026-09-27.
 
-## Basic Trades — `data/vo_trade_rework/villageroverhaul/trade/mason_*.json`
+## Basic Trades — `data/vo_trade_rework/villageroverhaul/exchange/mason_*.json`
 | Rang | Trade | Preis | 2. Slot | Output | Stock |
 |---|---|---|---|---|---|
 | 0 | Sandstein | 1 → 1 Smaragd | – | 1 → 1 | 1 → 1 |
@@ -24,7 +24,7 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | 3 | Diorit | 1 Quarz | Calcit | alle 1 |
 | 4 | Sandstein | 1 Quarz | Quarzblock | alle 1 (Vorschlag: 2 Quarz → 1 Quarz auf Max) |
 
-## Quests — `.../quest/mason_*.json` (alle Werte 1)
+## Quests — `.../exchange/mason_*.json` (Sektion `vo_trade_rework:quests`) (alle Werte 1)
 - Easy (Oberwelt): gemeißelte Blöcke, Ziegel, andere Varianten, polierte Blöcke, Kohle, Stein
 - Hard (Nether, Prismarin, Endstein, Purpur): gemeißelte Nether-Blöcke, Nether-Ziegel, polierte Nether-Blöcke, Quarz, Prismarin, Endstein, Purpur
 - Dauer: glatter Stein
@@ -33,10 +33,19 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | Wert | Aktuell |
 |---|---|
 | Slots | 3 Input + 3 Output |
-| Batch-Größe | 4 Ergebnisse, nur eine Sorte pro Batch |
+| Batch-Größe, Rang 0–6 | 4, 4, 4, 4, 4, 6, 8 Ergebnisse, nur eine Sorte pro Batch |
 | Batches pro Tag, Rang 0–6 | 8, 12, 16, 20, 24, 28, 32 |
 | Reichweite | 2 Blöcke |
 | Redstone-Puls | 2 Ticks |
-| Tuff-Abbaugeräusch beim Füllen / Nachlauf | alle 4 Ticks (Vanilla-Abbautakt), Lautstärke 0,75 / 20 Ticks |
+| Tuff-Abbaugeräusch beim Füllen (nur wenn etwas brechbar drin ist) / Nachlauf | alle 4 Ticks (Vanilla-Abbautakt), Lautstärke 0,75 / 20 Ticks |
+| Klingen-Animation | 3 Frames à 2 Ticks, nur während der Arbeit (Zustand `working`, `crushing_blades_moving.png.mcmeta`) |
+| Partikel beim Füllen (je Geräusch-Takt) | 3 Input über den Klingen, 2 Ergebnis aus dem Auspuff (Rückseite, Ausrichtung wie Steinmetz), Schub 1,5 |
 | Verhältnis | 1 : 1 (Steinmetz-Varianten im Steinmetz-Verhältnis) |
 - Regeln: Steinmetz-Rezepte rückwärts (automatisch) + `data/vo_trade_rework/vo_trade_rework/crushing/*.json` (crushing, cobbled_forms, smooth_blocks, concrete, glazed_terracotta); jede Steinart → Bruch-Form samt Varianten
+
+## Dorfbewohner-Statue — `mason/VillagerStatueBlock.java`, `client/render/GrayscaleTextures.java`
+| Wert | Aktuell |
+|---|---|
+| Kontrast der grauen Texturen | 0,55 (45 % weniger als das Original) |
+| Rauschen | ±3 % des Grauwertbereichs je Pixel (weißes Rauschen, fest pro Textur) |
+| Drehstufen | 16 (wie Mob-Köpfe) |

@@ -11,23 +11,15 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 @EventBusSubscriber(modid = VillagerOverhaulMod.MODID)
 public final class ModDataPackRegistries {
 
-    public static final ResourceKey<Registry<ItemExchange>> TRADE =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(VillagerOverhaulMod.MODID, "trade"));
-
-    public static final ResourceKey<Registry<ItemExchange>> QUEST =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(VillagerOverhaulMod.MODID, "quest"));
-
-    public static final ResourceKey<Registry<PassiveAbilityDefinition>> PASSIVE =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(VillagerOverhaulMod.MODID, "passive"));
-
+    /** Every trade and quest of every section - data/<namespace>/villageroverhaul/exchange/*.json, synced to the client. */
+    public static final ResourceKey<Registry<ItemExchange>> EXCHANGE =
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(VillagerOverhaulMod.MODID, "exchange"));
 
     private ModDataPackRegistries() {
     }
 
     @SubscribeEvent
     static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
-        event.dataPackRegistry(TRADE, ItemExchange.CODEC, ItemExchange.CODEC);
-        event.dataPackRegistry(QUEST, ItemExchange.CODEC, ItemExchange.CODEC);
-        event.dataPackRegistry(PASSIVE, PassiveAbilityDefinition.CODEC, PassiveAbilityDefinition.CODEC);
+        event.dataPackRegistry(EXCHANGE, ItemExchange.CODEC, ItemExchange.CODEC);
     }
 }

@@ -1,6 +1,0 @@
-{
-  "profession": "minecraft:farmer",
-  "custom_effect": "villageroverhaul:farmer_example",
-  "base_value": 1.0,
-  "max_value": 3.0
-}

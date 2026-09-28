@@ -1,21 +1,20 @@
 package com.villageroverhaul.client.ui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.villageroverhaul.trade.MissingTrade;
-import com.villageroverhaul.core.VillagerStateAccess;
-import com.villageroverhaul.core.state.StationSlot;
-import com.villageroverhaul.core.state.VillagerState;
-import com.villageroverhaul.data.ItemExchange;
-import com.villageroverhaul.trade.RestockService;
+import com.villageroverhaul.api.SectionDefinition;
+import com.villageroverhaul.api.SectionOffer;
+import com.villageroverhaul.menu.VillagerMenu;
 import com.villageroverhaul.network.CloneOfferItemPayload;
 import com.villageroverhaul.network.InvestUpgradePointPayload;
-import com.villageroverhaul.network.RerollQuestPayload;
+import com.villageroverhaul.network.SectionActionPayload;
 import com.villageroverhaul.network.SelectOfferPayload;
 import com.villageroverhaul.progression.ProgressionService;
-import com.villageroverhaul.progression.UpgradeGroup;
-import com.villageroverhaul.quest.QuestActions;
-import com.villageroverhaul.quest.QuestSlots;
-import net.minecraft.client.gui.Font;
+import com.villageroverhaul.section.RowView;
+import com.villageroverhaul.section.SectionView;
+import com.villageroverhaul.section.Sections;
+import com.villageroverhaul.state.VillagerState;
+import com.villageroverhaul.state.VillagerStateAccess;
+import com.villageroverhaul.trade.MissingTrade;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -35,9 +34,8 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * Our layout (villager_gui.pxo, 2026-09-22 brainstorm) around Vanilla's trading behavior. Every row
@@ -47,22 +45,21 @@ import java.util.Map;
  * runs setSelectionHint + tryMoveItems locally for prediction and sends SelectOfferPayload, like
  * MerchantScreen.postButtonClick.
  *
- * Sections come from the offer list's fixed order (quests, basic trades, master trades) with sizes
- * from VillagerOffersPayload. Rows are rebuilt whenever that payload or the synced VillagerState
- * changes. The basic/master meters show the productivity meters (RestockService), the happiness
- * meter the synced happiness (HappinessCalculator). Known first-pass simplification: the Passive
- * group's invest button placement is a judgment call. The list scrolls (wheel or scroller drag) once
- * it outgrows the panel. Quest rows have a reroll button right of the reward (back 2026-09-26); per-row
- * stock display is intentionally absent for now (2026-09-23).
+ * Built from the open sections the server sent (menu.sections(), in section order): every LIST section is a
+ * group in the scrolling list with its title, rank button and rows (its rows' look: SectionClientLogic); the
+ * BADGE section is the badge at the top left. Every section with a shown meter gets one in the stat group, the
+ * first section nearest the happiness meter. Rows are rebuilt whenever the offers or the synced VillagerState
+ * change. The list scrolls (wheel or scroller drag) once it outgrows the panel; per-row stock display is
+ * intentionally absent for now (2026-09-23).
  */
 public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
 
     private static final int LIST_X = 48;
     private static final int LIST_WIDTH = 88;
     private static final int SECTION_START_Y = 8;
-    // Rows are 20px apart, the button height, so buttons touch. Each 21px trade_group_sides tile starts
-    // with a 1px dark line; tiles are drawn 20px apart, so only the first line (the frame's top edge)
-    // shows - the others sit under the button above. Buttons start below that line.
+    // Rows are 20px apart, the button height, so buttons touch. Each 21px section side tile starts with a 1px
+    // dark line; tiles are drawn 20px apart, so only the first line (the frame's top edge) shows - the others
+    // sit under the button above. Buttons start below that line.
     private static final int ROW_HEIGHT = 20;
     private static final int ROW_TOP_BORDER = 1;
 
@@ -78,44 +75,35 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
     // Screen-relative positions below are measured on the villager_gui.pxo canvas (layer_bounds_2026-09-24.json)
     // with the origin kept at canvas (63, 52), where the panel started before the 2026-09-24 redesign - so
     // every slot/list position stayed valid. The panel texture itself now starts PANEL_X to the right; the
-    // passive ability group and the stat group sit behind it and stick out to the left.
+    // badge and the stat group sit behind it and stick out to the left.
     private static final int SCREEN_WIDTH = 319;
     private static final int PANEL_X = 41;
-    private static final int PASSIVE_GROUP_X = -7;
-    private static final int PASSIVE_GROUP_Y = 5;
-    private static final int PASSIVE_BUTTON_X = 23;
-    private static final int PASSIVE_BUTTON_Y = 8;
+    private static final int BADGE_X = -7;
+    private static final int BADGE_Y = 5;
+    private static final int BADGE_BUTTON_X = 23;
+    private static final int BADGE_BUTTON_Y = 8;
     // Stat group: left cap, one middle tile per visible meter, right piece (holds happiness) at a fixed spot.
     private static final int STAT_GROUP_RIGHT_X = 27;
     private static final int STAT_GROUP_Y = 71;
     // Happiness meter background (9x78) - also its tooltip hover area.
     private static final int HAPPINESS_BAR_X = 29;
     private static final int HAPPINESS_BAR_Y = 77;
-    // Productivity meter backgrounds (11x79) sit 1px into their middle tile, the fill 3px into the background.
+    // Work meter backgrounds (11x79) sit 1px into their middle tile, the fill 3px into the background.
     private static final int METER_TILE_OFFSET = 1;
     private static final int METER_FILL_OFFSET = 3;
     private static final int METER_Y = 77;
     private static final int TITLE_COLOR = 0xFF404040;
 
-    // Rows sit inside the trade_group frame, 3px in from each side - Vanilla's own 20px button height.
+    // Rows sit inside the section frame, 3px in from each side - Vanilla's own 20px button height.
     private static final int ROW_BUTTON_INSET = 3;
     private static final int ROW_BUTTON_WIDTH = LIST_WIDTH - 2 * ROW_BUTTON_INSET;
     private static final int ROW_BUTTON_HEIGHT = 20;
-    // Row-relative item positions, MerchantScreen's costA / costB / arrow / result squeezed into our 82px
-    // row. The discounted count is drawn right of the costA icon (up to +31, see extractAndDecorateCost),
-    // which is why costB starts that far right - as in Vanilla, the count may touch costB's edge.
+    // Row-relative positions of costA and costB. The discounted count is drawn right of the costA icon (up to
+    // +31, see extractAndDecorateCost), which is why costB starts that far right - as in Vanilla, the count may
+    // touch costB's edge. Arrow and result: SectionClientLogic.
     private static final int ROW_INPUT_X = 2;
     private static final int ROW_SECOND_INPUT_X = 32;
-    private static final int ROW_ARROW_X = 50;
-    private static final int ROW_RESULT_X = 63;
     private static final int ROW_ITEM_Y = 2;
-    // Quest rows (2026-09-26): a quest never has a second payment, so arrow and reward move left and the
-    // reroll button takes the room on the right. The arrow still clears the discounted count (up to +31).
-    private static final int QUEST_ROW_ARROW_X = 34;
-    private static final int QUEST_ROW_RESULT_X = 46;
-    private static final int QUEST_ROW_REROLL_X = 65;
-    private static final int QUEST_ROW_REROLL_Y = 2;
-    private static final long TICKS_PER_DAY = 24000L;
 
     private static final Identifier XP_BAR_BACKGROUND = Identifier.withDefaultNamespace("container/villager/experience_bar_background");
     private static final Identifier XP_BAR_CURRENT = Identifier.withDefaultNamespace("container/villager/experience_bar_current");
@@ -123,6 +111,8 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
     private static final Identifier TRADE_ARROW_SPRITE = Identifier.withDefaultNamespace("container/villager/trade_arrow");
     private static final Identifier TRADE_ARROW_OUT_OF_STOCK_SPRITE = Identifier.withDefaultNamespace("container/villager/trade_arrow_out_of_stock");
     private static final Identifier DISCOUNT_STRIKETHROUGH_SPRITE = Identifier.withDefaultNamespace("container/villager/discount_strikethrough");
+    /** The red of Vanilla's discount_strikethrough sprite, drawn as a line to fit any count width. */
+    private static final int YIELD_STRIKETHROUGH_COLOR = 0xFFD23C3C;
     private static final int XP_BAR_WIDTH = 102;
     private static final int XP_BAR_HEIGHT = 5;
     // The out_of_stock X (28x21) centered over the arrow between the second payment box and the result box (arrow x=229-250).
@@ -132,17 +122,22 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
     private static final int HEADER_BUTTON_X_ADJUST = -3;
     private static final int BUTTON_Y_ADJUST = 2;
 
-    /** firstOffer is the index of this section's first row in the menu's full offer list. */
-    private record SectionLayout(String title, int headerY, int contentY, int bottomY, int firstOffer, int rowCount) {
+    /** A LIST section in the scrolling list; firstOffer is the index of its first row in the menu's offer list. */
+    private record SectionLayout(SectionDefinition section, SectionView view, int headerY, int contentY, int bottomY, int firstOffer) {
+    }
+
+    /** A work meter in the stat group; x is screen-relative (its background's left edge). */
+    private record Meter(SectionDefinition section, SectionView view, VillagerGuiTextures.MeterSprites sprites, int x) {
     }
 
     private final Villager villager;
-    private final List<TradeOfferButton> tradeOfferButtons = new ArrayList<>();
-    /** Quest rows' reroll buttons with the quest slot each one rerolls. */
-    private final Map<RerollButtonWidget, Integer> rerollButtons = new HashMap<>();
-    /** Row and section-header buttons: input via addWidget, drawn by hand under the list scissor. */
+    private final List<OfferRowButton> rowButtons = new ArrayList<>();
+    private final List<SectionClientLogic.RowWidget> rowWidgets = new ArrayList<>();
+    /** Row buttons, row widgets and section rank buttons: input via addWidget, drawn by hand under the list scissor. */
     private final List<AbstractWidget> listWidgets = new ArrayList<>();
     private List<SectionLayout> sectionLayouts = List.of();
+    private List<Meter> meters = List.of();
+    private Optional<SectionDefinition> badge = Optional.empty();
     private VillagerState lastKnownState;
     private int lastKnownOffersVersion;
     private int selectedOffer = -1;
@@ -166,8 +161,8 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
     }
 
     /**
-     * Only what the buttons show (rank labels, upgrade-cost tooltips) - XP and happiness change every
-     * few seconds while the villager works, but are drawn fresh each frame and need no rebuild.
+     * Only what the buttons show (rank labels, upgrade arrows) - XP, happiness and meters change every few
+     * seconds while the villager works, but are drawn fresh each frame and need no rebuild.
      */
     private static boolean affectsWidgets(VillagerState before, VillagerState now) {
         return before == null
@@ -190,117 +185,115 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
         lastKnownState = state;
         lastKnownOffersVersion = menu.offersVersion();
 
-        int offerCount = menu.getOffers().size();
-        int questCount = Math.min(menu.questCount(), offerCount);
-        int basicCount = Math.min(menu.basicCount(), offerCount - questCount);
-        int masterCount = offerCount - questCount - basicCount;
-
         List<SectionLayout> layouts = new ArrayList<>();
+        List<Meter> shownMeters = new ArrayList<>();
+        Optional<SectionDefinition> badgeSection = Optional.empty();
         int y = SECTION_START_Y;
-        // Trades / Masteries / Passive only show while the villager owns that station or has a rank in the
-        // group (ProgressionService.isGroupOpen, 2026-09-24); an open section shows even while empty, so
-        // its first rank can be bought from its header.
-        SectionLayout questSection = layoutSection(layouts, y, "Quests", 0, questCount);
-        SectionLayout lastSection = questSection;
-        SectionLayout tradeSection = null;
-        if (basicCount > 0 || ProgressionService.isGroupOpen(state, UpgradeGroup.BASIC_TRADE)) {
-            tradeSection = layoutSection(layouts, nextSectionY(lastSection), "Trades", questCount, basicCount);
-            lastSection = tradeSection;
-        }
-        SectionLayout masterSection = masterCount > 0 || menu.rankCaps().isFallback() || ProgressionService.isGroupOpen(state, UpgradeGroup.MASTER_TRADE)
-                ? layoutSection(layouts, nextSectionY(lastSection), "Masteries", questCount + basicCount, masterCount)
-                : null;
-        this.sectionLayouts = layouts;
-        int contentBottom = nextSectionY(layouts.get(layouts.size() - 1));
-        this.maxScroll = Math.max(0, contentBottom - LIST_TOP - LIST_HEIGHT);
-        this.scrollOffset = Mth.clamp(scrollOffset, 0, maxScroll);
-
-        addGroupHeaderButton(UpgradeGroup.QUEST, questSection.headerY(), state);
-        if (tradeSection != null) {
-            addGroupHeaderButton(UpgradeGroup.BASIC_TRADE, tradeSection.headerY(), state);
-        }
-        if (masterSection != null) {
-            addGroupHeaderButton(UpgradeGroup.MASTER_TRADE, masterSection.headerY(), state);
-        }
-
-        // The whole passive group (backdrop, label, rank button) only shows while the villager owns a passive station.
-        if (state.stations().passive().isPresent()) {
-            addPassiveButton(state);
-        }
-        tradeOfferButtonsRebuild(layouts);
-    }
-
-    private void addPassiveButton(VillagerState state) {
-        // Measured from the passive group's own trade_level_button layer in the pxo.
-        int passiveButtonX = leftPos + PASSIVE_BUTTON_X;
-        int passiveButtonY = topPos + PASSIVE_BUTTON_Y;
-        addRenderableWidget(createGroupHeaderButton(UpgradeGroup.PASSIVE, passiveButtonX, passiveButtonY, state));
-    }
-
-    private void tradeOfferButtonsRebuild(List<SectionLayout> layouts) {
-        tradeOfferButtons.clear();
-        rerollButtons.clear();
-        for (SectionLayout section : layouts) {
-            for (int i = 0; i < section.rowCount(); i++) {
-                int x = leftPos + LIST_X + ROW_BUTTON_INSET;
-                int rowY = section.contentY() + ROW_TOP_BORDER + i * ROW_HEIGHT - scrollOffset;
-                int index = section.firstOffer() + i;
-                boolean visible = touchesList(rowY, ROW_BUTTON_HEIGHT);
-                // Added before its row button, so a click on it doesn't select the row; drawn after it.
-                RerollButtonWidget reroll = createRerollButton(index, x, topPos + rowY);
-                if (reroll != null) {
-                    reroll.visible = visible;
-                    addWidget(reroll);
+        int firstOffer = 0;
+        for (SectionView view : menu.sections()) {
+            Optional<SectionDefinition> definition = Sections.get(view.id());
+            if (definition.isEmpty()) {
+                continue;
+            }
+            SectionDefinition section = definition.get();
+            if (section.display() == SectionDefinition.Display.BADGE) {
+                // One badge fits the screen: the first BADGE section by order (SectionDefinition.display).
+                if (badgeSection.isEmpty()) {
+                    badgeSection = definition;
+                    addRankButton(section, view, leftPos + BADGE_BUTTON_X, topPos + BADGE_BUTTON_Y, state, false);
                 }
-                TradeOfferButton button = addWidget(new TradeOfferButton(x, topPos + rowY, index));
+            } else {
+                int contentY = y + VillagerGuiTextures.SECTION_TOP.height();
+                int bottomY = contentY + ROW_TOP_BORDER + Math.max(view.rows(), 1) * ROW_HEIGHT;
+                SectionLayout layout = new SectionLayout(section, view, y, contentY, bottomY, firstOffer);
+                layouts.add(layout);
+                addSectionRankButton(layout, state);
+                y = bottomY + VillagerGuiTextures.SECTION_BOTTOM.height();
+                firstOffer += view.rows();
+            }
+            if (view.showsMeter()) {
+                shownMeters.add(new Meter(section, view, VillagerGuiTextures.MeterSprites.of(section.meterSprite()), 0));
+            }
+        }
+        this.sectionLayouts = layouts;
+        this.badge = badgeSection;
+        this.meters = placeMeters(shownMeters);
+        this.maxScroll = Math.max(0, y - LIST_TOP - LIST_HEIGHT);
+        this.scrollOffset = Mth.clamp(scrollOffset, 0, maxScroll);
+        rebuildRows(layouts);
+    }
+
+    /** Right to left from the happiness meter, first section first - so the section order reads right to left. */
+    private static List<Meter> placeMeters(List<Meter> shown) {
+        int middle = VillagerGuiTextures.STAT_GROUP_MIDDLE.width();
+        int tilesX = STAT_GROUP_RIGHT_X - shown.size() * middle;
+        List<Meter> placed = new ArrayList<>(shown.size());
+        for (int i = 0; i < shown.size(); i++) {
+            Meter meter = shown.get(i);
+            int tile = shown.size() - 1 - i;
+            placed.add(new Meter(meter.section(), meter.view(), meter.sprites(), tilesX + tile * middle + METER_TILE_OFFSET));
+        }
+        return placed;
+    }
+
+    private void rebuildRows(List<SectionLayout> layouts) {
+        rowButtons.clear();
+        rowWidgets.clear();
+        for (SectionLayout layout : layouts) {
+            SectionClientLogic clientLogic = SectionClientLogic.of(layout.section().id());
+            RowContext context = new RowContext(layout.section());
+            for (int i = 0; i < layout.view().rows(); i++) {
+                int x = leftPos + LIST_X + ROW_BUTTON_INSET;
+                int rowY = layout.contentY() + ROW_TOP_BORDER + i * ROW_HEIGHT - scrollOffset;
+                int index = layout.firstOffer() + i;
+                boolean visible = touchesList(rowY, ROW_BUTTON_HEIGHT);
+                int slot = menu.row(index).map(RowView::slot).orElse(SectionOffer.NO_SLOT);
+                // Added before its row button, so a click on it doesn't select the row; drawn after it.
+                SectionClientLogic.RowWidget rowWidget = clientLogic.rowWidget(context, slot, x, topPos + rowY);
+                if (rowWidget != null) {
+                    rowWidget.widget().visible = visible;
+                    addWidget(rowWidget.widget());
+                    rowWidgets.add(rowWidget);
+                }
+                OfferRowButton button = addWidget(new OfferRowButton(x, topPos + rowY, index, clientLogic));
                 button.visible = visible;
                 button.active = !isEmptyRow(index);
-                tradeOfferButtons.add(button);
+                rowButtons.add(button);
                 listWidgets.add(button);
-                if (reroll != null) {
-                    listWidgets.add(reroll);
+                if (rowWidget != null) {
+                    listWidgets.add(rowWidget.widget());
                 }
             }
         }
     }
 
-    /** Every quest row except the permanent quest (it never rotates) gets a reroll button. */
-    private RerollButtonWidget createRerollButton(int index, int rowX, int rowY) {
-        List<Integer> questSlots = menu.questSlots();
-        if (index >= questSlots.size() || QuestSlots.isPermanent(questSlots.get(index))) {
-            return null;
-        }
-        int slot = questSlots.get(index);
-        RerollButtonWidget button = new RerollButtonWidget(rowX + QUEST_ROW_REROLL_X, rowY + QUEST_ROW_REROLL_Y,
-                () -> rerollCooldownTicks(slot) <= 0,
-                () -> ClientPacketDistributor.sendToServer(new RerollQuestPayload(slot))) {
-            @Override
-            public boolean isMouseOver(double mouseX, double mouseY) {
-                return super.isMouseOver(mouseX, mouseY) && isInListViewport(mouseX, mouseY);
-            }
-        };
-        rerollButtons.put(button, slot);
-        return button;
-    }
+    /** What a section's row widgets may use of this screen (SectionClientLogic.RowContext). */
+    private final class RowContext implements SectionClientLogic.RowContext {
+        private final SectionDefinition section;
 
-    private long rerollCooldownTicks(int slot) {
-        return QuestActions.rerollCooldownTicksRemaining(VillagerStateAccess.of(villager).getState(), villager, slot);
-    }
-
-    /**
-     * Ready: "Reroll quest". During the cooldown a day timer (2026-09-26): one diamond per day of the full
-     * cooldown, a filled one per day still to wait - a 3-day cooldown shows ◆◆◆, then ◆◆◇, on the last
-     * day ◆◇◇; a 2-day cooldown ◆◆, then ◆◇. The full cooldown is taken at the current quest rank (like
-     * the one the reroll set), never shorter than the days actually left.
-     */
-    private Component rerollTooltip(int slot) {
-        long remaining = rerollCooldownTicks(slot);
-        if (remaining <= 0) {
-            return Component.translatable("gui.villageroverhaul.quest_reroll");
+        private RowContext(SectionDefinition section) {
+            this.section = section;
         }
-        int daysLeft = (int) ((remaining + TICKS_PER_DAY - 1) / TICKS_PER_DAY);
-        int totalDays = Math.max(daysLeft, QuestActions.rerollCooldownDays(VillagerStateAccess.of(villager).getState()));
-        return Component.literal("◆".repeat(daysLeft) + "◇".repeat(totalDays - daysLeft));
+
+        @Override
+        public Villager villager() {
+            return villager;
+        }
+
+        @Override
+        public SectionDefinition section() {
+            return section;
+        }
+
+        @Override
+        public boolean isInList(double mouseX, double mouseY) {
+            return isInListViewport(mouseX, mouseY);
+        }
+
+        @Override
+        public void sendAction(int slot, int action) {
+            ClientPacketDistributor.sendToServer(new SectionActionPayload(section.id(), slot, action));
+        }
     }
 
     /**
@@ -366,7 +359,7 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             return false;
         }
         MerchantOffers offers = menu.getOffers();
-        for (TradeOfferButton button : tradeOfferButtons) {
+        for (OfferRowButton button : rowButtons) {
             if (!button.visible || button.index >= offers.size() || !button.isMouseOver(event.x(), event.y())) {
                 continue;
             }
@@ -401,18 +394,6 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
         setScrollOffset(Math.round(Mth.clamp(fraction, 0.0F, 1.0F) * maxScroll));
     }
 
-    private SectionLayout layoutSection(List<SectionLayout> layouts, int headerY, String title, int firstOffer, int rowCount) {
-        int contentY = headerY + VillagerGuiTextures.TRADE_GROUP_TOP.height();
-        int bottomY = contentY + ROW_TOP_BORDER + Math.max(rowCount, 1) * ROW_HEIGHT;
-        SectionLayout layout = new SectionLayout(title, headerY, contentY, bottomY, firstOffer, rowCount);
-        layouts.add(layout);
-        return layout;
-    }
-
-    private static int nextSectionY(SectionLayout previous) {
-        return previous.bottomY() + VillagerGuiTextures.TRADE_GROUP_BOTTOM.height();
-    }
-
     /**
      * A placeholder trade (trade/MissingTrade, 2026-09-27): a rank whose trade isn't designed yet. Its row is
      * drawn as an empty, disabled button - no cost, no arrow, no result, no tooltip, not selectable.
@@ -430,31 +411,31 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
         ClientPacketDistributor.sendToServer(new SelectOfferPayload(index));
     }
 
-    private void addGroupHeaderButton(UpgradeGroup group, int headerY, VillagerState state) {
-        int x = leftPos + LIST_X + LIST_WIDTH - VillagerGuiTextures.TRADE_LEVEL_BUTTON.width() - 2 + HEADER_BUTTON_X_ADJUST;
-        int panelY = headerY - scrollOffset + (VillagerGuiTextures.TRADE_GROUP_TOP.height() - VillagerGuiTextures.TRADE_LEVEL_BUTTON.height()) / 2 + BUTTON_Y_ADJUST;
-        TradeLevelButtonWidget button = addWidget(createGroupHeaderButton(group, x, topPos + panelY, state));
-        button.visible = touchesList(panelY, VillagerGuiTextures.TRADE_LEVEL_BUTTON.height());
+    private void addSectionRankButton(SectionLayout layout, VillagerState state) {
+        int x = leftPos + LIST_X + LIST_WIDTH - VillagerGuiTextures.RANK_BUTTON.width() - 2 + HEADER_BUTTON_X_ADJUST;
+        int panelY = layout.headerY() - scrollOffset + (VillagerGuiTextures.SECTION_TOP.height() - VillagerGuiTextures.RANK_BUTTON.height()) / 2 + BUTTON_Y_ADJUST;
+        RankButtonWidget button = addRankButton(layout.section(), layout.view(), x, topPos + panelY, state, true);
+        button.visible = touchesList(panelY, VillagerGuiTextures.RANK_BUTTON.height());
         listWidgets.add(button);
     }
 
-    private TradeLevelButtonWidget createGroupHeaderButton(UpgradeGroup group, int x, int y, VillagerState state) {
-        int rank = ProgressionService.rankOf(state.ranks(), group);
-        Runnable invest = () -> ClientPacketDistributor.sendToServer(new InvestUpgradePointPayload(group));
-        TradeLevelButtonWidget button = group == UpgradeGroup.PASSIVE
-                ? new TradeLevelButtonWidget(x, y, String.valueOf(rank), invest)
-                : new TradeLevelButtonWidget(x, y, String.valueOf(rank), invest) {
+    /** inList: the button scrolls with the list (a section header) and is clipped there; otherwise it is a normal widget (the badge). */
+    private RankButtonWidget addRankButton(SectionDefinition section, SectionView view, int x, int y, VillagerState state, boolean inList) {
+        Runnable invest = () -> ClientPacketDistributor.sendToServer(new InvestUpgradePointPayload(section.id()));
+        RankButtonWidget button = inList
+                ? new RankButtonWidget(x, y, state.rank(section.id()), invest) {
                     @Override
                     public boolean isMouseOver(double mouseX, double mouseY) {
                         return super.isMouseOver(mouseX, mouseY) && isInListViewport(mouseX, mouseY);
                     }
-                };
-        int cost = menu.rankCaps().upgradeCost(group, state.ranks());
+                }
+                : new RankButtonWidget(x, y, state.rank(section.id()), invest);
+        int cost = view.nextUpgradeCost();
         button.setTooltip(Tooltip.create(cost < 0
                 ? Component.translatable("gui.villageroverhaul.upgrade.maxed")
                 : Component.translatable("gui.villageroverhaul.upgrade.cost", cost, state.unspentUpgradePoints())));
         button.setShowArrow(cost >= 0 && cost <= state.unspentUpgradePoints());
-        return button;
+        return inList ? addWidget(button) : addRenderableWidget(button);
     }
 
     @Override
@@ -473,7 +454,7 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             int barX = VillagerMenu.GRID_LEFT + (VillagerMenu.GRID_WIDTH - XP_BAR_WIDTH) / 2;
             int barY = this.titleLabelY + 10;
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_BACKGROUND, barX, barY, XP_BAR_WIDTH, XP_BAR_HEIGHT);
-            int filled = Math.round(XP_BAR_WIDTH * ProgressionService.xpFraction(state, ProgressionService.maxLevel(villager)));
+            int filled = Math.round(XP_BAR_WIDTH * ProgressionService.xpFraction(state));
             if (filled > 0) {
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_CURRENT, XP_BAR_WIDTH, XP_BAR_HEIGHT, 0, 0, barX, barY, filled, XP_BAR_HEIGHT);
             }
@@ -487,12 +468,10 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
         int xo = leftPos;
         int yo = topPos;
 
-        // Back to front: the two groups sit behind the panel (2026-09-24 redesign), the meters on top of their tiles.
-        boolean passiveStation = VillagerStateAccess.of(villager).getState().stations().passive().isPresent();
-        if (passiveStation) {
-            blitSprite(graphics, VillagerGuiTextures.PASSIVE_ABILITY_GROUP, xo + PASSIVE_GROUP_X, yo + PASSIVE_GROUP_Y);
+        // Back to front: badge and stat group sit behind the panel (2026-09-24 redesign), the meters on top of their tiles.
+        if (badge.isPresent()) {
+            blitSprite(graphics, VillagerGuiTextures.BADGE, xo + BADGE_X, yo + BADGE_Y);
         }
-        List<Meter> meters = visibleMeters();
         int tilesX = STAT_GROUP_RIGHT_X - meters.size() * VillagerGuiTextures.STAT_GROUP_MIDDLE.width();
         blitSprite(graphics, VillagerGuiTextures.STAT_GROUP_LEFT, xo + tilesX - VillagerGuiTextures.STAT_GROUP_LEFT.width(), yo + STAT_GROUP_Y);
         for (int i = 0; i < meters.size(); i++) {
@@ -500,26 +479,25 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
         }
         blitSprite(graphics, VillagerGuiTextures.STAT_GROUP_RIGHT, xo + STAT_GROUP_RIGHT_X, yo + STAT_GROUP_Y);
         blitSprite(graphics, VillagerGuiTextures.PANEL, xo + PANEL_X, yo);
-        if (passiveStation) {
-            graphics.text(this.font, "Work", xo + PASSIVE_GROUP_X + 5, yo + PASSIVE_GROUP_Y + 5, TITLE_COLOR, false);
-        }
+        badge.ifPresent(section -> graphics.text(this.font, Component.translatable(section.titleKey()),
+                xo + BADGE_X + 5, yo + BADGE_Y + 5, TITLE_COLOR, false));
 
         drawBar(graphics, VillagerGuiTextures.HAPPINESS_BACKGROUND, VillagerGuiTextures.HAPPINESS_CURRENT,
                 xo + HAPPINESS_BAR_X, xo + HAPPINESS_BAR_X + 2, yo + HAPPINESS_BAR_Y, happinessPercent() / 100.0F);
         for (Meter meter : meters) {
-            drawBar(graphics, meter.background(), meter.fill(), xo + meter.x(), xo + meter.x() + METER_FILL_OFFSET, yo + METER_Y, meterFraction(meter.slot()));
+            drawBar(graphics, meter.sprites().background(), meter.sprites().fill(), xo + meter.x(), xo + meter.x() + METER_FILL_OFFSET, yo + METER_Y, meterFraction(meter));
         }
 
         // Section frames scroll with the list and are clipped to the list viewport.
         int ys = yo - scrollOffset;
         graphics.enableScissor(xo + LIST_X, yo + LIST_TOP, xo + LIST_X + LIST_WIDTH, yo + LIST_TOP + LIST_HEIGHT);
-        for (SectionLayout section : sectionLayouts) {
-            blitSprite(graphics, VillagerGuiTextures.TRADE_GROUP_TOP, xo + LIST_X, ys + section.headerY());
-            for (int i = 0; i < Math.max(section.rowCount(), 1); i++) {
-                blitSprite(graphics, VillagerGuiTextures.TRADE_GROUP_SIDES, xo + LIST_X, ys + section.contentY() + i * ROW_HEIGHT);
+        for (SectionLayout layout : sectionLayouts) {
+            blitSprite(graphics, VillagerGuiTextures.SECTION_TOP, xo + LIST_X, ys + layout.headerY());
+            for (int i = 0; i < Math.max(layout.view().rows(), 1); i++) {
+                blitSprite(graphics, VillagerGuiTextures.SECTION_SIDES, xo + LIST_X, ys + layout.contentY() + i * ROW_HEIGHT);
             }
-            blitSprite(graphics, VillagerGuiTextures.TRADE_GROUP_BOTTOM, xo + LIST_X, ys + section.bottomY());
-            graphics.text(this.font, section.title(), xo + LIST_X + 3, ys + section.headerY() + 3, TITLE_COLOR, false);
+            blitSprite(graphics, VillagerGuiTextures.SECTION_BOTTOM, xo + LIST_X, ys + layout.bottomY());
+            graphics.text(this.font, Component.translatable(layout.section().titleKey()), xo + LIST_X + 3, ys + layout.headerY() + 3, TITLE_COLOR, false);
         }
         graphics.disableScissor();
 
@@ -552,9 +530,9 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             };
             graphics.setTooltipForNextFrame(this.font, tooltip, mouseX, mouseY);
         }
-        for (Meter meter : visibleMeters()) {
-            if (isHovering(meter.x(), METER_Y, meter.background().width(), meter.background().height(), mouseX, mouseY)) {
-                graphics.setTooltipForNextFrame(this.font, meterTooltip(meter.slot()), mouseX, mouseY);
+        for (Meter meter : meters) {
+            if (isHovering(meter.x(), METER_Y, meter.sprites().background().width(), meter.sprites().background().height(), mouseX, mouseY)) {
+                graphics.setTooltipForNextFrame(this.font, meterTooltip(meter), mouseX, mouseY);
             }
         }
         // List widgets and row items are clipped to the list viewport, like the section frames in
@@ -569,7 +547,7 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
 
     private void extractRowItems(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         MerchantOffers offers = menu.getOffers();
-        for (TradeOfferButton button : tradeOfferButtons) {
+        for (OfferRowButton button : rowButtons) {
             if (!button.visible || button.index >= offers.size()) {
                 continue;
             }
@@ -586,22 +564,21 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
                 graphics.itemDecorations(this.font, costB, button.getX() + ROW_SECOND_INPUT_X, itemY);
             }
             Identifier arrow = offer.isOutOfStock() ? TRADE_ARROW_OUT_OF_STOCK_SPRITE : TRADE_ARROW_SPRITE;
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, arrow, button.getX() + button.arrowX(), itemY + 3, 10, 9);
-            ItemStack result = offer.getResult();
-            graphics.fakeItem(result, button.getX() + button.resultX(), itemY);
-            graphics.itemDecorations(this.font, result, button.getX() + button.resultX(), itemY);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, arrow, button.getX() + button.layout.arrowX(), itemY + 3, 10, 9);
+            int baseResultCount = menu.row(button.index).map(RowView::baseResultCount).orElse(offer.getResult().getCount());
+            extractAndDecorateResult(graphics, offer.getResult(), baseResultCount, button.getX() + button.layout.resultX(), itemY);
 
             if (button.isHoveredOrFocused()) {
                 button.extractToolTip(graphics, offer, mouseX, mouseY);
             }
         }
-        rerollButtons.forEach((button, slot) -> {
-            // isHovered, not isMouseOver: Vanilla's isMouseOver is false for an inactive button, and the
-            // cooldown timer is exactly what the inactive button should show. Set while drawing, inside the list scissor.
-            if (button.visible && button.isHovered()) {
-                graphics.setTooltipForNextFrame(this.font, rerollTooltip(slot), mouseX, mouseY);
+        for (SectionClientLogic.RowWidget rowWidget : rowWidgets) {
+            // isHovered, not isMouseOver: Vanilla's isMouseOver is false for an inactive button, and an inactive
+            // widget (a reroll on cooldown) is exactly when its tooltip matters. Set while drawing, inside the list scissor.
+            if (rowWidget.widget().visible && rowWidget.widget().isHovered()) {
+                graphics.setTooltipForNextFrame(this.font, rowWidget.tooltip().get(), mouseX, mouseY);
             }
-        });
+        }
     }
 
     /**
@@ -621,10 +598,27 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
     }
 
     /**
-     * Only next to the XP bar (2026-09-23: not next to every trade_level_button) - see the call in
-     * extractLabels. The empty square always shows; the digit and star only appear once there's
-     * actually an unspent point. Affordable groups additionally get a bobbing arrow at their rank
-     * button (TradeLevelButtonWidget.setShowArrow).
+     * The result, and - when a rank raised its yield (2026-09-28) - the Base count struck through beside the real
+     * one. There is no room right of the result icon (row edge, quest reroll button), so the Base count sits in
+     * the icon's top-right corner, above the real count in its usual place.
+     */
+    private void extractAndDecorateResult(GuiGraphicsExtractor graphics, ItemStack result, int baseCount, int x, int y) {
+        graphics.fakeItem(result, x, y);
+        graphics.itemDecorations(this.font, result, x, y);
+        if (baseCount == result.getCount() || baseCount <= 0) {
+            return;
+        }
+        String base = String.valueOf(baseCount);
+        int textX = x + 19 - 2 - this.font.width(base);
+        int textY = y - 1;
+        graphics.text(this.font, base, textX, textY, 0xFFFFFFFF, true);
+        graphics.fill(textX - 1, textY + 3, textX + this.font.width(base), textY + 4, YIELD_STRIKETHROUGH_COLOR);
+    }
+
+    /**
+     * Only next to the XP bar (2026-09-23: not next to every rank button) - see the call in extractLabels.
+     * The empty square always shows; the digit and star only appear once there's actually an unspent point.
+     * Affordable sections additionally get a bobbing arrow at their rank button (RankButtonWidget.setShowArrow).
      */
     private void drawUnspentPointIndicator(GuiGraphicsExtractor graphics, VillagerState state, int anchorX, int anchorY, int anchorWidth, int anchorHeight) {
         int squareX = anchorX + anchorWidth + 7;
@@ -651,68 +645,38 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
         return VillagerStateAccess.of(villager).getState().happiness().effectivePercent();
     }
 
-    /** A productivity meter in the stat group; x is screen-relative (its background's left edge). */
-    private record Meter(StationSlot slot, VillagerGuiTextures.Sprite background, VillagerGuiTextures.Sprite fill, int x) {
+    /** How full a section's meter is (synced state, size from the server). */
+    private float meterFraction(Meter meter) {
+        int points = VillagerStateAccess.of(villager).getState().productivity().meter(meter.section().id());
+        return Math.min(1.0F, points / (float) meter.view().meterPoints());
     }
 
     /**
-     * The meters of the workplaces the villager owns (2026-09-24), left to right passive, master, basic,
-     * packed against the happiness piece - a missing one lets the ones left of it slide right.
+     * A LIST section: its emptiest row, as stock relative to its max ("Trades restock: 40%"). A BADGE section has
+     * no rows - just how full its meter is.
      */
-    private List<Meter> visibleMeters() {
-        var stations = VillagerStateAccess.of(villager).getState().stations();
-        List<StationSlot> order = List.of(StationSlot.PASSIVE, StationSlot.MASTER, StationSlot.BASIC);
-        List<StationSlot> shown = order.stream().filter(slot -> stations.get(slot).isPresent()).toList();
-        int tilesX = STAT_GROUP_RIGHT_X - shown.size() * VillagerGuiTextures.STAT_GROUP_MIDDLE.width();
-        List<Meter> meters = new ArrayList<>(shown.size());
-        for (int i = 0; i < shown.size(); i++) {
-            StationSlot slot = shown.get(i);
-            int x = tilesX + i * VillagerGuiTextures.STAT_GROUP_MIDDLE.width() + METER_TILE_OFFSET;
-            meters.add(switch (slot) {
-                case PASSIVE -> new Meter(slot, VillagerGuiTextures.PASSIVE_PRODUCTIVITY_BACKGROUND, VillagerGuiTextures.PASSIVE_PRODUCTIVITY_CURRENT, x);
-                case MASTER -> new Meter(slot, VillagerGuiTextures.MASTER_PRODUCTIVITY_BACKGROUND, VillagerGuiTextures.MASTER_PRODUCTIVITY_CURRENT, x);
-                case BASIC -> new Meter(slot, VillagerGuiTextures.BASIC_PRODUCTIVITY_BACKGROUND, VillagerGuiTextures.BASIC_PRODUCTIVITY_CURRENT, x);
-            });
+    private Component meterTooltip(Meter meter) {
+        Component title = Component.translatable(meter.section().titleKey());
+        if (meter.section().display() == SectionDefinition.Display.BADGE) {
+            return Component.translatable("gui.villageroverhaul.meter.progress", title, Math.round(meterFraction(meter) * 100));
         }
-        return meters;
-    }
-
-    /** How full a workplace's productivity meter is; full means its trades refill a step - see RestockService. */
-    private float meterFraction(StationSlot slot) {
-        VillagerState state = VillagerStateAccess.of(villager).getState();
-        int points = state.dailyProductivity().of(slot);
-        return Math.min(1.0F, points / (float) RestockService.meterPoints(villager, slot, state));
-    }
-
-    /** Passive has no trades yet - its tooltip is just how full the meter is. */
-    private Component meterTooltip(StationSlot slot) {
-        return slot == StationSlot.PASSIVE
-                ? Component.translatable("gui.villageroverhaul.meter.passive", Math.round(meterFraction(slot) * 100))
-                : meterTooltip(slot.tier());
-    }
-
-    /**
-     * One line: the category's emptiest trade, as stock relative to its max ("Trade Restock: 40%") -
-     * read from the menu's offers, whose order is quests, basic trades, master trades.
-     */
-    private Component meterTooltip(ItemExchange.Tier tier) {
         MerchantOffers offers = menu.getOffers();
-        int questCount = Math.min(menu.questCount(), offers.size());
-        int basicCount = Math.min(menu.basicCount(), offers.size() - questCount);
-        int from = tier == ItemExchange.Tier.MASTER ? questCount + basicCount : questCount;
-        int to = tier == ItemExchange.Tier.MASTER ? offers.size() : questCount + basicCount;
         int lowestPercent = -1;
-        for (int i = from; i < to; i++) {
-            MerchantOffer offer = offers.get(i);
-            if (offer.getMaxUses() > 0) {
-                int percent = 100 * (offer.getMaxUses() - offer.getUses()) / offer.getMaxUses();
-                lowestPercent = lowestPercent < 0 ? percent : Math.min(lowestPercent, percent);
+        for (SectionLayout layout : sectionLayouts) {
+            if (layout.section() != meter.section()) {
+                continue;
+            }
+            for (int i = layout.firstOffer(); i < layout.firstOffer() + layout.view().rows() && i < offers.size(); i++) {
+                MerchantOffer offer = offers.get(i);
+                if (offer.getMaxUses() > 0) {
+                    int percent = 100 * (offer.getMaxUses() - offer.getUses()) / offer.getMaxUses();
+                    lowestPercent = lowestPercent < 0 ? percent : Math.min(lowestPercent, percent);
+                }
             }
         }
-        String key = "gui.villageroverhaul.meter." + (tier == ItemExchange.Tier.MASTER ? "master" : "basic");
         return lowestPercent < 0
-                ? Component.translatable(key + ".none")
-                : Component.translatable(key, lowestPercent);
+                ? Component.translatable("gui.villageroverhaul.meter.restock.none", title)
+                : Component.translatable("gui.villageroverhaul.meter.restock", title, lowestPercent);
     }
 
     private void drawBar(GuiGraphicsExtractor graphics, VillagerGuiTextures.Sprite background, VillagerGuiTextures.Sprite fill, int bgX, int fillX, int topY, float fraction) {
@@ -731,16 +695,18 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
     }
 
     /** MerchantScreen.TradeOfferButton - a plain Vanilla button per row, bound to one offer index. */
-    private class TradeOfferButton extends Button.Plain {
+    private class OfferRowButton extends Button.Plain {
         final int index;
+        final SectionClientLogic layout;
 
-        TradeOfferButton(int x, int y, int index) {
+        OfferRowButton(int x, int y, int index, SectionClientLogic layout) {
             super(x, y, ROW_BUTTON_WIDTH, ROW_BUTTON_HEIGHT, CommonComponents.EMPTY, button -> {
                 if (!isEmptyRow(index)) {
                     selectOffer(index);
                 }
             }, DEFAULT_NARRATION);
             this.index = index;
+            this.layout = layout;
         }
 
         @Override
@@ -748,28 +714,16 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             return super.isMouseOver(mouseX, mouseY) && isInListViewport(mouseX, mouseY);
         }
 
-        private boolean isQuestRow() {
-            return index < menu.questCount();
-        }
-
-        int arrowX() {
-            return isQuestRow() ? QUEST_ROW_ARROW_X : ROW_ARROW_X;
-        }
-
-        int resultX() {
-            return isQuestRow() ? QUEST_ROW_RESULT_X : ROW_RESULT_X;
-        }
-
         /**
          * Which item icon a horizontal position falls on: costA (+discount count), costB, result - or null
-         * (arrow, empty costB, a quest row's reroll button).
+         * (arrow, empty costB, a row widget).
          */
         VillagerMenu.OfferItem itemAt(MerchantOffer offer, double mouseX) {
-            if (mouseX < this.getX() + Math.min(ROW_SECOND_INPUT_X, arrowX()) - 2) {
+            if (mouseX < this.getX() + Math.min(ROW_SECOND_INPUT_X, layout.arrowX()) - 2) {
                 return VillagerMenu.OfferItem.COST_A;
-            } else if (mouseX < this.getX() + arrowX()) {
+            } else if (mouseX < this.getX() + layout.arrowX()) {
                 return offer.getCostB().isEmpty() ? null : VillagerMenu.OfferItem.COST_B;
-            } else if (mouseX >= this.getX() + resultX() - 2 && mouseX < this.getX() + resultX() + 16) {
+            } else if (mouseX >= this.getX() + layout.resultX() - 2 && mouseX < this.getX() + layout.resultX() + 16) {
                 return VillagerMenu.OfferItem.RESULT;
             }
             return null;

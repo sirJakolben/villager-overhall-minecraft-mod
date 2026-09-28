@@ -24,7 +24,7 @@ Umbau umgesetzt 2026-09-27: Dateien `veteran_*`, Code `veteran/`; Vorlage + Repa
 | 3 | Ozeanmonument | 1 → 1 Diamant | 1 Herausforderungskarte | 1 → 1 | 1 → 1 |
 | 4 | Antike Stadt | 1 → 1 Diamant | 1 Herausforderungskarte | 1 → 1 | 1 → 1 |
 
-## Quests — `.../quest/veteran_*.json` (alle Werte 1)
+## Quests — `.../exchange/veteran_*.json` (Sektion `vo_trade_rework:quests`) (alle Werte 1)
 - Easy: Zombie-, Wüstenzombie-Waffe (Eisenschwert/-schaufel), Skelett-, Eiswanderer-, Sumpfskelett-Bogen, Plünderer-Armbrust
 - Hard: Piglin-Waffe (Goldschwert/Armbrust), Piglin-Barbar-Goldaxt, Witherskelett-Steinschwert, Diener-Eisenaxt, Ertrunkener-Dreizack, Totem der Unsterblichkeit (normales Item)
 - keine Dauer-Quest: ab Quest-Rang 6 ein zweiter Hard-Platz (2026-09-27), Tageslimit auf Rang 9: 10 statt 7 (+3)

@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
  * Smith's repair station), laid out like a one-row chest (Vanilla's generic_54 texture, ChestMenu
  * positions): input on the left of the row, output on the right, an arrow in between
  * (client/ui/ThreeInThreeOutScreen). Input slots take what the station's container accepts
- * (canPlaceItem - checked on the server), output slots nothing. Each station registers its own menu type
+ * (canPlaceItem - checked on the server), output slots likewise (the crushing station takes anything there, the others nothing). Each station registers its own menu type
  * with this class (client/ui/ModMenuTypes).
  */
 public class ThreeInThreeOutMenu extends AbstractContainerMenu {

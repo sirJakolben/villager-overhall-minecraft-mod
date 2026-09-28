@@ -94,33 +94,10 @@ Festgelegt 2026-09-26 beim Planen von Mason und Schmieden. Leitfrage für jeden 
 
 Festgelegt 2026-09-28. Das Projekt besteht aus zwei Mods in einem Gradle-Projekt:
 
-- **Villager Overhaul** (Kern, `core/`, `villageroverhaul`): alles, was für jeden Villager gleich funktioniert – Leveln durch Arbeit, Upgrade-Gruppen, Handelsfenster, Quests, Restock, Glücklichkeit, Arbeitsplätze, Claim, Handelsblock, Beruf wird fest. Jeder Beruf läuft hier nach der Nicht-Implementierungsregel.
-- **Villager Overhaul: Trade Rework** (Extension, `trade-rework/`, `vo_trade_rework`): alle eigenen Berufe mit Trades, Quests, Items, Blöcken, Master- und Passive-Stationen und allem, was nur ein Beruf braucht (Mob-Waffen, Karten, Polster …).
-- **Richtung der Abhängigkeit:** Die Extension kennt den Kern, der Kern nie die Extension. Braucht der Kern an einer Stelle Berufswissen, bekommt er einen neutralen Haken in `api/ExtensionHooks`, den die Extension füllt – kein Import aus der Extension im Kern.
+- **Villager Overhaul** (Kern, `core/`, `villageroverhaul`): alles, was für jeden Villager gleich funktioniert – Leveln durch Arbeit, Sektionen mit Rängen und Leisten, Handelsfenster, Restock, Glücklichkeit, Arbeitsplätze, Claim, Handelsblock, Beruf wird fest. Ohne eigene Einträge läuft jeder Beruf mit seinen Vanilla-Trades (oder denen seiner Mod): Smaragd-Trades in der Sektion Quests, der Rest in Trades, beide restocken normal (README, „Vanilla-Trades“).
+- **Villager Overhaul: Trade Rework** (Extension, `trade-rework/`, `vo_trade_rework`): eigene Sektionen (Quests mit Rotation und Tageslimit, Masteries, Passive) und alle eigenen Berufe mit Einträgen, Items, Blöcken, Stationen und allem, was nur ein Beruf braucht (Mob-Waffen, Karten, Polster …).
+- **Richtung der Abhängigkeit:** Die Extension kennt den Kern, der Kern nie die Extension. Die Extension hängt sich über `api/` ein: Sektionen und Stationen registrieren (`ExtensionHooks.registerSection` / `registerStation`), eigenes Verhalten als `SectionLogic`; der Kern registriert seine eigenen Sektionen auf demselben Weg. Braucht der Kern sonst Berufswissen, bekommt er einen neutralen Haken in `api/ExtensionHooks` – kein Import aus der Extension im Kern.
 - **Neue Arbeit einordnen:** Gilt es für jeden Villager (auch für Farmer und Berufe fremder Mods)? → Kern. Gehört es zu einem Beruf, den wir designen? → Extension.
-
----
-
-## Nicht-Implementierungsregel (Mod-Kompatibilität)
-
-Festgelegt 2026-09-27. Gilt **immer** für jeden Beruf, den wir nicht selbst gebaut haben – Vanilla-Berufe ohne eigenes Design (Farmer, Fischer, Schäfer, Pfeilmacher, Kleriker, Metzger, Gerber) und jeden Beruf aus anderen Mods. Erkannt daran: keine eigenen Stationen (`ProfessionStations`, befüllt von der Extension), keine eigenen Trade- oder Quest-Dateien, aber Vanilla-Trade-Sets. Ohne die Extension Trade Rework gilt das für **jeden** Beruf – genau das ist die Basis-Mod. Sobald ein Beruf eigene Dateien bekommt, gilt wieder unser normales System.
-
-- Grundlage sind **alle** Vanilla-Trades des Berufs (Level 1–5, der ganze Pool, nicht Vanillas Zufallsauswahl), in Vanilla-Reihenfolge; Biom-Einschränkungen von Vanilla gelten weiter
-- Gibt es einen Trade in **mehr als drei Farbvarianten** (16 Wollfarben …), bleibt pro Villager eine zufällige davon
-- **Trades, die Smaragde geben → Quests**, alle als Dauer-Quests: kein Rotieren, kein Reroll, grau beim Tageslimit
-- Der Rest: die **letzten (bis zu) vier → Masteries**, alle anderen → **Basic Trades**; Masteries werden von hinten aufgefüllt
-- **Jedes Upgrade schaltet genau den nächsten Eintrag frei** (Quest- und Basic-Rang 0 = der erste, Master-Rang 1 = die erste Mastery); **keine Level-Caps**: der Rang geht so weit, wie es Einträge gibt – theoretisch ist alles erreichbar
-- **Danach 4 Preis-Upgrades pro Gruppe** (Stufe 0 gilt schon beim Freischalten, jedes Extra-Upgrade eine Stufe weiter, immer aufgerundet):
-  - Quests: verlangte Menge 120 → 100 → 80 → 60 → 30 % von Vanilla
-  - Trades mit **nicht stapelbarem** Ergebnis: Smaragd-Preis 200 → 150 → 100 → 80 → 50 %; erst auf der letzten Stufe: bei 2 Smaragden oder weniger → 1
-  - Trades mit **stapelbarem** Ergebnis: Menge 50 → 70 → 90 → 120 → 150 %, höchstens ein voller Stapel
-  - **Max-Bestand** jedes Trades (Restock-Obergrenze): 50 % von Vanilla auf Stufe 0, gleichmäßig bis 300 % auf Stufe 4 (50 → 112,5 → 175 → 237,5 → 300 %, aufgerundet)
-- Preise, Mengen, Bestand und Ergebnis (Verzauberungen, Farben …) kommen **aus Vanilla** (Grundlage der Preis-Stufen), einmal pro Villager gewürfelt und stabil
-- Der Vanilla-Arbeitsblock ist die Basic-Station; **Masteries sind immer sichtbar**, obwohl es keine Master-Station gibt; **Passive ist immer ausgeblendet**
-- **Punkte-Preise: eine gemeinsame Linie** über alles Kaufbare (Quest-, Basic- und Master-Ränge inkl. Preis-Upgrades): das erste Upgrade kostet 1, das allerletzte 5, dazwischen linear und gerundet; jedes Upgrade in egal welcher Gruppe geht einen Schritt weiter (2026-09-27)
-  - **Keine Level-Grenze** (2026-09-27): nicht implementierte Berufe steigen über Level 20 hinaus (ein Punkt pro Level), bis alles gekauft ist – Farmer braucht 72 Punkte, also bis Level 72; über Level 20 kostet jedes Level so viel wie der Schritt 19 → 20 (3 649 XP), die Kurve wächst nicht weiter
-- Leveln, Glück, Restock und Tageslimit laufen wie bei allen Villagern
-- Code: `fallback/FallbackCatalog.java`, `fallback/RankCaps.java`
 
 ---
 
@@ -128,7 +105,7 @@ Festgelegt 2026-09-27. Gilt **immer** für jeden Beruf, den wir nicht selbst geb
 
 Profession-Dateien liegen **nicht im Mod-Repo**, sondern im Obsidian-Vault des Nutzers: `C:\Users\(09) Obsidian\(03) Jakobs Vault\Jakobs Vault\Improved Villagers\<Profession>.md` (z. B. `Librarian.md`). Dort bestimmt der Nutzer die Werte, deshalb vor jeder Arbeit an einer Profession die aktuelle Fassung dort lesen, nicht aus dem Gedächtnis übernehmen. Neue Professionen bekommen dort ihre eigene Datei nach dem Muster von `Librarian.md`.
 
-Jede Profession-Datei enthält für **jeden** Trade und jede Quest eine Tabellenzeile mit Base-Werten (Rang 0) und Max-Werten (maximaler Gruppen-Rang) für Preis, Output und – bei Trades – Stock (Restock-Maximum). Diese Tabellen sind die maßgebliche Quelle: Ihre Werte werden 1:1 in die Datapack-Dateien übertragen, und bei einer Änderung in der Tabelle wird die Datapack-Datei nachgezogen. **Fehlt ein Wert, gilt 1.**
+Jede Profession-Datei enthält für **jeden** Trade und jede Quest eine Tabellenzeile mit Base-Werten (Rang 0) und Max-Werten (maximaler Rang der Sektion) für Preis, Output und – bei Trades – Stock (Restock-Maximum). Diese Tabellen sind die maßgebliche Quelle: Ihre Werte werden 1:1 in die Datapack-Dateien übertragen, und bei einer Änderung in der Tabelle wird die Datapack-Datei nachgezogen. **Fehlt ein Wert, gilt 1.**
 
 ---
 

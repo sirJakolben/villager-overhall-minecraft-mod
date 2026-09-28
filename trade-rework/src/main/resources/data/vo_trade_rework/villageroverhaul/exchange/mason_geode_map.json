@@ -1,0 +1,19 @@
+{
+  "profession": "minecraft:mason",
+  "section": "villageroverhaul:trades",
+  "unlock_rank": 6,
+  "base_input": { "item": "minecraft:emerald", "count": 1 },
+  "max_input": { "item": "minecraft:emerald", "count": 1 },
+  "second_input": { "item": "vo_trade_rework:adventure_map", "count": 1 },
+  "base_output": { "item": "minecraft:filled_map", "count": 1 },
+  "max_output": { "item": "minecraft:filled_map", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1,
+  "extensions": {
+    "vo_trade_rework:explorer_map": {
+      "feature": "minecraft:amethyst_geode",
+      "decoration": "minecraft:red_x",
+      "name": "filled_map.vo_trade_rework.amethyst_geode"
+    }
+  }
+}

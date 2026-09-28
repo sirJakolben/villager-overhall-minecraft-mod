@@ -41,9 +41,9 @@ public class RockPileBlock extends Block {
      */
     private static final VoxelShape[] ROCK_BOXES = {
             Block.box(5, 0, 2, 9, 3, 7),
-            Shapes.or(Block.box(8, 0, 0, 11, 2, 3), Block.box(1, 0, 7, 3, 2, 9)),
-            Block.box(3, 0, 8, 9, 5, 14),
-            Shapes.or(Block.box(8, 0, 4, 16, 8, 13), Block.box(12, 0, 12, 15, 2, 15))
+            Shapes.or(Block.box(8, 0, 0, 11, 2, 3), Block.box(1, 0, 9, 3, 2, 11)),
+            Block.box(3, 0, 10, 9, 5, 16),
+            Block.box(8, 0, 4, 16, 8, 13)
     };
     @SuppressWarnings("unchecked")
     private static final Map<Direction, VoxelShape>[] SHAPES = new Map[MAX_ROCKS];

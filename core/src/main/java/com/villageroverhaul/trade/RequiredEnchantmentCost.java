@@ -1,8 +1,8 @@
 package com.villageroverhaul.trade;
 
 import com.villageroverhaul.VillagerOverhaulMod;
-import com.villageroverhaul.data.ItemAmount;
 import com.villageroverhaul.api.ExtensionHooks;
+import com.villageroverhaul.data.ItemAmount;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentExactPredicate;

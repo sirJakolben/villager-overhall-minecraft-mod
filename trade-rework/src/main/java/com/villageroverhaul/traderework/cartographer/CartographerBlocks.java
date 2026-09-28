@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * The Cartographer's station (Obsidian Cartographer.md, 2026-09-27), placeholder model and texture for now.
- * A Cartographer job site like the cartography table (claim/ProfessionStations) that opens the Masteries -
+ * A Cartographer job site like the cartography table (TradeReworkSections, core station/ProfessionStations) that opens the Masteries -
  * the village maps. No passive station yet.
  */
 public final class CartographerBlocks {

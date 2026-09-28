@@ -23,7 +23,7 @@ Vorlage, Upgradestation und Reparaturstation im Code seit dem Umbau 2026-09-27 (
 | Diamant | Diamantblock | Eisen → Diamant |
 - Haltbarkeit + Polster werden prozentual übernommen
 
-## Quests — `.../quest/runesmith_*.json`
+## Quests — `.../exchange/runesmith_*.json` (Sektion `vo_trade_rework:quests`)
 - Dauer: Eisenbarren (vom Veteran übernommen, alle Werte 1); Easy + Hard offen
 
 ## Reparaturstation (Passive) — `runesmith/RepairStationBlockEntity.java`, `passive/RepairWork.java`

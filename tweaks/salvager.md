@@ -33,5 +33,8 @@ Zwilling von Obsidian `Salvager.md`, kompakt. Im Code: Basic 0, 1, 4, 5, 6 und d
 | Ausbeute | Rezeptmenge × Rang-Anteil × Zustand, abgerundet, min. 1 |
 | Rezeptmengen | Helm 5, Brust 8, Hose 7, Stiefel 4, Schwert 2, Spitzhacke 3, Axt 3, Schaufel 1, Hacke 2, Speer 1 |
 | Kette | 2 × Rezeptmenge als Eisen-Nuggets (Brustpanzer 16) |
-| Netherite | Diamant-Teil (behält alles, Haltbarkeit anteilig) + Scraps, volle Menge 4 |
+| Netherite | Diamant-Teil (behält alles, Haltbarkeit anteilig; bleibt im Input-Slot) + Scraps in den Output, volle Menge 4 |
 | Geräusch beim Füllen | Hochofen-Knistern alle 20 Ticks, Lautstärke 0,6 |
+| Licht beim Arbeiten | 13, sonst 0 (`SmeltingStationBlock.WORKING_LIGHT`); Metall im Tiegel leuchtet voll hell |
+| Lava-Blasen beim Arbeiten | 1 von 5 Animations-Ticks (`SmeltingStationBlock.BUBBLE_CHANCE`), Rate wie Lagerfeuer; je Blase Partikel + Lava-Plopp (Lautstärke 0,2–0,4) |
+| Lava-Blasen: Flugweite / Größe | 40 % der Vanilla-Weite (`MoltenBubbleParticle.FLIGHT_SHARE`); Größe 0,2–1,6 statt 0,2–2,2 (`MAX_SIZE_FACTOR`) |

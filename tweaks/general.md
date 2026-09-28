@@ -6,57 +6,61 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 ## Level & XP — `progression/ProgressionService.java`
 | Wert | Aktuell |
 |---|---|
-| Maximallevel | 20 |
-| XP für Level L → L+1 | 400 + 9 × L² (400 … 3649) |
+| Maximallevel | keins (alle Berufe, seit 2026-09-28) |
+| XP für Level L → L+1 | 400 + 9 × L² (400 … 3649), ab Level 20 konstant 3649 |
 | Punkte-Puffer (Leveln stoppt) | 5 |
-| Level pro Titelstufe | 4 |
+| Level pro Titelstufe | 5 |
 
-## Upgrade-Gruppen — `progression/UpgradeGroup.java`
-| Gruppe | Kosten je Rang | Max-Rang | alles frei ab |
-|---|---|---|---|
-| Quests | 1,1,1,2,2,2,3,3,5 | 9 | Rang 6 |
-| Basic Trades | 1,1,1,2,2,2,3,3,5 | 9 | Rang 6 |
-| Master Trades | 2,2,2,3,3,3,5 | 7 | Rang 4 |
-| Passive | 3,3,3,3,3,5 | 6 | Rang 3 |
-- Bis „alles frei“: Werte auf Base · danach linear bis Max (Preis als Vanilla-Rabatt) · Workstations auf Basic-Rang 4
+## Sektionen (Upgrade-Kosten je Sektion)
+| Sektion | Kosten je Rang | Max-Rang | alles frei ab | Code |
+|---|---|---|---|---|
+| Quests (Kern) | 1,1,1,2,2,2,3,3,5 | 9 | Rang 6 | `section/CoreSections.java` |
+| Trades (Kern) | 1,1,1,2,2,2,3,3,5 | 9 | Rang 6 | `section/CoreSections.java` |
+| Quests (Extension) | 1,1,1,2,2,2,3,3,5 | 9 | Rang 6 | `TradeReworkSections.java` |
+| Masteries (Extension) | 2,2,2,3,3,3,5 | 7 | Rang 4 | `TradeReworkSections.java` |
+| Passive (Extension) | 3,3,3,3,3,5 | 6 | Rang 3 | `TradeReworkSections.java` |
+- Bis „alles frei“: Werte auf Base · danach linear bis Max (Preis als Vanilla-Rabatt) · Workstations auf Trades-Rang 4
+- Berufe mit Vanilla-Trades (`vanilla/`): statt der Tabelle eine gemeinsame Kostenlinie 1 → 5 über alle Ränge, je Sektion letzter Freischalt-Rang + 4 Preis-Stufen
 
-## Arbeit — `freedom/VillagerWorkScan.java`
+## Arbeit — `work/VillagerWorkScan.java`
 | Wert | Aktuell |
 |---|---|
-| Scan-Intervall | 100 Ticks (+ Leisten-Zwischenbuchung nach 50 Ticks: halbe Punkte + Passive-Schritt) |
+| Scan-Intervall | 100 Ticks (+ Leisten-Zwischenbuchung nach 50 Ticks: halbe Punkte + eigene Arbeit der Sektionen) |
 | Arbeits-XP pro Scan | 10 × (1 + 2 × Glück) → 10 … 30 |
-| Arbeits-Radius | 3 Blöcke |
+| Arbeits-Radius | 10 Blöcke (wie Vanilla-Arbeitsbereich) |
+| Arbeitszeit (Tagesablauf, `data/minecraft/timeline/villager_schedule.json`) | Tick 1400–9600 (Vanilla 2000–9000) |
 | Glocke / Begleiter-Radius | 8 / 8 Blöcke |
 
-## Stationen — `claim/`
+## Stationen — `station/`
 | Wert | Aktuell | Code |
 |---|---|---|
 | Suche + Vorrang Arbeitslose | 48 Blöcke | `UnemployedPriority.RADIUS` |
 | Ankunft an Station | 1,73 Blöcke | `WorkAtStation.ARRIVED_DISTANCE` |
 | Arbeitsgeräusch | 300–600 Ticks | `WorkAtStation.WORK_SOUND_INTERVAL` |
 
-## Glücklichkeit — `freedom/HappinessCalculator.java`
+## Glücklichkeit — `happiness/HappinessCalculator.java`
 | Element | Anteil | Timer |
 |---|---|---|
 | Bett | 30 % | 2 Tage |
 | Dorfzentrum (Glocke) | 20 % | 2 Tage |
 | Villager-Kontakt | 20 + 10 + 10 % | je 3 Tage |
 | Begleiter (Tag `happiness_companions`) | 10 + 10 % | je 3 Tage |
+| Extension-Elemente (`api/HappinessElement`): Dorfbewohner-Statue ≤ 8 Blöcke | 10 % | 2 Tage |
 - Je Element auf 5 % aufgerundet, Summe max. 100 % · Angst → 0 %, Held des Dorfes → 100 % (vorübergehend)
 
-## Handel & Restock — `trade/RestockService.java`
+## Handel & Restock — `work/RestockService.java`
 | Wert | Aktuell |
 |---|---|
 | Startbestand neuer Trade | 50 % (aufgerundet) |
 | Nachschub pro volle Leiste | +25 % vom Max, mind. +1 |
 | Arbeits-Checks pro vollem Tag | 60 |
-| Leistengröße (Trades) | 1500 Punkte |
+| Leistengröße (jede Listen-Sektion, eine Leiste pro Sektion) | 1500 Punkte |
 | Punkte pro Check | 50 (0 % Glück) … 100 (100 %) |
 | Freigabe voller Leiste nach Trade | 40 Ticks |
-| Passiv-Leiste nach Passiv-Rang 0–6 | Librarian 6000 · 6000 · 6000 · 6000 · 3000 · 2000 · 1500 (= 1,1,1,1,2,3,4 Upgrades/Tag, `BookUpgradeWork`) · Mason 750 … 187 (= 8 … 32 Batches/Tag, `CrushingWork`) · Beruf ohne Passive 6000 (= 1 Schritt/Tag, `PassiveWork.NO_PASSIVE_STEPS_PER_DAY`, Kern); Weiche `PassiveWork.stepsPerDay` fragt die Extension |
-- Fokus: größte Lücke → leerste Leiste → höchster Rang (Buch-Upgrade fällig hat Vorrang) · Ruf-Rabatt/Nachfrage aus · Held-Rabatt Vanilla
+| Passiv-Leiste nach Passiv-Rang 0–6 | Librarian 6000 · 6000 · 6000 · 6000 · 3000 · 2000 · 1500 (= 1,1,1,1,2,3,4 Upgrades/Tag, `BookUpgradeWork`) · Mason 750 … 187 (= 8 … 32 Batches/Tag, `CrushingWork`) (Extension, `passive/PassiveLogic.meterPoints`) |
+- Fokus (`station/StationFocus.choose`, zwischen Sektionen): fällige Arbeit (Passive) → größte Lücke → leerste Leiste → höchster Rang · Sektionen an derselben Station füllen ihre Leisten gemeinsam · Ruf-Rabatt/Nachfrage aus · Held-Rabatt Vanilla
 
-## Quests — `quest/QuestSlots.java`, `quest/QuestActions.java`
+## Quests (Extension) — `quest/QuestSlots.java`, `quest/QuestLogic.java`
 | Wert | Aktuell |
 |---|---|
 | 2. Easy-Platz / Hard-Platz / Dauer-Quest ab Rang | 3 / 5 / 6 |
@@ -64,7 +68,7 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 | Pause bis nächste Quest | 40 Ticks |
 | Reroll-Wartezeit | 5 Tage (Rang 0) → 1 Tag (Max-Rang) |
 
-## Claim & Handelsblock — `claim/`
+## Claim & Handelsblock — `station/`
 | Wert | Aktuell |
 |---|---|
 | Claim-Zeitfenster | 600 Ticks |
@@ -74,7 +78,13 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 | Besuch: Wartezeit / Abbruch / angekommen ab | 100 / 1200 Ticks / 2,5 Blöcke |
 | Handelsblock max. Abstand zum Arbeitsplatz | 48 Blöcke |
 
-## Debug — `core/DebugCommands.java`
+## Debug — `debug/DebugCommands.java`
 | Wert | Aktuell |
 |---|---|
 | Reichweite / Ziel-Toleranz / Ziel-Kegel | 20 Blöcke / 0,5 / 6° |
+
+## Heilen & Brauen — `world/`
+| Wert | Aktuell |
+|---|---|
+| Natürlicher Zombie wird Zombie-Villager | 20 % (Vanilla: Zombie 95 : Zombie-Villager 5 → ~24 % statt 5 %) |
+| Lohenstaub in Dorf-Brauständen (nur neu generierte Chunks) | 1–3 |
