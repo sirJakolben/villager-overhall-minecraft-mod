@@ -1,6 +1,5 @@
 package com.villageroverhaul.traderework;
 
-import com.villageroverhaul.VillagerOverhaulMod;
 import com.villageroverhaul.api.ExtensionHooks;
 import com.villageroverhaul.api.SectionDefinition;
 import com.villageroverhaul.api.StationDefinition;
@@ -61,7 +60,7 @@ public final class TradeReworkSections {
     public static final SectionDefinition MASTERIES = SectionDefinition.builder(id("masteries"))
             .order(2)
             .station(MASTER_STATION)
-            .meter(Identifier.fromNamespaceAndPath(VillagerOverhaulMod.MODID, "master_productivity"))
+            .meter(id("master_productivity"))
             .upgradeCosts(List.of(2, 2, 2, 3, 3, 3, 5), 4)
             .build();
 
@@ -69,7 +68,7 @@ public final class TradeReworkSections {
             .order(3)
             .badge()
             .station(PASSIVE_STATION)
-            .meter(Identifier.fromNamespaceAndPath(VillagerOverhaulMod.MODID, "passive_productivity"))
+            .meter(id("passive_productivity"))
             .upgradeCosts(List.of(3, 3, 3, 3, 3, 5), 3)
             .logic(new PassiveLogic(Map.of(
                     VillagerProfession.LIBRARIAN, new BookUpgradeWork(),

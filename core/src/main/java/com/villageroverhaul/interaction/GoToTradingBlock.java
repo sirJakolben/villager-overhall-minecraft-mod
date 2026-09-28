@@ -1,4 +1,4 @@
-package com.villageroverhaul.station;
+package com.villageroverhaul.interaction;
 
 import com.google.common.collect.ImmutableMap;
 import com.villageroverhaul.state.VillagerStateAccess;

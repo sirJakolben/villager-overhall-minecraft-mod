@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Pair;
-import com.villageroverhaul.station.GoToTradingBlock;
+import com.villageroverhaul.interaction.GoToTradingBlock;
 import com.villageroverhaul.station.PausedAtStation;
 import com.villageroverhaul.station.UnemployedPriority;
 import com.villageroverhaul.station.WorkAtStation;

@@ -1,4 +1,4 @@
-package com.villageroverhaul.station;
+package com.villageroverhaul.interaction;
 
 import com.villageroverhaul.VillagerOverhaulMod;
 import net.minecraft.world.item.BlockItem;

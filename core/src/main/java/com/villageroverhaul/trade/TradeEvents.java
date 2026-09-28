@@ -1,8 +1,8 @@
 package com.villageroverhaul.trade;
 
 import com.villageroverhaul.VillagerOverhaulMod;
+import com.villageroverhaul.progression.ProfessionLock;
 import com.villageroverhaul.state.VillagerStateAccess;
-import com.villageroverhaul.station.ProfessionLock;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

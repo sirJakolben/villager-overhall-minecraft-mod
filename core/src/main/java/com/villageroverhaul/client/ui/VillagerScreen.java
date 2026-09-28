@@ -197,8 +197,11 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             }
             SectionDefinition section = definition.get();
             if (section.display() == SectionDefinition.Display.BADGE) {
-                badgeSection = definition;
-                addRankButton(section, view, leftPos + BADGE_BUTTON_X, topPos + BADGE_BUTTON_Y, state, false);
+                // One badge fits the screen: the first BADGE section by order (SectionDefinition.display).
+                if (badgeSection.isEmpty()) {
+                    badgeSection = definition;
+                    addRankButton(section, view, leftPos + BADGE_BUTTON_X, topPos + BADGE_BUTTON_Y, state, false);
+                }
             } else {
                 int contentY = y + VillagerGuiTextures.SECTION_TOP.height();
                 int bottomY = contentY + ROW_TOP_BORDER + Math.max(view.rows(), 1) * ROW_HEIGHT;

@@ -14,8 +14,9 @@ import java.util.Optional;
  * its own. Build one with builder(id).
  *
  * - order: position in the screen, lowest first; meters are drawn in the same order, right to left.
- * - display: LIST is a group of rows in the scrolling list; BADGE is the single badge at the top left (a
- *   section without rows, like a passive) - at most one BADGE section may be registered.
+ * - display: LIST is a group of rows in the scrolling list; BADGE is the badge at the top left (a section
+ *   without rows, like a passive). Only one badge fits the screen: a villager with several BADGE sections shows
+ *   the first by order, the others keep their meter but no badge - so give each profession at most one.
  * - station: where the villager works on this section - its meter fills there, and the section opens once the
  *   villager owns that station (see section/VillagerSections). Empty: always open, meter never fills.
  * - meterVisible / meterSprite: whether the meter shows in the screen, and its art - the textures

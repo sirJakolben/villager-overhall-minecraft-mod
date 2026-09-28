@@ -1,4 +1,4 @@
-package com.villageroverhaul.station;
+package com.villageroverhaul.interaction;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

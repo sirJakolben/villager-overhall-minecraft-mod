@@ -1,10 +1,10 @@
 package com.villageroverhaul;
 
 import com.mojang.logging.LogUtils;
+import com.villageroverhaul.interaction.TradingBlocks;
 import com.villageroverhaul.menu.ModMenuTypes;
 import com.villageroverhaul.section.CoreSections;
 import com.villageroverhaul.state.ModAttachments;
-import com.villageroverhaul.station.TradingBlocks;
 import com.villageroverhaul.trade.MissingTrade;
 import com.villageroverhaul.trade.RequiredEnchantmentCost;
 import net.neoforged.bus.api.IEventBus;

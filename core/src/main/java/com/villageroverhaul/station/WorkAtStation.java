@@ -1,6 +1,7 @@
 package com.villageroverhaul.station;
 
 import com.google.common.collect.ImmutableMap;
+import com.villageroverhaul.interaction.TradingBlockCall;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;

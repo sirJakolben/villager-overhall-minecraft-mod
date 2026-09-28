@@ -1,6 +1,6 @@
 package com.villageroverhaul.state;
 
-import com.villageroverhaul.station.ProfessionLock;
+import com.villageroverhaul.progression.ProfessionLock;
 import com.villageroverhaul.trade.VillagerOffers;
 import net.minecraft.world.entity.npc.villager.Villager;
 

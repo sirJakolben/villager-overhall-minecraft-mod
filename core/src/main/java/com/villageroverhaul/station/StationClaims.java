@@ -2,6 +2,8 @@ package com.villageroverhaul.station;
 
 import com.mojang.datafixers.util.Pair;
 import com.villageroverhaul.VillagerOverhaulMod;
+import com.villageroverhaul.interaction.TradingBlockCall;
+import com.villageroverhaul.interaction.TradingBlocks;
 import com.villageroverhaul.section.Sections;
 import com.villageroverhaul.state.Stations;
 import com.villageroverhaul.state.VillagerState;

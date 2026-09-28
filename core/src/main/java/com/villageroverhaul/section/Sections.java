@@ -30,10 +30,6 @@ public final class Sections {
     }
 
     public static void register(SectionDefinition section) {
-        if (section.display() == SectionDefinition.Display.BADGE
-                && SECTIONS.values().stream().anyMatch(other -> other.display() == SectionDefinition.Display.BADGE)) {
-            throw new IllegalStateException("Only one BADGE section fits the screen - " + section.id() + " is the second");
-        }
         if (SECTIONS.putIfAbsent(section.id(), section) != null) {
             throw new IllegalStateException("Section registered twice: " + section.id());
         }

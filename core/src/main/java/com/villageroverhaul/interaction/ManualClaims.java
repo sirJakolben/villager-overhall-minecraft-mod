@@ -1,8 +1,11 @@
-package com.villageroverhaul.station;
+package com.villageroverhaul.interaction;
 
+import com.villageroverhaul.progression.ProfessionLock;
 import com.villageroverhaul.state.Stations;
 import com.villageroverhaul.state.VillagerState;
 import com.villageroverhaul.state.VillagerStateAccess;
+import com.villageroverhaul.station.ProfessionStations;
+import com.villageroverhaul.station.StationClaims;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;

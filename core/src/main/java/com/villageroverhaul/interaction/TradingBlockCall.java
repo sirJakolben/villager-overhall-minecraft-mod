@@ -1,4 +1,4 @@
-package com.villageroverhaul.station;
+package com.villageroverhaul.interaction;
 
 import com.villageroverhaul.state.VillagerState;
 import com.villageroverhaul.state.VillagerStateAccess;

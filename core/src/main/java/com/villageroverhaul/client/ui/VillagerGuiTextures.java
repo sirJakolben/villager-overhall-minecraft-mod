@@ -33,8 +33,8 @@ public final class VillagerGuiTextures {
     }
 
     public static final Sprite PANEL = Sprite.core("villager_gui", 278, 166);
-    /** Backdrop of the BADGE section at the top left. */
-    public static final Sprite BADGE = Sprite.core("passive_ability_group", 56, 67);
+    /** Backdrop of the BADGE section at the top left - a neutral frame (pxo layer "passive_ability_group"). */
+    public static final Sprite BADGE = Sprite.core("badge_frame", 56, 67);
     // The meter backdrop behind the panel: left cap, one middle tile per visible meter, right piece holding happiness.
     public static final Sprite STAT_GROUP_LEFT = Sprite.core("stat_group_left", 4, 90);
     public static final Sprite STAT_GROUP_MIDDLE = Sprite.core("stat_group_middle", 13, 90);

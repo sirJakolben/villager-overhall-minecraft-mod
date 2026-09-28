@@ -1,4 +1,4 @@
-package com.villageroverhaul.station;
+package com.villageroverhaul.interaction;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;

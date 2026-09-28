@@ -1,4 +1,4 @@
-package com.villageroverhaul.station;
+package com.villageroverhaul.progression;
 
 import net.minecraft.world.entity.npc.villager.Villager;
 

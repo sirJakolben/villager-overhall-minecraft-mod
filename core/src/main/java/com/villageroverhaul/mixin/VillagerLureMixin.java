@@ -2,7 +2,7 @@ package com.villageroverhaul.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.villageroverhaul.station.EmeraldLure;
+import com.villageroverhaul.interaction.EmeraldLure;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
