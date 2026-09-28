@@ -28,6 +28,7 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 | Scan-Intervall | 100 Ticks (+ Leisten-Zwischenbuchung nach 50 Ticks: halbe Punkte + eigene Arbeit der Sektionen) |
 | Arbeits-XP pro Scan | 10 × (1 + 2 × Glück) → 10 … 30 |
 | Arbeits-Radius | 10 Blöcke (wie Vanilla-Arbeitsbereich) |
+| Arbeitszeit (Tagesablauf, `data/minecraft/timeline/villager_schedule.json`) | Tick 1400–9600 (Vanilla 2000–9000) |
 | Glocke / Begleiter-Radius | 8 / 8 Blöcke |
 
 ## Stationen — `station/`

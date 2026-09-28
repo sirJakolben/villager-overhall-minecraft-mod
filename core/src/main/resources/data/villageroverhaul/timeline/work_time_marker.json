@@ -4,7 +4,7 @@
   "time_markers": {
     "minecraft:work": {
       "show_in_commands": true,
-      "ticks": 2000
+      "ticks": 1400
     }
   }
 }

@@ -138,7 +138,8 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 
 ### Debug (`/vo`, angeschauter Villager)
 - `debug/DebugCommands.java`: `state` (`progression`, `productivity`, `happiness`, `sections`, `raw`), `grant_xp`, `grant_points`, `invest <sektion>`, `list`, `trade <eintrag>` (Trade oder Quest), `action <sektion> <slot> <aktion>` (z. B. Quest-Reroll = Aktion 0), `restock`, `reset` (Level, Punkte, Ränge, Bestand, Leisten, Quest-Slots zurück; Glück + Stationen bleiben)
-- `data/villageroverhaul/timeline/work_time_marker.json`: `/time set work` (Tick 2000, Beginn der Villager-Arbeitszeit) – nur ein Time Marker, kein Java
+- `data/villageroverhaul/timeline/work_time_marker.json`: `/time set work` (Tick 1400, Beginn der Villager-Arbeitszeit) – nur ein Time Marker, kein Java
+- `data/minecraft/timeline/villager_schedule.json`: Vanillas Villager-Tagesablauf überschrieben – Arbeit Tick 1400–9600 statt 2000–9000 (30 s früher, 30 s länger), sonst Vanilla
 
 ## Trade Rework – wo steht was
 
