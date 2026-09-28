@@ -8,7 +8,7 @@
 		"2": "vo_trade_rework:block/book_enhance_station_small_side",
 		"3": "vo_trade_rework:block/book_enhance_station_book_row",
 		"4": "vo_trade_rework:block/book_enhance_station_tall_side",
-		"particle": "vo_trade_rework:block/book_enhance_station_bottom"
+		"particle": "minecraft:block/lectern_sides"
 	},
 	"elements": [
 		{

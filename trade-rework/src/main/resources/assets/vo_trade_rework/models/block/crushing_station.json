@@ -4,7 +4,7 @@
 	"textures": {
 		"0": "vo_trade_rework:block/crushing_station",
 		"1": "vo_trade_rework:block/crushing_blades",
-		"particle": "vo_trade_rework:block/crushing_station"
+		"particle": "minecraft:block/stonecutter_bottom"
 	},
 	"elements": [
 		{

@@ -1,1 +1,4 @@
-{ "parent": "vo_trade_rework:block/placeholder_block" }
+{
+  "parent": "vo_trade_rework:block/placeholder_block",
+  "textures": { "particle": "minecraft:block/cartography_table_side3" }
+}

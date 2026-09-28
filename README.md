@@ -57,6 +57,7 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 - **Werte als Datapack**: Einträge als JSON, Balancing ohne Neukompilieren
 - **Handelsliste = Ansicht** des eigenen Zustands: Vanillas `MerchantOffers` wird aus `VillagerState` und den Sektions-Logiken neu gebaut
 - **Claim**: verdrängter Villager behält Level, Punkte und Beruf; **kein Teleport** zum Handelsblock (Panik, Raid, Schlaf haben Vorrang)
+- **Stations-Partikel = Vanilla-Workstation** (2026-09-29): jede eigene Station (auch Platzhalter) nutzt als `particle` im Blockmodell die Partikel-Textur der Vanilla-Workstation ihres Berufs – Librarian `lectern_sides`, Mason `stonecutter_bottom`, Toolsmith/Runesmith `smithing_table_front`, Weaponsmith/Veteran `grindstone_side`, Cartographer `cartography_table_side3`, Armorer/Salvager `blast_furnace_front` (alle `minecraft:block/…`)
 - Verworfen: generisches Skill-/Modifier-System, Countdown-Glücklichkeitszähler, morgendlicher Tages-Restock, „erste Benutzung“-Flag für Stationen, SmartBrainLib, geteilte Leisten zwischen Sektionen
 
 ## Kern – wo steht was

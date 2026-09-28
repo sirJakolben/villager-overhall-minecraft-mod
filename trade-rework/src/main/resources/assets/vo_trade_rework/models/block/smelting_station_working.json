@@ -4,7 +4,7 @@
 	"textures": {
 		"0": "vo_trade_rework:block/smelting_station",
 		"1": "vo_trade_rework:block/molten_metal",
-		"particle": "vo_trade_rework:block/smelting_station"
+		"particle": "minecraft:block/blast_furnace_front"
 	},
 	"elements": [
 		{
