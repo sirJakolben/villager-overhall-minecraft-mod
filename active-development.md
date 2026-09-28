@@ -11,6 +11,7 @@ Zahlen: [tweaks/](tweaks/) · fehlende Grafiken: Obsidian `Fehlende Texturen und
 - [ ] **Ein Besitzer pro Station** (Bug 2026-09-28, zwei Masons an einer Brechstation): in der betroffenen Welt geht einer der beiden innerhalb von ~5 s weg und sucht sich eine andere Brechstation (oder bleibt ohne); per Smaragd eine besetzte Station einem anderen Mason zuweisen → nur der neue arbeitet dort; Station abbauen und sofort neu setzen → trotzdem nur ein Besitzer
 - [ ] **Claim-Partikel + Handelsblock-Partikel** (2026-09-28): Smaragd-Claim an Handelsblock oder Arbeitsplatz → grüne Sterne über dem Villager **und** über dem Block; Handelsblock abbauen/drauf laufen → Fichtenholz-Partikel statt Stücke des UV-Blatts
 - [ ] **Handelsblock-Pathfinding** (2026-09-28): Villager während Arbeitszeit (~Tick 1400–9600) und Treffpunkt-Zeit (9600–11000) per Redstone rufen → läuft direkt hin und bleibt stehen, kein Hin-und-Her-Zuckeln; Rechtsklick-Besuch genauso; nach dem Ruf wieder normales Schlendern um Arbeitsblock/Glocke
+- [ ] **Handelsblock + Stationen nicht mehr begehbar** (2026-09-28): Villager laufen um Handelsblock, Schreib-, Verbesserungs-, Brech- und Schmelzstation herum oder springen drüber, statt daran hängen zu bleiben
 - [ ] Zweiter Bezahl-Slot (`second_input`)
 - [ ] Spezialbücher am Zaubertisch: nur Kategorie-Verzauberungen, Ergebnis = verzaubertes Buch, eine von mehreren wird gestrichen, Vorschau stimmt
 - [ ] Verbesserungsstation: Trichter/Spender rein, nur fertige Bücher raus, Komparator, Redstone-Puls + Arbeitsgeräusch, Abbauen droppt Bücher
