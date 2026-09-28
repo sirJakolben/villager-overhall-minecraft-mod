@@ -30,7 +30,7 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 
 - Eigene Sektionen **Quests** (Easy/Hard/Dauer-Plätze, Tageslimit, Reroll mit Wartezeit), **Masteries** (Master-Station) und **Passive** (Plakette oben links, Passiv-Station) plus eigene Einträge für sechs Berufe; alle anderen Berufe laufen mit ihren Vanilla-Trades auf dem Kern
 - **Librarian** komplett: Laterne, Namensschild, Bücherstapel, XP abfüllen, Villager-XP-Flasche, Schreib- und Verbesserungsstation, vier Spezialbücher, Buch-Upgrades als Passive, Lore-Schriftrollen
-- **Mason** (Grundgerüst, Placeholder-Grafik): Sandsteine inkl. neuem braunem Sandstein, Steinchen, Wegsteine, Dorfbewohner-Statue (Deko), Veredelung mit Kohle/Quarz statt Smaragden, Metamorph- und Brechstation, Brech-Passive (Varianten eine Stufe zurück), Quests, Geoden-Karte
+- **Mason** (Grundgerüst, Placeholder-Grafik): Sandsteine inkl. neuem braunem Sandstein (ganze Familie + brauner Sand), Steinchen, Wegsteine, Dorfbewohner-Statue (Deko), Veredelung mit Kohle/Quarz statt Smaragden, Metamorph- und Brechstation, Brech-Passive (Varianten eine Stufe zurück), Quests, Geoden-Karte
 - **Runesmith** (Vanilla-Toolsmith, Teil-Gerüst, Placeholder-Grafik): Bücher Haltbarkeit I + Reparatur, eine Upgrade-Vorlage (Vanilla-Schmiede-Rezepte, 1 Block der Zielstufe), Upgrade- und Reparaturstation, Reparieren + Polster als Passive
 - **Veteran** (Vanilla-Weaponsmith, Teil-Gerüst, Placeholder-Grafik): Mob-Waffen (markierte Vanilla-Items mit Namen und Treffer-Effekt, 25 % Drop; Diener-Axt schlägt, Piglin-Armbrust spannt 20 % schneller), Quests auf Mob-Waffen, Fernglas, Rahmen, Waffenständer, Challengestation, Karten zu Außenposten, Verlies, Trial Chamber, Anwesen, Monument, Antiker Stadt
 - **Cartographer** (Vanilla, Teil-Gerüst): Abenteuer- und Herausforderungskarte (Vanilla-Kartentextur), Erkundungsstation, Dorfkarten als Masteries; Entdeckerkarten als Trade-Output für alle Berufe (Strukturen, Geoden, Erzadern – die letzten zwei aus dem Weltseed)
@@ -123,7 +123,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 | Hinlaufen, Vanilla-Verhalten am Arbeitsblock/an der Glocke pausieren (auch beim Handelsblock-Ruf) | `station/WorkAtStation.java`, `station/PausedWhileAway.java` |
 | Claim per Smaragd, Verdrängen | `station/EmeraldClaimTool.java`, `station/ManualClaims.java` |
 | Anlocken mit Smaragd | `station/EmeraldLure.java`, `mixin/VillagerLureMixin.java` |
-| Handelsblock (Redstone-Ruf, Besuch per Rechtsklick) | `station/TradingBlock.java`, `station/TradingBlockCall.java`, `station/GoToTradingBlock.java`, `station/TradingBlocks.java`, Rezept `data/villageroverhaul/recipe/trading_block.json` |
+| Handelsblock (Redstone-Ruf, Besuch per Rechtsklick, beim Setzen zum Spieler gedreht wie ein Ofen) | `interaction/TradingBlock.java`, `interaction/TradingBlockCall.java`, `interaction/GoToTradingBlock.java`, `interaction/TradingBlocks.java`, Rezept `data/villageroverhaul/recipe/trading_block.json` |
 
 ### Vanilla-Trades (Berufe ohne eigene Einträge, Mod-Kompatibilität)
 | Was | Dateien |
@@ -180,6 +180,7 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Brechstation (3 + 3 Slots, Trichter wie Ofen, Komparator, Redstone-Puls) | `mason/CrushingStationBlock.java`, `mason/CrushingStationBlockEntity.java`, Fenster `station/ThreeInThreeOutMenu.java` + `client/ui/ThreeInThreeOutScreen.java` |
 | Dorfbewohner-Statuen (je Typ ein Block, Figur beim Setzen gewürfelt, 2 Blöcke hoch wie Tür, grau gerendert auf Rüstungsständer-Platte; Mason-Trade liefert die Statue seines Typs) | `mason/VillagerStatueBlock.java`, `mason/StatueFigure.java`, `mason/VillagerStatueBlockEntity.java`, Trade `trade/VillagerStatueOutput.java`, Grafik `client/render/VillagerStatueRenderer.java`, `VillagerStatueSpecialRenderer.java` (Item), `VillagerStatueFigure.java`, `GrayscaleTextures.java` |
 | Statuen machen glücklich (+10 %, 8 Blöcke, 2 Tage; Statuen sind POIs, Abfrage statt Block-Scan) | `mason/VillagerStatueHappiness.java` |
+| Brauner Sandstein-Familie + brauner Sand (umgefärbte Vanilla-Texturen als Dateien, Rohdateien in `assets/Mason/brown_sandstone`; Modelle, Loot, Rezepte = Vanilla-Sandstein mit getauschten IDs) | `mason/MasonBlocks.java`, `textures/block/*brown_sand*.png`, Tags in `data/minecraft/tags/` |
 | Brech-Regeln (Steinmetz-Rezepte rückwärts + Datapack-Regeln) | `mason/CrushingRecipes.java`, `mason/CrushingRule.java`, `data/vo_trade_rework/vo_trade_rework/crushing/*.json` |
 | Passive: Brechen (Batches à 4 einer Sorte, Rang 5: 6, Rang 6: 8, 8–32 pro Tag, Gang zur Station) | `passive/CrushingWork.java` |
 | Placeholder für Blöcke ohne Grafik | `models/block/placeholder_block.json`, `textures/block/placeholder_texture.png` (Quelle `assets/placeholder_block/`) |
