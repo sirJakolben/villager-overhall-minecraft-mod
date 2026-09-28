@@ -40,6 +40,14 @@ public record VillagerState(
         return new VillagerState(0, 0, 0, Map.of(), Map.of(), Productivity.EMPTY, Happiness.EMPTY, 0L, Stations.NONE);
     }
 
+    /**
+     * Back to a fresh start (/vo reset): level, XP, points, ranks, stock and meters as initial(). Happiness and
+     * stations stay - they describe the villager's surroundings (bed, village, owned stations), not its progress.
+     */
+    public VillagerState withProgressReset() {
+        return new VillagerState(0, 0, 0, Map.of(), Map.of(), Productivity.EMPTY, happiness, 0L, stations);
+    }
+
     public int rank(Identifier section) {
         return ranks.getOrDefault(section, 0);
     }

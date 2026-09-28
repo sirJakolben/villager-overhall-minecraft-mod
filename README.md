@@ -10,7 +10,7 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 ### Kern (Villager Overhaul)
 
 - **Jeder Beruf läuft mit seinen Vanilla-Trades auf unserem System** (auch Berufe anderer Mods): Smaragd-Trades → Sektion **Quests**, alles andere → Sektion **Trades**; beide restocken normal am Vanilla-Arbeitsblock; jedes Upgrade schaltet den nächsten Eintrag frei, danach 4 Preis-Upgrades; keine Level-Grenze
-- **Villager leveln durch Arbeit**, nicht durch Handel: Arbeits-XP je nach Glücklichkeit, ein Punkt pro Level (Level 0–20 für Berufe der Extension)
+- **Villager leveln durch Arbeit**, nicht durch Handel: Arbeits-XP je nach Glücklichkeit, ein Punkt pro Level, keine Level-Grenze (auch nicht für Berufe der Extension)
 - **Sektionen**: jede Gruppe im Handelsfenster hat eigenen Rang, eigenen Upgrade-Button, eigene Leiste und optional eine Station; Punkte schalten frei und verbessern Preise, Mengen, Bestand. Der Kern bringt Quests + Trades mit, Extensions registrieren weitere
 - **Eigenes Handelsfenster** mit den Sektionen, Leisten und Upgrade-Buttons, aber Vanilla-Handelsmechanik darunter
 - **Restock über Leisten** (eine pro Sektion) statt Vanilla-Restock, abhängig von Arbeit und Glücklichkeit
@@ -78,7 +78,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 | Was | Dateien |
 |---|---|
 | Villager-Klick öffnet eigenes Fenster (Vanilla-Schritte bleiben) | `mixin/VillagerTradingMixin.java`, `mixin/VillagerAccessor.java` |
-| Handelsliste aus Zustand + Sektions-Logiken, Rang-Rabatt als Vanilla-Sonderpreis | `trade/VillagerOffers.java`, `trade/ExchangeScaling.java`, `trade/ResolvedExchange.java` |
+| Handelsliste aus Zustand + Sektions-Logiken, Rang-Rabatt als Vanilla-Sonderpreis, höherer Ertrag: Base-Menge durchgestrichen oben rechts am Ergebnis (`section/RowView.java`) | `trade/VillagerOffers.java`, `trade/ExchangeScaling.java`, `trade/ResolvedExchange.java` |
 | Menü (Vanilla-Merchant-Slots, XP-Preis per Haken `ExtensionHooks.playerXpCost`, Kreativ-Mittelklick) | `menu/VillagerMenu.java`, `menu/ModMenuTypes.java` |
 | Fenster (Sektionen in einer Schleife, Plakette, Leisten für n Sektionen, Rang-Buttons, Scrollen) | `client/ui/VillagerScreen.java`, `client/ui/RankButtonWidget.java`, `client/ui/VillagerGuiTextures.java` |
 | Zeilen-Aussehen je Sektion (Pfeil/Ergebnis-Position, Zusatz-Widget wie Reroll) | `client/ui/SectionClientLogic.java` (nur Client) |
@@ -118,7 +118,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 |---|---|
 | Erkennen (keine eigenen Stationen oder Einträge, hat Vanilla-Trade-Sets), Vanilla-Trades würfeln (Seed je Villager + Trade), Farbvarianten > 3 → eine, Aufteilung Quests / Trades, im Speicher gecacht (Datapack-Reload leert) | `vanilla/VanillaCatalog.java` |
 | Preis-Stufen (Smaragd-Belohnung: verlangte Menge, unstapelbar: Smaragd-Preis, stapelbar: Menge, Max-Bestand 50 → 300 %) | `vanilla/VanillaScaling.java` |
-| Rang-Obergrenzen je Sektion (letzter Freischalt-Rang + 4 Preis-Upgrades), Punkte-Kosten auf einer gemeinsamen Linie 1 → 5; keine Level-Grenze (`ProgressionService.maxLevel`) | `vanilla/VanillaRankCaps.java` |
+| Rang-Obergrenzen je Sektion (letzter Freischalt-Rang + 4 Preis-Upgrades), Punkte-Kosten auf einer gemeinsamen Linie 1 → 5 | `vanilla/VanillaRankCaps.java` |
 
 ### Platzhalter für fehlende Trades
 | Was | Dateien |
@@ -126,7 +126,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 | Leere Ränge zeigen eine komplett leere, deaktivierte Zeile – kein Preis, kein Pfeil, kein Ergebnis, kein Tooltip, nicht anklickbar (`client/ui/VillagerScreen.isEmptyRow`) – Datei löschen, sobald der echte Trade steht | Item `trade/MissingTrade.java` (`villageroverhaul:missing_trade`); die `*_todo_basic_<rang>.json` / `*_todo_master_<rang>.json` liegen in der Extension |
 
 ### Debug (`/vo`, angeschauter Villager)
-- `debug/DebugCommands.java`: `state` (`progression`, `productivity`, `happiness`, `sections`, `raw`), `grant_xp`, `grant_points`, `invest <sektion>`, `list`, `trade <eintrag>` (Trade oder Quest), `action <sektion> <slot> <aktion>` (z. B. Quest-Reroll = Aktion 0), `restock`
+- `debug/DebugCommands.java`: `state` (`progression`, `productivity`, `happiness`, `sections`, `raw`), `grant_xp`, `grant_points`, `invest <sektion>`, `list`, `trade <eintrag>` (Trade oder Quest), `action <sektion> <slot> <aktion>` (z. B. Quest-Reroll = Aktion 0), `restock`, `reset` (Level, Punkte, Ränge, Bestand, Leisten, Quest-Slots zurück; Glück + Stationen bleiben)
 
 ## Trade Rework – wo steht was
 

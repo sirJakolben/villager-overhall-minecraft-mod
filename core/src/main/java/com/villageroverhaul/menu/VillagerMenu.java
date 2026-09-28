@@ -1,6 +1,7 @@
 package com.villageroverhaul.menu;
 
 import com.villageroverhaul.api.ExtensionHooks;
+import com.villageroverhaul.section.RowView;
 import com.villageroverhaul.section.SectionView;
 import com.villageroverhaul.section.VillagerSections;
 import com.villageroverhaul.trade.RequiredEnchantmentCost;
@@ -25,6 +26,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Vanilla's trading machinery in our own layout. The container (MerchantContainer) and result slot
@@ -66,7 +68,7 @@ public class VillagerMenu extends AbstractContainerMenu {
     private final Merchant trader;
     private final MerchantContainer tradeContainer;
     private List<SectionView> sections = List.of();
-    private List<Integer> rowSlots = List.of();
+    private List<RowView> rows = List.of();
     private int offersVersion;
 
     /** Server side - the villager is the Merchant. */
@@ -111,9 +113,9 @@ public class VillagerMenu extends AbstractContainerMenu {
         return sections;
     }
 
-    /** Per row, the slot its section's logic gave it (api/SectionOffer). */
-    public List<Integer> rowSlots() {
-        return rowSlots;
+    /** Per row, what the offer itself doesn't carry (section/RowView); empty for a row the server didn't describe. */
+    public Optional<RowView> row(int index) {
+        return index >= 0 && index < rows.size() ? Optional.of(rows.get(index)) : Optional.empty();
     }
 
     /** Bumped on every client-side offers update, so the screen knows when to rebuild its rows. */
@@ -154,10 +156,10 @@ public class VillagerMenu extends AbstractContainerMenu {
         setCarried(clone);
     }
 
-    public void setOffers(MerchantOffers offers, List<SectionView> sections, List<Integer> rowSlots) {
+    public void setOffers(MerchantOffers offers, List<SectionView> sections, List<RowView> rows) {
         trader.overrideOffers(offers);
         this.sections = sections;
-        this.rowSlots = rowSlots;
+        this.rows = rows;
         this.offersVersion++;
         refreshActiveOffer();
     }

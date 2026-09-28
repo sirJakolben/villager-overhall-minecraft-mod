@@ -51,15 +51,20 @@ public final class VanillaScaling {
         ItemStack result = entry.result();
         if (result.is(Items.EMERALD)) {
             return new ResolvedExchange(entry.id(), emeraldRewardPrice(entry.costA(), 0), emeraldRewardPrice(entry.costA(), stage), entry.costB(),
-                    amount(result), usesRemaining, maxUses, Optional.of(result));
+                    result.getCount(), amount(result), usesRemaining, maxUses, Optional.of(result));
         }
         if (result.getMaxStackSize() <= 1) {
             return new ResolvedExchange(entry.id(), unstackablePrice(entry.costA(), 0), unstackablePrice(entry.costA(), stage),
-                    entry.costB().map(cost -> unstackablePrice(cost, stage)), amount(result), usesRemaining, maxUses, Optional.of(result));
+                    entry.costB().map(cost -> unstackablePrice(cost, stage)), result.getCount(), amount(result), usesRemaining, maxUses, Optional.of(result));
         }
-        int count = Math.min(result.getMaxStackSize(), percentUp(result.getCount(), STACKABLE_YIELD_PERCENT[stage]));
-        ItemStack scaled = result.copyWithCount(count);
-        return new ResolvedExchange(entry.id(), entry.costA(), entry.costA(), entry.costB(), amount(scaled), usesRemaining, maxUses, Optional.of(scaled));
+        ItemStack scaled = result.copyWithCount(stackableYield(result, stage));
+        return new ResolvedExchange(entry.id(), entry.costA(), entry.costA(), entry.costB(), stackableYield(result, 0), amount(scaled),
+                usesRemaining, maxUses, Optional.of(scaled));
+    }
+
+    /** How many of a stackable result one trade gives at this stage, at most one full stack. */
+    private static int stackableYield(ItemStack result, int stage) {
+        return Math.min(result.getMaxStackSize(), percentUp(result.getCount(), STACKABLE_YIELD_PERCENT[stage]));
     }
 
     public static int stageOf(VanillaCatalog.Catalog catalog, Identifier section, int rank) {

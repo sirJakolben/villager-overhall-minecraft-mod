@@ -58,7 +58,11 @@ public final class VillagerWorkScan {
     /** Ticks after a full scan the light work booking runs - half-way, so the meters move every 50 ticks. */
     private static final int WORK_BOOKING_OFFSET = SCAN_PERIOD / 2;
     private static final int WORK_XP = 10;
-    private static final double WORK_RADIUS = 3.0;
+    /**
+     * Vanilla's own work area: during WORK a villager strolls up to 10 blocks from its job site before it walks
+     * back (VillagerGoalPackages.getWorkPackage, StrollToPoi) - all of that counts as working (2026-09-28, was 3).
+     */
+    private static final double WORK_RADIUS = 10.0;
     private static final double MEETING_POINT_RADIUS = 8.0;
     private static final double COMPANION_RADIUS = 8.0;
     /** Which entities count as companions (cats, golems, allays by default) - a data pack tag, editable without code. */
@@ -100,7 +104,7 @@ public final class VillagerWorkScan {
         updated = StationClaims.update(level, villager, updated);
         if (isWorking(villager, StationFocus.awayStation(villager, updated))) {
             int points = RestockService.workPoints(happiness.effectivePercent());
-            updated = ProgressionService.withXp(updated, workXp(happiness.effectivePercent()), ProgressionService.maxLevel(villager));
+            updated = ProgressionService.withXp(updated, workXp(happiness.effectivePercent()));
             updated = RestockService.withWork(level, villager, updated, points - points / 2);
         }
         updated = VillagerSections.onWorkScan(level, villager, updated, villager.getBrain().isActive(Activity.WORK));

@@ -6,10 +6,10 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 ## Level & XP — `progression/ProgressionService.java`
 | Wert | Aktuell |
 |---|---|
-| Maximallevel | 20 |
-| XP für Level L → L+1 | 400 + 9 × L² (400 … 3649) |
+| Maximallevel | keins (alle Berufe, seit 2026-09-28) |
+| XP für Level L → L+1 | 400 + 9 × L² (400 … 3649), ab Level 20 konstant 3649 |
 | Punkte-Puffer (Leveln stoppt) | 5 |
-| Level pro Titelstufe | 4 |
+| Level pro Titelstufe | 5 |
 
 ## Sektionen (Upgrade-Kosten je Sektion)
 | Sektion | Kosten je Rang | Max-Rang | alles frei ab | Code |
@@ -27,7 +27,7 @@ Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md]
 |---|---|
 | Scan-Intervall | 100 Ticks (+ Leisten-Zwischenbuchung nach 50 Ticks: halbe Punkte + eigene Arbeit der Sektionen) |
 | Arbeits-XP pro Scan | 10 × (1 + 2 × Glück) → 10 … 30 |
-| Arbeits-Radius | 3 Blöcke |
+| Arbeits-Radius | 10 Blöcke (wie Vanilla-Arbeitsbereich) |
 | Glocke / Begleiter-Radius | 8 / 8 Blöcke |
 
 ## Stationen — `station/`

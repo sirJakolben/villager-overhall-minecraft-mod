@@ -76,6 +76,7 @@ public final class DebugCommands {
                                         Sections.all().stream().map(SectionDefinition::id), builder))
                                 .executes(DebugCommands::executeInvest)))
                 .then(Commands.literal("restock").executes(DebugCommands::executeRestock))
+                .then(Commands.literal("reset").executes(DebugCommands::executeReset))
                 .then(Commands.literal("trade")
                         .then(Commands.argument("id", IdentifierArgument.id())
                                 .executes(DebugCommands::executeTrade)))
@@ -118,7 +119,7 @@ public final class DebugCommands {
 
     private static void printOverview(Consumer<String> out, Villager villager, VillagerState state, long today) {
         out.accept("== " + villager.getName().getString() + " (" + villager.getVillagerData().profession().getRegisteredName() + ") ==");
-        out.accept("Level " + state.level() + "/" + ProgressionService.maxLevel(villager) + ", XP " + state.xp() + "/" + ProgressionService.xpToNextLevel(state.level())
+        out.accept("Level " + state.level() + ", XP " + state.xp() + "/" + ProgressionService.xpToNextLevel(state.level())
                 + ", unspent points " + state.unspentUpgradePoints());
         out.accept("Happiness " + state.happiness().effectivePercent() + "% (long-term " + state.happiness().percent() + "%)"
                 + ", working now: " + VillagerWorkScan.isWorking(villager));
@@ -143,7 +144,7 @@ public final class DebugCommands {
 
     private static void printProgression(Consumer<String> out, Villager villager, VillagerState state, long today) {
         out.accept("== Progression ==");
-        out.accept("Level " + state.level() + "/" + ProgressionService.maxLevel(villager) + " (title tier " + ProgressionService.merchantTier(state.level()) + ")");
+        out.accept("Level " + state.level() + " (title tier " + ProgressionService.merchantTier(state.level()) + ")");
         out.accept("XP " + state.xp() + "/" + ProgressionService.xpToNextLevel(state.level()) + " to next level");
         out.accept("Unspent points: " + state.unspentUpgradePoints());
         for (SectionDefinition section : VillagerSections.of(villager)) {
@@ -253,6 +254,26 @@ public final class DebugCommands {
 
         RestockService.restock(villager);
         source.sendSuccess(() -> Component.literal("Restocked."), false);
+        return 1;
+    }
+
+    /**
+     * Starts the villager over (VillagerState.withProgressReset): level 0, no points, every section at rank 0, fresh
+     * stock and meters - plus whatever its sections keep of their own (SectionLogic.onReset, e.g. quest slots).
+     */
+    private static int executeReset(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        CommandSourceStack source = ctx.getSource();
+        Villager villager = requireLookedAtVillager(source);
+        if (villager == null) {
+            return 0;
+        }
+
+        VillagerStateAccess access = VillagerStateAccess.of(villager);
+        access.setState(access.getState().withProgressReset());
+        for (SectionDefinition section : VillagerSections.of(villager)) {
+            section.logic().onReset(villager, section);
+        }
+        source.sendSuccess(() -> Component.literal("Reset " + villager.getName().getString() + "."), false);
         return 1;
     }
 

@@ -2,12 +2,14 @@ package com.villageroverhaul.client.ui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.villageroverhaul.api.SectionDefinition;
+import com.villageroverhaul.api.SectionOffer;
 import com.villageroverhaul.menu.VillagerMenu;
 import com.villageroverhaul.network.CloneOfferItemPayload;
 import com.villageroverhaul.network.InvestUpgradePointPayload;
 import com.villageroverhaul.network.SectionActionPayload;
 import com.villageroverhaul.network.SelectOfferPayload;
 import com.villageroverhaul.progression.ProgressionService;
+import com.villageroverhaul.section.RowView;
 import com.villageroverhaul.section.SectionView;
 import com.villageroverhaul.section.Sections;
 import com.villageroverhaul.state.VillagerState;
@@ -109,6 +111,8 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
     private static final Identifier TRADE_ARROW_SPRITE = Identifier.withDefaultNamespace("container/villager/trade_arrow");
     private static final Identifier TRADE_ARROW_OUT_OF_STOCK_SPRITE = Identifier.withDefaultNamespace("container/villager/trade_arrow_out_of_stock");
     private static final Identifier DISCOUNT_STRIKETHROUGH_SPRITE = Identifier.withDefaultNamespace("container/villager/discount_strikethrough");
+    /** The red of Vanilla's discount_strikethrough sprite, drawn as a line to fit any count width. */
+    private static final int YIELD_STRIKETHROUGH_COLOR = 0xFFD23C3C;
     private static final int XP_BAR_WIDTH = 102;
     private static final int XP_BAR_HEIGHT = 5;
     // The out_of_stock X (28x21) centered over the arrow between the second payment box and the result box (arrow x=229-250).
@@ -240,7 +244,7 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
                 int rowY = layout.contentY() + ROW_TOP_BORDER + i * ROW_HEIGHT - scrollOffset;
                 int index = layout.firstOffer() + i;
                 boolean visible = touchesList(rowY, ROW_BUTTON_HEIGHT);
-                int slot = index < menu.rowSlots().size() ? menu.rowSlots().get(index) : -1;
+                int slot = menu.row(index).map(RowView::slot).orElse(SectionOffer.NO_SLOT);
                 // Added before its row button, so a click on it doesn't select the row; drawn after it.
                 SectionClientLogic.RowWidget rowWidget = clientLogic.rowWidget(context, slot, x, topPos + rowY);
                 if (rowWidget != null) {
@@ -447,7 +451,7 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             int barX = VillagerMenu.GRID_LEFT + (VillagerMenu.GRID_WIDTH - XP_BAR_WIDTH) / 2;
             int barY = this.titleLabelY + 10;
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_BACKGROUND, barX, barY, XP_BAR_WIDTH, XP_BAR_HEIGHT);
-            int filled = Math.round(XP_BAR_WIDTH * ProgressionService.xpFraction(state, ProgressionService.maxLevel(villager)));
+            int filled = Math.round(XP_BAR_WIDTH * ProgressionService.xpFraction(state));
             if (filled > 0) {
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, XP_BAR_CURRENT, XP_BAR_WIDTH, XP_BAR_HEIGHT, 0, 0, barX, barY, filled, XP_BAR_HEIGHT);
             }
@@ -558,9 +562,8 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             }
             Identifier arrow = offer.isOutOfStock() ? TRADE_ARROW_OUT_OF_STOCK_SPRITE : TRADE_ARROW_SPRITE;
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, arrow, button.getX() + button.layout.arrowX(), itemY + 3, 10, 9);
-            ItemStack result = offer.getResult();
-            graphics.fakeItem(result, button.getX() + button.layout.resultX(), itemY);
-            graphics.itemDecorations(this.font, result, button.getX() + button.layout.resultX(), itemY);
+            int baseResultCount = menu.row(button.index).map(RowView::baseResultCount).orElse(offer.getResult().getCount());
+            extractAndDecorateResult(graphics, offer.getResult(), baseResultCount, button.getX() + button.layout.resultX(), itemY);
 
             if (button.isHoveredOrFocused()) {
                 button.extractToolTip(graphics, offer, mouseX, mouseY);
@@ -589,6 +592,24 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
             graphics.text(this.font, count, x + 14 + 19 - 2 - this.font.width(count), y + 6 + 3, 0xFFFFFFFF, true);
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, DISCOUNT_STRIKETHROUGH_SPRITE, x + 7, y + 12, 9, 2);
         }
+    }
+
+    /**
+     * The result, and - when a rank raised its yield (2026-09-28) - the Base count struck through beside the real
+     * one. There is no room right of the result icon (row edge, quest reroll button), so the Base count sits in
+     * the icon's top-right corner, above the real count in its usual place.
+     */
+    private void extractAndDecorateResult(GuiGraphicsExtractor graphics, ItemStack result, int baseCount, int x, int y) {
+        graphics.fakeItem(result, x, y);
+        graphics.itemDecorations(this.font, result, x, y);
+        if (baseCount == result.getCount() || baseCount <= 0) {
+            return;
+        }
+        String base = String.valueOf(baseCount);
+        int textX = x + 19 - 2 - this.font.width(base);
+        int textY = y - 1;
+        graphics.text(this.font, base, textX, textY, 0xFFFFFFFF, true);
+        graphics.fill(textX - 1, textY + 3, textX + this.font.width(base), textY + 4, YIELD_STRIKETHROUGH_COLOR);
     }
 
     /**

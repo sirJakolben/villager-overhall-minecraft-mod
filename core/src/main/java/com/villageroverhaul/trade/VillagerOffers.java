@@ -10,6 +10,7 @@ import com.villageroverhaul.menu.VillagerMenu;
 import com.villageroverhaul.mixin.VillagerAccessor;
 import com.villageroverhaul.network.VillagerOffersPayload;
 import com.villageroverhaul.progression.ProgressionService;
+import com.villageroverhaul.section.RowView;
 import com.villageroverhaul.section.SectionView;
 import com.villageroverhaul.section.VillagerSections;
 import com.villageroverhaul.state.VillagerState;
@@ -86,8 +87,10 @@ public final class VillagerOffers {
 
     public static void sendTo(ServerPlayer player, VillagerMenu menu, Villager villager) {
         Built built = build(villager);
-        List<Integer> rowSlots = built.sources().stream().map(source -> source.offer().slot()).toList();
-        PacketDistributor.sendToPlayer(player, new VillagerOffersPayload(menu.containerId, villager.getOffers(), built.sections(), rowSlots));
+        List<RowView> rows = built.sources().stream()
+                .map(source -> new RowView(source.offer().slot(), source.offer().exchange().baseOutputCount()))
+                .toList();
+        PacketDistributor.sendToPlayer(player, new VillagerOffersPayload(menu.containerId, villager.getOffers(), built.sections(), rows));
     }
 
     /**

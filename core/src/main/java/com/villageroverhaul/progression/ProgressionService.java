@@ -16,9 +16,12 @@ import java.util.Optional;
  * Level/XP and upgrade-point bookkeeping - see README.md (numbers still up for playtest tweaking).
  *
  * Level curve (reworked 2026-09-24): the step from level L to L+1 costs XP_BASE + XP_PER_LEVEL_SQUARED * L²
- * villager XP (400, 409, 436, ..., 3649) - flat early, steep late. At 100 % happiness (30 XP per work
- * check, ~60 checks a day, VillagerWorkScan) that is ~3 in-game days to level 9 (one section fully
- * unlocked) and ~17 days to level 20.
+ * villager XP (400, 409, 436, ..., 3649) - flat early, steep late - and from CURVE_END_LEVEL on every step
+ * costs as much as the last one. At 100 % happiness (30 XP per work check, ~60 checks a day,
+ * VillagerWorkScan) that is ~3 in-game days to level 9 and ~17 days to level 20.
+ *
+ * No level cap, for every profession (2026-09-28: the core's rule replaced the Trade Rework's level-20 cap) -
+ * a villager only pauses at the point cap.
  *
  * Ranks: every level brings one upgrade point, spent on a section's rank (investPoint). The price of each
  * rank-up comes from the section (SectionDefinition.upgradeCost), or - for a profession running on its Vanilla
@@ -26,7 +29,8 @@ import java.util.Optional;
  */
 public final class ProgressionService {
 
-    public static final int MAX_LEVEL = 20;
+    /** From this level on the curve stops growing. */
+    public static final int CURVE_END_LEVEL = 20;
     private static final int XP_BASE = 400;
     private static final int XP_PER_LEVEL_SQUARED = 9;
     private static final int MAX_UNSPENT_POINTS = 5;
@@ -43,12 +47,11 @@ public final class ProgressionService {
     }
 
     /**
-     * Villager XP for the step from `level` to `level + 1`. Past MAX_LEVEL (only professions running on their
-     * Vanilla trades get there, see maxLevel) every step costs as much as the last one, 19 → 20 - the curve
-     * stops growing so their many unlocks stay reachable (2026-09-27).
+     * Villager XP for the step from `level` to `level + 1`. Past CURVE_END_LEVEL every step costs as much as the
+     * last one, 19 → 20 - the curve stops growing so late unlocks stay reachable (2026-09-27).
      */
     public static int xpToNextLevel(int level) {
-        int curveLevel = Math.min(level, MAX_LEVEL - 1);
+        int curveLevel = Math.min(level, CURVE_END_LEVEL - 1);
         return XP_BASE + XP_PER_LEVEL_SQUARED * curveLevel * curveLevel;
     }
 
@@ -62,34 +65,19 @@ public final class ProgressionService {
     }
 
     /** Progress toward the next level-up, 0..1. */
-    public static float xpFraction(VillagerState state, int maxLevel) {
-        if (state.level() >= maxLevel) {
-            return 1.0F;
-        }
+    public static float xpFraction(VillagerState state) {
         return Math.min(1.0F, state.xp() / (float) xpToNextLevel(state.level()));
     }
 
-    /**
-     * Highest level of this villager: MAX_LEVEL - except a profession running on its Vanilla trades
-     * (VanillaCatalog), which has no level cap, so its many unlocks can all be bought; it only pauses at the
-     * point cap.
-     */
-    public static int maxLevel(Villager villager) {
-        return VanillaCatalog.usedBy(villager) ? Integer.MAX_VALUE : MAX_LEVEL;
-    }
-
-    /** False at the max level, or at the point cap with the XP bar already full - withXp would drop any XP then. */
-    public static boolean canGainXp(VillagerState state, int maxLevel) {
-        if (state.level() >= maxLevel) {
-            return false;
-        }
+    /** False at the point cap with the XP bar already full - withXp would drop any XP then. */
+    public static boolean canGainXp(VillagerState state) {
         return state.unspentUpgradePoints() < MAX_UNSPENT_POINTS || state.xp() < xpToNextLevel(state.level()) - 1;
     }
 
     /** Grants XP and stores the result - see withXp. */
     public static void grantXp(Villager villager, int amount) {
         VillagerStateAccess access = VillagerStateAccess.of(villager);
-        access.setState(withXp(access.getState(), amount, maxLevel(villager)));
+        access.setState(withXp(access.getState(), amount));
     }
 
     /**
@@ -102,25 +90,20 @@ public final class ProgressionService {
     }
 
     /**
-     * Adds XP and levels up while XP allows - never past maxLevel (further XP is dropped), and never past
-     * MAX_UNSPENT_POINTS unspent upgrade points (XP then stops just below the next level until points are spent).
+     * Adds XP and levels up while XP allows - never past MAX_UNSPENT_POINTS unspent upgrade points (XP then stops
+     * just below the next level until points are spent).
      */
-    public static VillagerState withXp(VillagerState state, int amount, int maxLevel) {
+    public static VillagerState withXp(VillagerState state, int amount) {
         int level = state.level();
-        if (level >= maxLevel) {
-            return state;
-        }
         int xp = state.xp() + amount;
         int unspentUpgradePoints = state.unspentUpgradePoints();
 
-        while (level < maxLevel && xp >= xpToNextLevel(level) && unspentUpgradePoints < MAX_UNSPENT_POINTS) {
+        while (xp >= xpToNextLevel(level) && unspentUpgradePoints < MAX_UNSPENT_POINTS) {
             xp -= xpToNextLevel(level);
             level++;
             unspentUpgradePoints++;
         }
-        if (level >= maxLevel) {
-            xp = 0;
-        } else if (unspentUpgradePoints >= MAX_UNSPENT_POINTS) {
+        if (unspentUpgradePoints >= MAX_UNSPENT_POINTS) {
             // Paused at the point cap: XP stops one short of the next level, so a long-unvisited villager
             // never banks more than MAX_UNSPENT_POINTS - spending points doesn't trigger a burst of level-ups.
             xp = Math.min(xp, xpToNextLevel(level) - 1);

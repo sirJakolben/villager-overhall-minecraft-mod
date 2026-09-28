@@ -101,6 +101,7 @@ public final class QuestLogic implements SectionLogic {
                     new ItemAmount(inputItem, exchange.baseInput().count(), inputEnchantment, exchange.baseInput().mob()),
                     new ItemAmount(inputItem, ExchangeScaling.scaleInput(exchange, rank, section).count(), inputEnchantment, exchange.baseInput().mob()),
                     exchange.secondInput(),
+                    exchange.baseOutput().count(),
                     ExchangeScaling.scaleOutput(exchange, rank, section),
                     limitReached && poolName.equals(QuestSlots.PERMANENT) ? 0 : 1, 1
             ), slot));
@@ -169,6 +170,12 @@ public final class QuestLogic implements SectionLogic {
         }
         long readyAt = villager.level().getGameTime() + rerollCooldownDays(state.rank(section.id()), section) * TICKS_PER_DAY;
         QuestState.set(villager, QuestState.of(villager).withRotated(slot).withRerollReadyAt(slot, readyAt));
+    }
+
+    /** Fresh slots: first quests again, no reroll cooldown, no turn-ins today. */
+    @Override
+    public void onReset(Villager villager, SectionDefinition section) {
+        QuestState.set(villager, QuestState.EMPTY);
     }
 
     @Override

@@ -70,6 +70,10 @@ public interface SectionLogic {
     default void onAction(Villager villager, ServerPlayer player, SectionDefinition section, int slot, int action) {
     }
 
+    /** The villager was reset (/vo reset) - clear whatever state the section keeps of its own. */
+    default void onReset(Villager villager, SectionDefinition section) {
+    }
+
     /** Extra lines for /vo state sections. */
     default List<String> describe(Villager villager, VillagerState state, SectionDefinition section) {
         return List.of();

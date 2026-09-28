@@ -188,7 +188,7 @@ public class VillagerExperienceOrb extends Entity {
                 && !villager.isBaby()
                 && !villager.getVillagerData().profession().is(VillagerProfession.NONE)
                 && !villager.getVillagerData().profession().is(VillagerProfession.NITWIT)
-                && ProgressionService.canGainXp(VillagerStateAccess.of(villager).getState(), ProgressionService.maxLevel(villager));
+                && ProgressionService.canGainXp(VillagerStateAccess.of(villager).getState());
     }
 
     private void tryAbsorbInto(@Nullable Villager villager) {

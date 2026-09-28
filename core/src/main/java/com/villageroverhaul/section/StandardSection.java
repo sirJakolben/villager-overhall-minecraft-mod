@@ -68,6 +68,7 @@ public final class StandardSection {
                 exchange.baseInput(),
                 ExchangeScaling.scaleInput(exchange, rank, section),
                 exchange.secondInput(),
+                exchange.baseOutput().count(),
                 ExchangeScaling.scaleOutput(exchange, rank, section),
                 stock.getOrDefault(id, RestockService.initialStock(maxUses)),
                 maxUses
