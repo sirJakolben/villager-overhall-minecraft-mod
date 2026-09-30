@@ -13,11 +13,11 @@ import com.villageroverhaul.traderework.passive.BookUpgradeWork;
 import com.villageroverhaul.traderework.passive.CrushingWork;
 import com.villageroverhaul.traderework.passive.PassiveLogic;
 import com.villageroverhaul.traderework.passive.RepairWork;
-import com.villageroverhaul.traderework.passive.SmeltingWork;
+import com.villageroverhaul.traderework.passive.SalvageWork;
 import com.villageroverhaul.traderework.quest.QuestEntry;
 import com.villageroverhaul.traderework.quest.QuestLogic;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlocks;
-import com.villageroverhaul.traderework.salvager.SalvagerBlocks;
+import com.villageroverhaul.traderework.goldsmith.GoldsmithBlocks;
 import com.villageroverhaul.traderework.trade.ExplorerMap;
 import com.villageroverhaul.traderework.trade.VillagerStatueOutput;
 import com.villageroverhaul.traderework.veteran.MobWeapons;
@@ -77,7 +77,7 @@ public final class TradeReworkSections {
                     VillagerProfession.LIBRARIAN, new BookUpgradeWork(),
                     VillagerProfession.MASON, new CrushingWork(),
                     VillagerProfession.TOOLSMITH, new RepairWork(),
-                    VillagerProfession.ARMORER, new SmeltingWork())))
+                    VillagerProfession.ARMORER, new SalvageWork())))
             .build();
 
     private TradeReworkSections() {
@@ -89,12 +89,12 @@ public final class TradeReworkSections {
         masterStation(VillagerProfession.TOOLSMITH, PoiTypes.TOOLSMITH, RunesmithBlocks.UPGRADE_STATION);
         masterStation(VillagerProfession.WEAPONSMITH, PoiTypes.WEAPONSMITH, VeteranBlocks.CHALLENGE_STATION);
         masterStation(VillagerProfession.CARTOGRAPHER, PoiTypes.CARTOGRAPHER, CartographerBlocks.EXPLORE_STATION);
-        masterStation(VillagerProfession.ARMORER, PoiTypes.ARMORER, SalvagerBlocks.REFINEMENT_STATION);
+        masterStation(VillagerProfession.ARMORER, PoiTypes.ARMORER, GoldsmithBlocks.GILDING_STATION);
 
         passiveStation(VillagerProfession.LIBRARIAN, PoiTypes.LIBRARIAN, LibrarianBlocks.ENCHANTMENT_STATION);
         passiveStation(VillagerProfession.MASON, PoiTypes.MASON, MasonBlocks.CRUSHING_STATION);
         passiveStation(VillagerProfession.TOOLSMITH, PoiTypes.TOOLSMITH, RunesmithBlocks.REPAIR_STATION);
-        passiveStation(VillagerProfession.ARMORER, PoiTypes.ARMORER, SalvagerBlocks.SMELTING_STATION);
+        passiveStation(VillagerProfession.ARMORER, PoiTypes.ARMORER, GoldsmithBlocks.SALVAGE_STATION);
 
         ExtensionHooks.registerSection(QUESTS);
         ExtensionHooks.registerSection(MASTERIES);

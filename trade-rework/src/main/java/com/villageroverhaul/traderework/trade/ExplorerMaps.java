@@ -30,7 +30,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Explorer-map trades (2026-09-27, Cartographer / Veteran / Mason / Salvager), built for the core's offer list
+ * Explorer-map trades (2026-09-27, Cartographer / Veteran / Mason / Goldsmith), built for the core's offer list
  * through ExplorerMap (an api/ResultOverride). Structures are searched like
  * Vanilla's; geodes (explore/FeatureLocator) and ore veins (explore/OreVeinLocator) are predicted from the
  * world seed within SEED_SEARCH_RADIUS_CHUNKS, and their maps name the height in the tooltip. Vanilla searches the structure when it

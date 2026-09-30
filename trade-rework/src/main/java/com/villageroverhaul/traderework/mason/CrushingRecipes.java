@@ -32,7 +32,7 @@ import java.util.Set;
  *   "granite -> 2 slabs" becomes "2 slabs -> granite". The root is an input that isn't itself a
  *   stonecutter result (polished granite stairs go to granite, not polished granite). Using the
  *   stonecutter's own ratios means crushing can never make more than it took, and modded or future
- *   variants (the Salvager's gilded blocks) work with no extra data. Blocks that aren't stonecutter
+ *   variants (the Goldsmith's gilded blocks) work with no extra data. Blocks that aren't stonecutter
  *   results - quartz block, blackstone, calcite - have no way back, so they stay final.
  *
  * The table is built once and rebuilt only when the recipes (/reload) or the rules change.

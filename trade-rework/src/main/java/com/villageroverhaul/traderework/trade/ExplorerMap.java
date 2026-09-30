@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * An entry whose output is an explorer map (2026-09-27, Cartographer / Veteran / Mason / Salvager), under
+ * An entry whose output is an explorer map (2026-09-27, Cartographer / Veteran / Mason / Goldsmith), under
  * "extensions": {"vo_trade_rework:explorer_map": {...}}: a filled map to the nearest target, marked with
  * decoration and named with the translation key name. Exactly one target kind:
  * - destination: a structure tag, found like Vanilla's cartographer maps (villages, trial chambers ...)

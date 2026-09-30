@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "vo_trade_rework:block/iron_framed_redstone_slab" },
+    "type=top": { "model": "vo_trade_rework:block/iron_framed_redstone_slab_top" },
+    "type=double": { "model": "vo_trade_rework:block/iron_framed_redstone_slab_double" }
+  }
+}

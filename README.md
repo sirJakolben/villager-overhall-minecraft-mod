@@ -34,7 +34,7 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 - **Runesmith** (Vanilla-Toolsmith, Teil-Gerüst, Placeholder-Grafik): Bücher Haltbarkeit I + Reparatur, eine Upgrade-Vorlage (Vanilla-Schmiede-Rezepte, 1 Block der Zielstufe), Upgrade- und Reparaturstation, Reparieren + Polster als Passive
 - **Veteran** (Vanilla-Weaponsmith, Teil-Gerüst, Placeholder-Grafik): Mob-Waffen (markierte Vanilla-Items mit Namen und Treffer-Effekt, 25 % Drop; Diener-Axt schlägt, Piglin-Armbrust spannt 20 % schneller), Quests auf Mob-Waffen, Fernglas, Rahmen, Waffenständer, Challengestation, Karten zu Außenposten, Verlies, Trial Chamber, Anwesen, Monument, Antiker Stadt
 - **Cartographer** (Vanilla, Teil-Gerüst): Abenteuer- und Herausforderungskarte (Vanilla-Kartentextur), Erkundungsstation, Dorfkarten als Masteries; Entdeckerkarten als Trade-Output für alle Berufe (Strukturen, Geoden, Erzadern – die letzten zwei aus dem Weltseed)
-- **Salvager** (Vanilla-Armorer, Teil-Gerüst): Eisenketten, Eisengitter, Kupfer- und Eisenader-Karte, Schmelzstation als Passive (Metall-Ausrüstung → Barren), Veredelungsstation (noch ohne Funktion)
+- **Goldsmith / Goldschmied** (Vanilla-Armorer, bis 2026-09-29 „Salvager / Verwerter“, Teil-Gerüst): vergoldete Eisenkette + vergoldetes Eisengitter (Smaragd + Vanilla-Kette/-Gitter), Kupfer- und Eisenader-Karte, Verwertungsstation als Passive (Metall-Ausrüstung → Barren), Vergoldungsstation mit Masteries 1–4 (Metall + Block → verstärktes Glas, eisengerahmter Redstone, goldgerahmter Lapis + goldverzierte Varianten per Steinmetz, vergoldeter Schwarzstein)
 
 ## Technische Basis
 
@@ -57,7 +57,7 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 - **Werte als Datapack**: Einträge als JSON, Balancing ohne Neukompilieren
 - **Handelsliste = Ansicht** des eigenen Zustands: Vanillas `MerchantOffers` wird aus `VillagerState` und den Sektions-Logiken neu gebaut
 - **Claim**: verdrängter Villager behält Level, Punkte und Beruf; **kein Teleport** zum Handelsblock (Panik, Raid, Schlaf haben Vorrang)
-- **Stations-Partikel = Vanilla-Workstation** (2026-09-29): jede eigene Station (auch Platzhalter) nutzt als `particle` im Blockmodell die Partikel-Textur der Vanilla-Workstation ihres Berufs – Librarian `lectern_sides`, Mason `stonecutter_bottom`, Toolsmith/Runesmith `smithing_table_front`, Weaponsmith/Veteran `grindstone_side`, Cartographer `cartography_table_side3`, Armorer/Salvager `blast_furnace_front` (alle `minecraft:block/…`)
+- **Stations-Partikel = Vanilla-Workstation** (2026-09-29): jede eigene Station (auch Platzhalter) nutzt als `particle` im Blockmodell die Partikel-Textur der Vanilla-Workstation ihres Berufs – Librarian `lectern_sides`, Mason `stonecutter_bottom`, Toolsmith/Runesmith `smithing_table_front`, Weaponsmith/Veteran `grindstone_side`, Cartographer `cartography_table_side3`, Armorer/Goldsmith `blast_furnace_front` (alle `minecraft:block/…`)
 - Verworfen: generisches Skill-/Modifier-System, Countdown-Glücklichkeitszähler, morgendlicher Tages-Restock, „erste Benutzung“-Flag für Stationen, SmartBrainLib, geteilte Leisten zwischen Sektionen
 
 ## Kern – wo steht was
@@ -219,14 +219,16 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Abenteuer- + Herausforderungskarte (Items, Textur = Vanilla-Karte) | `cartographer/CartographerItems.java`, Modelle `models/item/adventure_map.json`, `challenge_map.json` |
 | Trades: Basic 4 Erkundungsstation, Basic 5/6 die zwei Karten, Master 0–4 Dorfkarten Ebene/Wüste/Savanne/Taiga/Schnee | `exchange/cartographer_*.json` |
 
-### Salvager (Vanilla-Armorer, Basic Trades + Schmelz-Passive)
+### Goldsmith (Vanilla-Armorer, Basic Trades + Masteries + Verwertungs-Passive)
 | Was | Dateien |
 |---|---|
-| Basic 0 Eisenketten, 1 Eisengitter, 4 Veredelungs- + Schmelzstation, 5 Kupferader-Karte, 6 Eisenader-Karte | `exchange/salvager_*.json` |
-| Veredelungsstation (Master, noch ohne Funktion) + Schmelzstation (Passive) | `salvager/SalvagerBlocks.java`, `TradeReworkSections.java` |
-| Schmelzstation (3 + 3 wie die Brechstation, Trichter, Komparator, Redstone-Puls, Hochofen-Knistern; WORKING: Tiegel mit animiertem geschmolzenem Metall nur beim Arbeiten) | `salvager/SmeltingStationBlock.java`, Modelle `smelting_station.json` / `smelting_station_working.json`, Lava-Blasen `salvager/SalvagerParticles.java` + `client/render/MoltenBubbleParticle.java`, `salvager/SmeltingStationBlockEntity.java`, `salvager/SalvagerBlockEntities.java` |
-| Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil bleibt im Input-Slot, Scraps in den Output; Trichter unten zieht Output + übrig gebliebene Diamant-Teile) | `passive/SmeltingWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`salvager/SalvageRule.java`) |
-| Berufsname „Verwerter“ | `entity.minecraft.villager.armorer` in `lang/*.json` |
+| Basic 0 vergoldete Eisenkette, 1 vergoldetes Eisengitter (je Smaragd + Vanilla-Kette bzw. -Gitter), 4 Vergoldungs- + Verwertungsstation, 5 Kupferader-Karte, 6 Eisenader-Karte | `exchange/goldsmith_*.json` |
+| Vergoldete Eisenkette / vergoldetes Eisengitter (Seabrass-Texturen aus Abyssal Decor auf Vanillas `template_chain` / `template_bars_*`, Verhalten wie Eisenkette/-gitter, Tags `chains` / `bars`) | `goldsmith/GoldsmithBlocks.java` |
+| Vergoldungsstation (Master, Placeholder-Würfel) + Verwertungsstation (Passive) | `goldsmith/GoldsmithBlocks.java`, `TradeReworkSections.java` |
+| Masteries 1–4 ohne Smaragde (Metall im 1. Slot, Block im 2.): Eisen + Glas → verstärktes Glas (Rahmen verbindet sich mit angrenzendem verstärktem Glas (Connected Textures: jede Seite wählt eine von 16 Texturen nach den 4 Nachbarn in ihrer Ebene, `ReinforcedGlassBlock`, eigene Texturen in `assets/Goldsmith/reinforced_glass`)), Eisen + Redstone-Block → eisengerahmter Redstone (gibt Signal; Steinmetz: eisengerahmter Redstone → eisengerahmte Redstone-Treppe (L-Textur, Modelle wie die Lapis-Treppe), -Stufe ×2, eisenverzierter Redstone (Ornated Redstone, setzt sich wie ein Kolben), eisenverzierte Redstone-Säule (Ornated Redstone Pillar); nur der Grundblock gibt Signal (entschieden 2026-09-30), Texturen selbst gezeichnet (`assets/Goldsmith/redstone variants`)), Gold + Lapisblock → goldgerahmter Lapis (Steinmetz: goldgerahmter Lapis → goldgerahmte Stufe ×2 / Treppe, goldverzierter Lapis, goldverzierte Lapissäule), Gold + Schwarzstein → Vanilla vergoldeter Schwarzstein | `exchange/goldsmith_reinforced_glass.json` / `_iron_framed_redstone` / `_gold_framed_lapis` / `_gilded_blackstone`, Blöcke in `goldsmith/GoldsmithBlocks.java`, Steinmetz `recipe/*_from_gold_framed_lapis_stonecutting.json` |
+| Verwertungsstation (3 + 3 wie die Brechstation, Trichter, Komparator, Redstone-Puls, Hochofen-Knistern; WORKING: Tiegel mit animiertem geschmolzenem Metall nur beim Arbeiten) | `goldsmith/SalvageStationBlock.java`, Modelle `salvage_station.json` / `salvage_station_working.json`, Lava-Blasen `goldsmith/GoldsmithParticles.java` + `client/render/MoltenBubbleParticle.java`, `goldsmith/SalvageStationBlockEntity.java`, `goldsmith/GoldsmithBlockEntities.java` |
+| Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil bleibt im Input-Slot, Scraps in den Output; Trichter unten zieht Output + übrig gebliebene Diamant-Teile) | `passive/SalvageWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`goldsmith/SalvageRule.java`) |
+| Berufsname „Goldschmied“ / „Goldsmith“ | `entity.minecraft.villager.armorer` in `lang/*.json` |
 
 ### Entdeckerkarten als Trade-Output (gemeinsam für alle Berufe)
 | Was | Dateien |
@@ -235,7 +237,7 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Suche einmal pro Villager + Trade beim ersten Handeln, fertige Karte am Villager gespeichert; vorher Platzhalter, nichts gefunden = ausverkauft (1 Tag Pause bis zur nächsten Suche); Geoden-/Aderkarten zeigen die Höhe im Tooltip | `trade/ExplorerMaps.java` (Attachment `explorer_maps`), eingehängt über `ExtensionHooks.setExplorerMaps` (Kern: `trade/VillagerOffers.build`) |
 | Strukturen: Vanilla-Suche (100 Chunks, noch nicht verwendete Struktur) | `ServerLevel.findNearestMapStructure` |
 | Geoden (Mason) + Verliese (Veteran): Platzierung aus dem Weltseed nachgerechnet, ohne Chunks zu laden (Deko-Seed, Feature-Index, Platzierungsregeln, Biom aus der Biom-Quelle); Verliese zusätzlich in der Welt nachgeprüft (`verify_block` Spawner, max. 64 Kandidaten, lädt den Chunk) | `explore/FeatureLocator.java`, `mixin/ChunkGeneratorAccessor.java` |
-| Erzadern (Salvager): Ader-Rauschen (`OreVeinifier`) aus dem Weltseed ausgewertet | `explore/OreVeinLocator.java` |
+| Erzadern (Goldsmith): Ader-Rauschen (`OreVeinifier`) aus dem Weltseed ausgewertet | `explore/OreVeinLocator.java` |
 | Ring-Suche um den Villager (32 Chunks) | `explore/ChunkSearch.java` |
 ### Debug der Extension
 - `explore/LocateCommand.java`: `/vo locate geode|copper_vein|iron_vein|dungeon` – Vorhersage ab der eigenen Position, lädt die Stelle und zählt passende Blöcke (0 = daneben)
@@ -244,4 +246,5 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 
 - Obsidian-Vault `Jakobs Vault/Improved Villagers/`: Berufs-Dateien (z. B. `Librarian.md`, Wertetabellen = Quelle der Datapack-Werte), `Tweak-Werte.md` (Quelle aller Zahlen), `Fehlende Texturen und Modelle.md`
 - Rohe Grafiken: `assets/` (Blockbench, Pixelorama, PNG)
+- **Credits:** Vergoldete Eisenkette + vergoldetes Eisengitter (Abyssal Decors „Seabrass“) und der Eisenrahmen von verstärktem Glas stammen aus **Abyssal Decor** von **starrysock** (https://modrinth.com/mod/abyssal-decor, CC0; Nutzung zusätzlich vom Autor ausdrücklich erlaubt, 2026-09-29). Chipped (Terrarium) geprüft: Code MIT, Texturen All Rights Reserved → nicht übernehmbar
 - NeoForge-Doku: Attachments https://docs.neoforged.net/docs/datastorage/attachments/ · Registries https://docs.neoforged.net/docs/concepts/registries/

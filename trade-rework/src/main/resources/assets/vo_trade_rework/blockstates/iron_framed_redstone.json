@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "vo_trade_rework:block/iron_framed_redstone" }
+  }
+}

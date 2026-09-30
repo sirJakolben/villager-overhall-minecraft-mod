@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * The Cartographer's explore station and blank maps (Obsidian Cartographer.md, 2026-09-27). The maps are plain items that other professions
  * take as the second payment for an explorer map (trade/ExplorerMaps). Adventure map -> villages
- * (Cartographer), pillager outpost (Veteran), later geode (Mason) and ore veins (Salvager); challenge map ->
+ * (Cartographer), pillager outpost (Veteran), later geode (Mason) and ore veins (Goldsmith); challenge map ->
  * trial chambers, mansion, monument, ancient city (Veteran). Placeholder texture: Vanilla's empty map.
  */
 @EventBusSubscriber(modid = TradeReworkMod.MODID)

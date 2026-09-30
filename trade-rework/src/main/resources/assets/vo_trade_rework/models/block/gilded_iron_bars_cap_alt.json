@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_bars_cap_alt",
+  "textures": {
+    "bars": "vo_trade_rework:block/gilded_iron_bars",
+    "edge": "vo_trade_rework:block/gilded_iron_bars"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up": { "model": "vo_trade_rework:block/ornated_lapis" },
+    "facing=down": { "model": "vo_trade_rework:block/ornated_lapis", "x": 180 },
+    "facing=north": { "model": "vo_trade_rework:block/ornated_lapis", "x": 90 },
+    "facing=south": { "model": "vo_trade_rework:block/ornated_lapis", "x": 90, "y": 180 },
+    "facing=west": { "model": "vo_trade_rework:block/ornated_lapis", "x": 90, "y": 270 },
+    "facing=east": { "model": "vo_trade_rework:block/ornated_lapis", "x": 90, "y": 90 }
+  }
+}

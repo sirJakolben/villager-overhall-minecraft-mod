@@ -1,7 +1,7 @@
 # Tweaks – allgemein (alle Berufe)
 
 Zwilling von Obsidian `Tweak-Werte.md` (allgemeiner Teil), kompakt. Beide werden gemeinsam geändert; bei Abweichung gilt Obsidian.
-Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md](veteran.md) · geplant: [runesmith.md](runesmith.md), [salvager.md](salvager.md), [cartographer.md](cartographer.md), [fisherman.md](fisherman.md), [leatherworker.md](leatherworker.md). Stand: 2026-09-28. Code-Stellen: Kern `core/…`, Berufe `trade-rework/…` (siehe README).
+Berufs-Werte: [librarian.md](librarian.md) · [mason.md](mason.md), [veteran.md](veteran.md) · geplant: [runesmith.md](runesmith.md), [goldsmith.md](goldsmith.md), [cartographer.md](cartographer.md), [fisherman.md](fisherman.md), [leatherworker.md](leatherworker.md). Stand: 2026-09-28. Code-Stellen: Kern `core/…`, Berufe `trade-rework/…` (siehe README).
 
 ## Level & XP — `progression/ProgressionService.java`
 | Wert | Aktuell |

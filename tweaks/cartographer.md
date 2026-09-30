@@ -21,5 +21,5 @@ Zwilling von Obsidian `Cartographer.md`, kompakt. Fehlende Werte = 1. Bei Abweic
 - alle Werte 1
 
 ## Abnehmer der Karten
-- Abenteuerkarte: Veteran (Außenposten, Verlies), Mason (Geode), Salvager (Kupfer-/Eisenader), Dorfkarten hier
+- Abenteuerkarte: Veteran (Außenposten, Verlies), Mason (Geode), Goldsmith (Kupfer-/Eisenader), Dorfkarten hier
 - Herausforderungskarte: Veteran (Trial Chamber, Anwesen, Monument, Antike Stadt)

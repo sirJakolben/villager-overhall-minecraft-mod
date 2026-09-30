@@ -2,6 +2,8 @@
   "values": [
     "vo_trade_rework:brown_sandstone_slab",
     "vo_trade_rework:cut_brown_sandstone_slab",
-    "vo_trade_rework:smooth_brown_sandstone_slab"
+    "vo_trade_rework:smooth_brown_sandstone_slab",
+    "vo_trade_rework:gold_framed_lapis_slab",
+    "vo_trade_rework:iron_framed_redstone_slab"
   ]
 }

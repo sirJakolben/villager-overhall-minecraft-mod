@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "vo_trade_rework:iron_framed_redstone",
+  "result": {
+    "id": "vo_trade_rework:ornated_redstone"
+  }
+}

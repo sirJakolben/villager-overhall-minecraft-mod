@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Finds the big ore veins added in 1.18 (Salvager's vein maps, 2026-09-27) from the world seed alone. They
+ * Finds the big ore veins added in 1.18 (Goldsmith's vein maps, 2026-09-27) from the world seed alone. They
  * are neither a structure nor a feature but part of the terrain noise (Vanilla OreVeinifier): the vein
  * toggle noise picks copper (positive, y 0..50) or iron (negative, y -60..-8), and where it is strong
  * enough and the ridged noise is below zero, the stone becomes vein.

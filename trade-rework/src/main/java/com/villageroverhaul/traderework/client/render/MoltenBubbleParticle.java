@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.SimpleParticleType;
 
 /**
- * The smelting station's lava bubble (SalvagerParticles.MOLTEN_BUBBLE): Vanilla's lava particle - same sprite,
+ * The salvage station's lava bubble (GoldsmithParticles.MOLTEN_BUBBLE): Vanilla's lava particle - same sprite,
  * glow, shrinking and smoke trail - but it stays around the crucible and never rolls the biggest sizes.
  */
 public class MoltenBubbleParticle extends LavaParticle {

@@ -1,7 +1,7 @@
 package com.villageroverhaul.traderework;
 
 import com.villageroverhaul.traderework.mason.CrushingRule;
-import com.villageroverhaul.traderework.salvager.SalvageRule;
+import com.villageroverhaul.traderework.goldsmith.SalvageRule;
 import com.villageroverhaul.traderework.veteran.MobWeaponDefinition;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -21,7 +21,7 @@ public final class TradeReworkRegistries {
     public static final ResourceKey<Registry<CrushingRule>> CRUSHING =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "crushing"));
 
-    /** Smelting station rules (salvager/SalvageRule), server-only. */
+    /** Salvage station rules (goldsmith/SalvageRule), server-only. */
     public static final ResourceKey<Registry<SalvageRule>> SALVAGE =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "salvage"));
 

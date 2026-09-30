@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/template_chain",
+  "textures": { "texture": "vo_trade_rework:block/gilded_iron_chain" }
+}

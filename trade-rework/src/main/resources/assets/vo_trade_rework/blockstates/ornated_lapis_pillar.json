@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=x": { "model": "vo_trade_rework:block/ornated_lapis_pillar", "x": 90, "y": 90 },
+    "axis=y": { "model": "vo_trade_rework:block/ornated_lapis_pillar" },
+    "axis=z": { "model": "vo_trade_rework:block/ornated_lapis_pillar", "x": 90 }
+  }
+}

@@ -6,7 +6,7 @@ import net.minecraft.world.entity.npc.villager.Villager;
 
 /**
  * One profession's passive - the work at its passive station (Librarian: book upgrades, Mason: crushing,
- * Runesmith: repairing, Salvager: smelting). PassiveLogic calls the one of the villager's profession.
+ * Runesmith: repairing, Goldsmith: smelting). PassiveLogic calls the one of the villager's profession.
  */
 public interface PassiveWork {
 

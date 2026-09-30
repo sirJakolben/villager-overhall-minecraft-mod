@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "vo_trade_rework:block/gold_framed_lapis",
+    "top": "vo_trade_rework:block/gold_framed_lapis",
+    "side": "vo_trade_rework:block/gold_framed_lapis"
+  }
+}

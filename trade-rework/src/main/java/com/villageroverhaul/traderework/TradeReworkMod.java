@@ -18,9 +18,9 @@ import com.villageroverhaul.traderework.runesmith.BonusDurability;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlockEntities;
 import com.villageroverhaul.traderework.runesmith.RunesmithBlocks;
 import com.villageroverhaul.traderework.runesmith.RunesmithItems;
-import com.villageroverhaul.traderework.salvager.SalvagerBlockEntities;
-import com.villageroverhaul.traderework.salvager.SalvagerBlocks;
-import com.villageroverhaul.traderework.salvager.SalvagerParticles;
+import com.villageroverhaul.traderework.goldsmith.GoldsmithBlockEntities;
+import com.villageroverhaul.traderework.goldsmith.GoldsmithBlocks;
+import com.villageroverhaul.traderework.goldsmith.GoldsmithParticles;
 import com.villageroverhaul.traderework.trade.ExplorerMaps;
 import com.villageroverhaul.traderework.veteran.MobWeapons;
 import com.villageroverhaul.traderework.veteran.VeteranBlockEntities;
@@ -65,10 +65,10 @@ public class TradeReworkMod {
         VeteranItems.ITEMS.register(modEventBus);
         CartographerBlocks.BLOCKS.register(modEventBus);
         CartographerItems.ITEMS.register(modEventBus);
-        SalvagerBlocks.BLOCKS.register(modEventBus);
-        SalvagerBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
-        SalvagerBlocks.ITEMS.register(modEventBus);
-        SalvagerParticles.PARTICLE_TYPES.register(modEventBus);
+        GoldsmithBlocks.BLOCKS.register(modEventBus);
+        GoldsmithBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
+        GoldsmithBlocks.ITEMS.register(modEventBus);
+        GoldsmithParticles.PARTICLE_TYPES.register(modEventBus);
 
         TradeReworkSections.register();
     }

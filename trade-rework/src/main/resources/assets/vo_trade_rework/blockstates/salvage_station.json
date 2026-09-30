@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "powered=false,working=false": { "model": "vo_trade_rework:block/salvage_station" },
+    "powered=true,working=false": { "model": "vo_trade_rework:block/salvage_station" },
+    "powered=false,working=true": { "model": "vo_trade_rework:block/salvage_station_working" },
+    "powered=true,working=true": { "model": "vo_trade_rework:block/salvage_station_working" }
+  }
+}

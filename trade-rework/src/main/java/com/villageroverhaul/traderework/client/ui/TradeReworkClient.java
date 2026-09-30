@@ -4,7 +4,7 @@ import com.villageroverhaul.client.ui.SectionClientLogic;
 import com.villageroverhaul.traderework.TradeReworkMod;
 import com.villageroverhaul.traderework.TradeReworkSections;
 import com.villageroverhaul.traderework.client.render.MoltenBubbleParticle;
-import com.villageroverhaul.traderework.salvager.SalvagerParticles;
+import com.villageroverhaul.traderework.goldsmith.GoldsmithParticles;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,12 +24,12 @@ public final class TradeReworkClient {
         event.register(TradeReworkMenus.ENCHANTMENT_STATION_MENU.get(), EnchantmentStationScreen::new);
         event.register(TradeReworkMenus.CRUSHING_STATION_MENU.get(), ThreeInThreeOutScreen::new);
         event.register(TradeReworkMenus.REPAIR_STATION_MENU.get(), ThreeInThreeOutScreen::new);
-        event.register(TradeReworkMenus.SMELTING_STATION_MENU.get(), ThreeInThreeOutScreen::new);
+        event.register(TradeReworkMenus.SALVAGE_STATION_MENU.get(), ThreeInThreeOutScreen::new);
     }
 
     @SubscribeEvent
     static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(SalvagerParticles.MOLTEN_BUBBLE.get(), MoltenBubbleParticle::provider);
+        event.registerSpriteSet(GoldsmithParticles.MOLTEN_BUBBLE.get(), MoltenBubbleParticle::provider);
     }
 
     @SubscribeEvent
