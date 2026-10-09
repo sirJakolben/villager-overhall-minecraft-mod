@@ -168,7 +168,7 @@ public final class RestockService {
             return updated;
         }
         for (SectionDefinition section : workable) {
-            if (!section.station().equals(focus.get().station())) {
+            if (!section.station().equals(focus.get().station()) || !section.logic().fillsFromWork(villager, updated, section)) {
                 continue;
             }
             int filled = Math.min(meterPoints(villager, updated, section), updated.productivity().meter(section.id()) + points);

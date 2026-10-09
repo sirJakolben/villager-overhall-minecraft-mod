@@ -1,4 +1,4 @@
-# Entwicklungsvorschlag: Kern erweiterbar machen (2026-09-28)
+# Kern erweiterbar machen (Phase 1 + 2 sind gebaut, offen: Phase 3–5)
 
 Auftrag für einen Entwicklungs-Chat. Ziel: Der Kern (`core/`, `villageroverhaul`) soll so gebaut sein, dass fremde Programmierer ihn holen und eigene Trades, Bedingungen und Ideen umsetzen können, **ohne den Kern anzufassen**. Dafür fliegt Berufswissen der Extension aus dem Kern, und drei feste Sonderfälle werden zu registrierbaren Typen. Dazu kommt ein neues Kern-Feature: Trades in Raten.
 
@@ -28,57 +28,11 @@ Entstanden in einer Analyse-Sitzung. Befunde und Begründungen stehen kurz unter
 > **Der Kern kennt keine konkreten Dinge, sondern registrierte Typen mit Codec.**
 > Eintrags-Zusatzdaten → Erweiterungstypen. Item-Modifikationen → Component-Prüfung. Bedingungen außerhalb der Items → `TradeRequirement`-Typen.
 
-Danach entfallen alle drei globalen Setter in `api/ExtensionHooks`:
+Danach entfallen die globalen Setter in `api/ExtensionHooks`:
 - `setMobWeaponComponent`
 - `setPlayerXpCost`
-- `setExplorerMaps`
 
 Übrig bleiben nur `registerSection`, `registerStation` und die neuen `register…`-Methoden. Das „der letzte Setter gewinnt“-Problem, das zwei Extensions heute still gegeneinander ausspielen würde, verschwindet damit.
-
----
-
-## Phase 1: Sortierung (reines Verschieben, kein Verhalten)
-
-**Warum:** In `station/` stecken zwei Themen. Einige Klassen liegen im falschen Paket, und die Grafiken der Extension liegen im Kern.
-
-- `station/` teilen. Neues Paket `interaction/` (Name frei wählbar) für die Interaktion zwischen Spieler und Villager: `TradingBlock`, `TradingBlocks`, `TradingBlockCall`, `GoToTradingBlock`, `EmeraldClaimTool`, `ManualClaims`, `EmeraldLure`. In `station/` bleiben: `StationClaims`, `StationFocus`, `ProfessionStations`, `WorkAtStation`, `PausedAtStation`, `UnemployedPriority`.
-- `ProfessionLock`: prüfen, ob es besser zu `trade/` oder `progression/` passt (es wird von `TradeEvents` benutzt und betrifft den Beruf, nicht Stationen).
-- `trade/RequiredEnchantmentCost` wird in Phase 3 ohnehin ersetzt, also hier nicht anfassen.
-- **Grafiken:** `master_productivity_*`, `passive_productivity_*` wandern von `core/…/textures/gui/villager/` in die Extension (Namespace `vo_trade_rework`). `TradeReworkSections` verweist dann nicht mehr auf `VillagerOverhaulMod.MODID`.
-- `passive_ability_group.png` (Badge-Rahmen, `VillagerGuiTextures.BADGE`): ansehen. Ist es ein neutraler Rahmen, bleibt er im Kern und wird in `badge_frame` umbenannt. Enthält es Passiv-Grafik, bekommt `SectionDefinition` ein optionales Badge-Sprite, und die Datei wandert in die Extension.
-- Mixin-Config und `package-info.java` nachziehen, Build + `runClient` beider Mods kurz starten.
-
----
-
-## Phase 2: Offene Eintrags-Erweiterungen
-
-**Warum:** `data/ItemExchange` ist ein geschlossener Record. Die Felder `pool`, `input_variants` und `input_enchantment_variants` liest nur `QuestLogic` der Extension. `explorer_map` (samt `ExplorerMap`, `VeinType` mit fest eingebauten Y-Bändern) kann der Kern nicht einmal erfüllen, das macht der Hook der Extension. Jede neue Extension-Idee bräuchte heute ein neues Kern-Feld.
-
-**Ziel-Form im JSON:**
-```json
-{
-  "profession": "minecraft:librarian",
-  "section": "vo_trade_rework:quests",
-  "base_input": { … }, "max_input": { … }, "base_output": { … }, "max_output": { … },
-  "base_max_uses": 1, "max_max_uses": 1,
-  "extensions": {
-    "vo_trade_rework:quest": { "pool": "hard", "input_variants": ["minecraft:oak_sign", "…"] },
-    "vo_trade_rework:explorer_map": { "destination": "#minecraft:village", "decoration": "…", "name": "…" }
-  }
-}
-```
-
-**Kern:**
-- `api/ExchangeExtensionType<T>(Identifier id, Codec<T> codec)` wird über `ExtensionHooks.registerExchangeExtension(type)` registriert. Die Registrierung ist thread-safe wie `Sections`.
-- `ItemExchange` bekommt `ExchangeExtensions extensions` (eine Map Typ → Wert). Der Codec dispatcht über die Map-Schlüssel. Ein unbekannter Schlüssel ist ein **Ladefehler mit klarer Meldung**, kein stilles Ignorieren (so fallen Tippfehler im Datapack sofort auf). Zugriff: `exchange.extension(TYPE)` → `Optional<T>`.
-- **Ausgabe ersetzen:** ein Interface `api/ResultOverride` mit `Output resultFor(Villager, Identifier entryId)`, wobei `Output` aus Stack und `soldOut` besteht (heute `ExtensionHooks.MapOutput`). Implementiert es ein Erweiterungswert, benutzt `VillagerOffers.toOffer` (heute Zeile ~147) dessen Ergebnis statt `base_output`.
-- Aus dem Kern entfernen: `ItemExchange.pool/inputVariants/inputEnchantmentVariants/explorerMap`, `data/ExplorerMap` (mit `VeinType`), `ExtensionHooks.ExplorerMapBuilder/MapOutput/setExplorerMaps/explorerMap`.
-- ⚠ Prüfen: Wird die Exchange-Registry zum Client synchronisiert (`ModDataPackRegistries`, `SectionEntries` spricht von Client- und Server-Kopie)? Dann braucht der Erweiterungs-Codec auch auf dem Client alle Typen. Das ist gegeben, solange beide Seiten die Extension laden.
-
-**Extension:**
-- `quest/QuestEntry` (Record: `pool`, `inputVariants`, `inputEnchantmentVariants`) als Erweiterungstyp `vo_trade_rework:quest`. `QuestLogic` liest `exchange.extension(QuestEntry.TYPE)`.
-- `ExplorerMap` + `VeinType` ziehen nach `trade/` bzw. `explore/` der Extension, als Typ `vo_trade_rework:explorer_map`, der `ResultOverride` implementiert und intern `ExplorerMaps.outputFor` aufruft.
-- **JSON-Migration:** alle `exchange/*.json` mit `pool`, `input_variants`, `input_enchantment_variants` oder `explorer_map`. Das betrifft etwa 50 Dateien, also ein Skript benutzen und nicht von Hand arbeiten.
 
 ---
 

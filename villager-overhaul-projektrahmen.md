@@ -2,6 +2,8 @@
 
 Dieser Prompt ist der dauerhafte Rahmen für die Zusammenarbeit an diesem Projekt. Er beschreibt ausschließlich **wie** gearbeitet wird – **was** noch gebaut wird, steht in [active-development.md](active-development.md), **was schon da ist**, in [README.md](README.md), alle Zahlen in [tweaks/](tweaks/).
 
+**Leitidee:** Die Mod gibt jedem Villager ein Vanilla-artiges Rework. Alles soll sich anfühlen, als wäre es mit dem nächsten Minecraft-Update gekommen. Neue Blöcke und Items sind Erweiterungen, keine Eingriffe ins Vanilla-Erlebnis.
+
 ---
 
 ## Bereits entschiedene technische Eckpunkte
@@ -79,14 +81,9 @@ Die technische Umsetzung (welcher Hook, warum dieser Punkt) wird danach in der E
 
 ---
 
-## Design-Regel: ergänzen statt kannibalisieren
+## Design-Regel: ergänzen statt ersetzen
 
-Festgelegt 2026-09-26 beim Planen von Mason und Schmieden. Leitfrage für jeden Trade und jede Passive: **Ersetzt das etwas, das selbst Spielerlebnis ist, oder nur Fleißarbeit?**
-
-- **Nicht ok:** Ein Villager-Trade macht ein Vanilla-System überflüssig. Beispiele: Sharpness V direkt kaufen (ersetzt das Zaubertisch-Setup), Quarz aus dem Nichts beim Vanilla-Mason (ersetzt das Minen im Nether), Diamantrüstung kaufen.
-- **Ok:** Allerweltsmaterial „aus der Luft“ (Sandstein kaufen statt zur Wüste reisen und ein Loch zu graben). Das nimmt nur Arbeit weg, die niemand gern macht.
-- **Bevorzugt:** Der Villager ist ein **Multiplikator für eigene Arbeit**. Wertvolles muss der Spieler weiter selbst beschaffen, der Villager macht es ergiebiger (Quarz + Sandstein → Quarzblock zu besserer Rate, Diamanten lassen sich nicht zurückschmelzen).
-- Konkurrierende Wege sind erlaubt, wenn jeder eine eigene Nische mit eigenem Preis hat (Reparatur: Amboss sofort gegen XP, Repair Station gratis aber langsam, Mending teuer und dauerhaft). Dass ein Late-Game-Weg einen Early-Game-Weg ablöst, ist gewollt.
+Trades nehmen nur Fleißarbeit ab und ersetzen kein Vanilla-Spielerlebnis. Der Villager ist ein Multiplikator für die Arbeit des Spielers.
 
 ---
 

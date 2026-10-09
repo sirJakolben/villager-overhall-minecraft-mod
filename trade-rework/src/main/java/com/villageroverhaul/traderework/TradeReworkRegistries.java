@@ -2,6 +2,7 @@ package com.villageroverhaul.traderework;
 
 import com.villageroverhaul.traderework.mason.CrushingRule;
 import com.villageroverhaul.traderework.goldsmith.SalvageRule;
+import com.villageroverhaul.traderework.fisherman.BiomeFish;
 import com.villageroverhaul.traderework.veteran.MobWeaponDefinition;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -29,6 +30,10 @@ public final class TradeReworkRegistries {
     public static final ResourceKey<Registry<MobWeaponDefinition>> MOB_WEAPON =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "mob_weapon"));
 
+    /** The biome fish of each biome group (fisherman/BiomeFish), server-only - the client never needs them. */
+    public static final ResourceKey<Registry<BiomeFish>> BIOME_FISH =
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "biome_fish"));
+
     private TradeReworkRegistries() {
     }
 
@@ -36,6 +41,7 @@ public final class TradeReworkRegistries {
     static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(CRUSHING, CrushingRule.CODEC);
         event.dataPackRegistry(SALVAGE, SalvageRule.CODEC);
+        event.dataPackRegistry(BIOME_FISH, BiomeFish.CODEC);
         event.dataPackRegistry(MOB_WEAPON, MobWeaponDefinition.CODEC, MobWeaponDefinition.CODEC);
     }
 }

@@ -5,9 +5,11 @@ import com.villageroverhaul.happiness.HappinessElements;
 import com.villageroverhaul.section.Sections;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.trading.MerchantOffer;
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
@@ -24,8 +26,26 @@ public final class ExtensionHooks {
 
     private static volatile Supplier<@Nullable DataComponentType<EntityType<?>>> mobWeaponComponent = () -> null;
     private static volatile ToIntFunction<MerchantOffer> playerXpCost = offer -> 0;
+    private static final java.util.List<Predicate<Villager>> STAY_PUT = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private ExtensionHooks() {
+    }
+
+    /**
+     * A reason for a villager to stand still right now (the Fisherman while his cast is in the air): while it holds, Vanilla's place-bound behaviors
+     * (strolling around the job site, walking back to it, meeting at the bell) pause exactly as for a station or a Trading Block call (station/PausedWhileAway).
+     */
+    public static void registerStayPut(Predicate<Villager> reason) {
+        STAY_PUT.add(reason);
+    }
+
+    public static boolean isStayingPut(Villager villager) {
+        for (Predicate<Villager> reason : STAY_PUT) {
+            if (reason.test(villager)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** A station a profession has besides its Vanilla job site - see StationDefinition. */

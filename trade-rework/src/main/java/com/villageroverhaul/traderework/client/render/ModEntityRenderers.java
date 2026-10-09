@@ -1,6 +1,7 @@
 package com.villageroverhaul.traderework.client.render;
 
 import com.villageroverhaul.traderework.TradeReworkMod;
+import com.villageroverhaul.traderework.fisherman.FishermanEntities;
 import com.villageroverhaul.traderework.librarian.LibrarianEntities;
 import com.villageroverhaul.traderework.mason.MasonBlockEntities;
 import com.villageroverhaul.traderework.veteran.VeteranBlockEntities;
@@ -23,6 +24,7 @@ public final class ModEntityRenderers {
         // The thrown bottle is drawn as its item, exactly like Vanilla's thrown Bottle o' Enchanting.
         event.registerEntityRenderer(LibrarianEntities.VILLAGER_EXPERIENCE_BOTTLE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(LibrarianEntities.VILLAGER_EXPERIENCE_ORB.get(), VillagerExperienceOrbRenderer::new);
+        event.registerEntityRenderer(FishermanEntities.VILLAGER_BOBBER.get(), VillagerBobberRenderer::new);
         event.registerBlockEntityRenderer(VeteranBlockEntities.WEAPON_RACK.get(), WeaponRackRenderer::new);
         event.registerBlockEntityRenderer(MasonBlockEntities.VILLAGER_STATUE.get(), VillagerStatueRenderer::new);
     }

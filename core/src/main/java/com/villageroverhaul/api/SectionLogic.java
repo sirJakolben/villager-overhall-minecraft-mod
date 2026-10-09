@@ -3,11 +3,13 @@ package com.villageroverhaul.api;
 import com.villageroverhaul.section.StandardSection;
 import com.villageroverhaul.state.VillagerState;
 import com.villageroverhaul.work.RestockService;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.villager.Villager;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * How a section behaves, on the server. Every method has the standard trade behavior as its default
@@ -47,6 +49,23 @@ public interface SectionLogic {
     /** Size of the section's meter in work points. A meter above its size (after a rank-up) counts as full. */
     default int meterPoints(Villager villager, VillagerState state, SectionDefinition section) {
         return RestockService.METER_POINTS;
+    }
+
+    /**
+     * Whether working at the section's station fills its meter and makes it a candidate for the focus by its meter (StationFocus.choose rules 1-3).
+     * A section that keeps its meter itself - the Trade Rework's carrying passives, whose meter shows what the villager carries and goes down at the
+     * station - answers false: it is only ever chosen when its work is waiting (isPending).
+     */
+    default boolean fillsFromWork(Villager villager, VillagerState state, SectionDefinition section) {
+        return true;
+    }
+
+    /**
+     * Where the villager works on this section right now when that is not the section's station - a short errand, like the Fisherman's walk to
+     * the water before a cast. While the section is the focus, the villager walks there instead of to its station (StationFocus.workStation).
+     */
+    default Optional<GlobalPos> workPlace(Villager villager, VillagerState state, SectionDefinition section) {
+        return Optional.empty();
     }
 
     /** Work is waiting at the section's station - the focus goes there before anything else. */

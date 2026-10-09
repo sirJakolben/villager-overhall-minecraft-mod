@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:farmer",
+  "section": "vo_trade_rework:masteries",
+  "unlock_rank": 4,
+  "base_input": { "item": "vo_trade_rework:golden_bread", "count": 1 },
+  "max_input": { "item": "vo_trade_rework:golden_bread", "count": 1 },
+  "base_output": { "item": "vo_trade_rework:gilded_toast", "count": 1 },
+  "max_output": { "item": "vo_trade_rework:gilded_toast", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

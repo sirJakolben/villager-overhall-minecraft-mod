@@ -42,7 +42,8 @@ public final class StationFocus {
     }
 
     public static Optional<GlobalPos> workStation(Villager villager, VillagerState state) {
-        Optional<GlobalPos> station = focusSection(villager, state).flatMap(section -> VillagerSections.stationOf(state, section));
+        Optional<GlobalPos> station = focusSection(villager, state)
+                .flatMap(section -> section.logic().workPlace(villager, state, section).or(() -> VillagerSections.stationOf(state, section)));
         if (station.isEmpty()) {
             Holder<VillagerProfession> profession = villager.getVillagerData().profession();
             station = state.stations().positions().entrySet().stream()
@@ -81,16 +82,18 @@ public final class StationFocus {
      */
     public static Optional<SectionDefinition> choose(ServerLevel level, Villager villager, VillagerState state, List<SectionDefinition> workable) {
         Holder<VillagerProfession> profession = villager.getVillagerData().profession();
-        List<SectionDefinition> candidates = workable.stream()
+        List<SectionDefinition> allCandidates = workable.stream()
                 .sorted(Comparator.comparingInt((SectionDefinition section) -> -ProfessionStations.morningPriority(profession, section.station().orElseThrow()))
                         .thenComparingInt(SectionDefinition::order))
                 .toList();
-        for (SectionDefinition section : candidates) {
+        for (SectionDefinition section : allCandidates) {
             if (section.logic().isPending(level, villager, state, section)) {
                 return Optional.of(section);
             }
         }
 
+        // Rules 1-3 look only at sections that fill from work; the others (carrying passives) are chosen by rule 0 alone.
+        List<SectionDefinition> candidates = allCandidates.stream().filter(section -> section.logic().fillsFromWork(villager, state, section)).toList();
         Map<SectionDefinition, Integer> missing = new HashMap<>();
         SectionDefinition shortage = null;
         for (SectionDefinition section : candidates) {

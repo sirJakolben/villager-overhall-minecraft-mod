@@ -1,5 +1,6 @@
 package com.villageroverhaul.station;
 
+import com.villageroverhaul.api.ExtensionHooks;
 import com.villageroverhaul.interaction.TradingBlockCall;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.Behavior;
@@ -17,8 +18,8 @@ import java.util.function.Predicate;
  * SocializeAtBell) - without this, Vanilla would pull the villager back the moment it arrives, or keep
  * redirecting it on the way (bug 2026-09-28: villagers never made it to their Trading Block).
  *
- * - atStation: during work - it works at another station (StationFocus) or is called to its Trading Block.
- * - called: any other time - it is called to its Trading Block (TradingBlockCall).
+ * - atStation: during work - it works at another station (StationFocus), is called to its Trading Block, or an extension asks it to stay put (ExtensionHooks.registerStayPut).
+ * - called: any other time - it is called to its Trading Block (TradingBlockCall), or an extension asks it to stay put.
  */
 public final class PausedWhileAway implements BehaviorControl<Villager> {
 
@@ -31,11 +32,11 @@ public final class PausedWhileAway implements BehaviorControl<Villager> {
     }
 
     public static PausedWhileAway atStation(BehaviorControl<? super Villager> delegate) {
-        return new PausedWhileAway(delegate, body -> StationFocus.awayStation(body).isPresent() || TradingBlockCall.isCalled(body));
+        return new PausedWhileAway(delegate, body -> StationFocus.awayStation(body).isPresent() || TradingBlockCall.isCalled(body) || ExtensionHooks.isStayingPut(body));
     }
 
     public static PausedWhileAway called(BehaviorControl<? super Villager> delegate) {
-        return new PausedWhileAway(delegate, TradingBlockCall::isCalled);
+        return new PausedWhileAway(delegate, body -> TradingBlockCall.isCalled(body) || ExtensionHooks.isStayingPut(body));
     }
 
     @Override

@@ -8,7 +8,7 @@
 Kompakter Überblick: was die zwei Mods können und wo es im Code steht. Zum Wiederfinden, nicht zum Durchlesen.
 Seit 2026-09-28 zwei Mods in einem Gradle-Projekt: **Villager Overhaul** (Kern, `core/`, Mod-ID `villageroverhaul`) und **Villager Overhaul: Trade Rework** (Extension, `trade-rework/`, Mod-ID `vo_trade_rework`, braucht den Kern).
 Offenes steht in [active-development.md](active-development.md), Zahlen in [tweaks/](tweaks/), Arbeitsregeln in [villager-overhaul-projektrahmen.md](villager-overhaul-projektrahmen.md).
-Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (Sektions-Umbau).
+Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-30 (Farmer + Fisherman).
 
 ## Features
 
@@ -34,7 +34,9 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 - **Runesmith** (Vanilla-Toolsmith, Teil-Gerüst, Placeholder-Grafik): Bücher Haltbarkeit I + Reparatur, eine Upgrade-Vorlage (Vanilla-Schmiede-Rezepte, 1 Block der Zielstufe), Upgrade- und Reparaturstation, Reparieren + Polster als Passive
 - **Veteran** (Vanilla-Weaponsmith, Teil-Gerüst, Placeholder-Grafik): Mob-Waffen (markierte Vanilla-Items mit Namen und Treffer-Effekt, 25 % Drop; Diener-Axt schlägt, Piglin-Armbrust spannt 20 % schneller), Quests auf Mob-Waffen, Fernglas, Rahmen, Waffenständer, Challengestation, Karten zu Außenposten, Verlies, Trial Chamber, Anwesen, Monument, Antiker Stadt
 - **Cartographer** (Vanilla, Teil-Gerüst): Abenteuer- und Herausforderungskarte (Vanilla-Kartentextur), Erkundungsstation, Dorfkarten als Masteries; Entdeckerkarten als Trade-Output für alle Berufe (Strukturen, Geoden, Erzadern – die letzten zwei aus dem Weltseed)
-- **Goldsmith / Goldschmied** (Vanilla-Armorer, bis 2026-09-29 „Salvager / Verwerter“, Teil-Gerüst): vergoldete Eisenkette + vergoldetes Eisengitter (Smaragd + Vanilla-Kette/-Gitter), Kupfer- und Eisenader-Karte, Verwertungsstation als Passive (Metall-Ausrüstung → Barren), Vergoldungsstation mit Masteries 1–4 (Metall + Block → verstärktes Glas, eisengerahmter Redstone, goldgerahmter Lapis + goldverzierte Varianten per Steinmetz, vergoldeter Schwarzstein)
+- **Goldsmith / Goldschmied** (Vanilla-Armorer, Teil-Gerüst): vergoldete Eisenkette + vergoldetes Eisengitter (Smaragd + Vanilla-Kette/-Gitter), Kupfer- und Eisenader-Karte, Verwertungsstation als Passive (Metall-Ausrüstung → Barren), Vergoldungsstation mit Masteries 1–4 (Metall + Block → verstärktes Glas, eisengerahmter Redstone, goldgerahmter Lapis + goldverzierte Varianten per Steinmetz, vergoldeter Schwarzstein)
+- **Farmer / Bauer** (Vanilla, Teil-Gerüst, Placeholder-Grafik): Passive mit Erntekorbstation – er erntet wirklich am Feld, jede Ernte füllt seine Passive-Leiste (Last, Kapazität 3–9 je Rang); voll oder nach einer Minute Stillstand bringt er sie zum Korb, wo die Leiste alle 3 s um eine Einheit sinkt und jede Einheit eine Chance auf goldenes Brot/Rote Bete/Kartoffel/Karotte hat (0 % auf Rang 0, 20 % auf Rang 6); Glasurstation mit vier Masteries (Kandierter Apfel, goldene Rote-Bete-Suppe, glasierte Karotte, Goldtoast, alle mit Effekt); Suppen stapeln bis 16 (global)
+- **Fisherman / Fischer** (Vanilla, Teil-Gerüst, Placeholder-Grafik): Passive mit Fischkorbstation – er fischt wirklich (hat vor jedem Wurf freie Sicht aufs Wasser (sonst läuft er zu einem Platz mit Sicht), dreht sich zum Wasser, Angel in der Hand, Schwimmer auf dem Wasser, kein Fisch wird erzeugt: der Fang ist eine Einheit auf seiner Last, Kapazität 3–9; 10 Fänge pro Arbeitstag auf Rang 0 bis 30 auf Rang 6, auf Rang 6 zählt ein Fang mit 50 % doppelt); am Korb sinkt die Leiste alle 3 s um eine Einheit und jede Einheit gibt genau einen Fisch – Kabeljau, Lachs oder mit 1–7 % der Biom-Fisch seines Bioms (acht Biom-Fische, der Spieler fängt sie mit 8 % auch selbst); Werftstation ohne Masteries (die Boote wurden am 2026-10-07 entfernt, neues Konzept folgt)
 
 ## Technische Basis
 
@@ -52,13 +54,10 @@ Pfade stehen am Anfang der beiden „Wo steht was“-Teile. Stand: 2026-09-28 (S
 - **Sichtbarkeit**: eine Sektion gehört zum Villager, wenn sie für seinen Beruf Einträge oder eine registrierte Station hat; sie ist offen, wenn sie keine Station braucht, die Station besetzt ist oder schon Ränge da sind (`section/VillagerSections`)
 - **Kein eigener Entity-Typ**: Zustand als Data Attachment am Vanilla-Villager → Spawning, Zucht, Raids, Heilen bleiben Vanilla
 - **Vanilla-Erhalt**: so spät und so eng wie möglich eingreifen (Daten > Events > Mixin, `@WrapOperation` statt Methoden-Abbruch) – Regeln im Projektrahmen
-- **Leitprinzip**: keine Vanilla-Spielweise funktionslos machen, nur ineffizienter (eingesperrter Villager arbeitet schwächer, nie null)
-- **Keine Zufallsmechaniken** bei Villager-Entscheidungen (Fokus, Quests deterministisch)
 - **Werte als Datapack**: Einträge als JSON, Balancing ohne Neukompilieren
 - **Handelsliste = Ansicht** des eigenen Zustands: Vanillas `MerchantOffers` wird aus `VillagerState` und den Sektions-Logiken neu gebaut
 - **Claim**: verdrängter Villager behält Level, Punkte und Beruf; **kein Teleport** zum Handelsblock (Panik, Raid, Schlaf haben Vorrang)
-- **Stations-Partikel = Vanilla-Workstation** (2026-09-29): jede eigene Station (auch Platzhalter) nutzt als `particle` im Blockmodell die Partikel-Textur der Vanilla-Workstation ihres Berufs – Librarian `lectern_sides`, Mason `stonecutter_bottom`, Toolsmith/Runesmith `smithing_table_front`, Weaponsmith/Veteran `grindstone_side`, Cartographer `cartography_table_side3`, Armorer/Goldsmith `blast_furnace_front` (alle `minecraft:block/…`)
-- Verworfen: generisches Skill-/Modifier-System, Countdown-Glücklichkeitszähler, morgendlicher Tages-Restock, „erste Benutzung“-Flag für Stationen, SmartBrainLib, geteilte Leisten zwischen Sektionen
+- **Stations-Partikel = Vanilla-Workstation** (2026-09-29): jede eigene Station (auch Platzhalter) nutzt als `particle` im Blockmodell die Partikel-Textur der Vanilla-Workstation ihres Berufs – Librarian `lectern_sides`, Mason `stonecutter_bottom`, Toolsmith/Runesmith `smithing_table_front`, Weaponsmith/Veteran `grindstone_side`, Cartographer `cartography_table_side3`, Armorer/Goldsmith `blast_furnace_front`, Farmer `composter_side`, Fisherman `barrel_side` (alle `minecraft:block/…`)
 
 ## Kern – wo steht was
 
@@ -81,7 +80,7 @@ Java relativ zu `core/src/main/java/com/villageroverhaul/`, Daten relativ zu `co
 | Attachment + automatischer Sync | `state/ModAttachments.java`, `state/AttachmentVillagerStateAccess.java`, `state/VillagerStateAccess.java` |
 | Zustand übersteht Zombie-Umwandlung und Heilen (ohne Arbeitsplätze) | `state/VillagerConversion.java` |
 | Mehr Zombie-Villager, Lohenstaub in Dorf-Brauständen | `world/ZombieVillagerSpawns.java`, `world/VillageBrewingStands.java` |
-| Datapack-Registry `exchange` (alle Trades und Quests aller Sektionen) | `data/ModDataPackRegistries.java`, `data/ItemExchange.java` (`section`, optional `pool`), `data/ItemAmount.java` |
+| Datapack-Registry `exchange` (alle Trades und Quests aller Sektionen) | `data/ModDataPackRegistries.java`, `data/ItemExchange.java` (`section`, `extensions`), `data/ExchangeExtensions.java`, `data/ItemAmount.java` |
 | Einträge | keine im Kern – liefert die Extension (`data/vo_trade_rework/villageroverhaul/exchange/`) |
 | Spieltag | `work/DayClock.java` |
 
@@ -155,6 +154,7 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Quest-Zustand (Rotation, Reroll-Zeit, Tageszähler, Pausen) als eigenes, synchronisiertes Attachment | `quest/QuestState.java` |
 | Quest-Zeilen im Fenster (Reroll-Button + Tage-Timer) | `client/ui/QuestClientLogic.java`, `client/ui/RerollButtonWidget.java`, Registrierung `client/ui/TradeReworkClient.java` |
 | Passive: Leiste je Beruf, Schritt an der Passiv-Station | `passive/PassiveLogic.java`, `passive/PassiveWork.java` + je Beruf `passive/*Work.java` |
+| Passive Stationsblöcke (Menü auf Rechtsklick, Redstone-Puls, Komparator, nicht begehbar; `FacingPassiveStationBlock` dreht zum Spieler) – alle fünf Passive-Stationen erben davon | `station/PassiveStationBlock.java`, `station/FacingPassiveStationBlock.java` |
 
 ### Librarian
 | Was | Dateien |
@@ -186,7 +186,7 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Passive: Brechen (Batches à 4 einer Sorte, Rang 5: 6, Rang 6: 8, 8–32 pro Tag, Gang zur Station) | `passive/CrushingWork.java` |
 | Placeholder für Blöcke ohne Grafik | `models/block/placeholder_block.json`, `textures/block/placeholder_texture.png` (Quelle `assets/placeholder_block/`) |
 
-### Runesmith (Vanilla-Toolsmith; bis 2026-09-27 beim Repair Smith)
+### Runesmith (Vanilla-Toolsmith)
 | Was | Dateien |
 |---|---|
 | Blöcke, Block-Entity, Items (Upgrade- + Reparaturstation, eine Upgrade-Vorlage) | `runesmith/RunesmithBlocks.java`, `runesmith/RunesmithBlockEntities.java`, `runesmith/RunesmithItems.java` |
@@ -198,7 +198,10 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Berufsname „Runenschmied“ | `entity.minecraft.villager.toolsmith` in `lang/*.json` |
 | Gemeinsames 3 + 3-Stationsfenster (auch Brechstation) | `station/ThreeInThreeOutMenu.java`, `client/ui/ThreeInThreeOutScreen.java` |
 
-### Veteran (Vanilla-Weaponsmith; bis 2026-09-27 „Repair Smith“)
+- **Vogelscheuche** (2026-10-08, ungetestet im Spiel): `farmer/ScarecrowBlock|ScarecrowGoal|ScarecrowEvents.java`, Trade `farmer_scarecrow.json` – siehe tweaks/farmer.md
+- **Eisengolem-Nachtpatrouille** (2026-10-08, ungetestet im Spiel): `golem/PatrolGoal.java`, `golem/IronGolemEvents.java` – siehe tweaks/iron-golem.md
+
+### Veteran (Vanilla-Weaponsmith)
 | Was | Dateien |
 |---|---|
 | Challengestation (Master-Workstation, noch keine Passive-Station) | `veteran/VeteranBlocks.java`, `veteran/VeteranItems.java`, `TradeReworkSections.java` |
@@ -230,11 +233,41 @@ Java relativ zu `trade-rework/src/main/java/com/villageroverhaul/traderework/`, 
 | Passive: Einschmelzen (1 Teil pro Schritt, 8–32 pro Tag; Rezeptmenge × Rang-Anteil × Zustand, min. 1; Kette → Nuggets; Netherite → Diamant-Teil bleibt im Input-Slot, Scraps in den Output; Trichter unten zieht Output + übrig gebliebene Diamant-Teile) | `passive/SalvageWork.java`, Regeln `data/vo_trade_rework/vo_trade_rework/salvage/*.json` (`goldsmith/SalvageRule.java`) |
 | Berufsname „Goldschmied“ / „Goldsmith“ | `entity.minecraft.villager.armorer` in `lang/*.json` |
 
+### Körbe (Passive von Farmer + Fisherman, 2026-09-30)
+| Was | Dateien |
+|---|---|
+| Korb-Block (5 Slots im Vanilla-Trichterfenster wie die Verbesserungsstation, Füllstand 0–5 = belegte Slots wie beim Komposter, Trichter unten zieht, Komparator, Redstone-Puls; Hitbox 14 × 14 × 9 px) – ein Typ für Erntekorb- und Fischkorbstation | `basket/BasketStationBlock.java`, `basket/BasketStationBlockEntity.java`, `basket/BasketBlockEntities.java` |
+| Last am Villager (Einheiten je Sorte, Rückkehr-Flag, Schritt-Takt, gemerktes Wasser; nur Server, übersteht Zombie-Umwandlung, `/vo reset` leert); die Passive-Leiste zeigt sie (`PassiveLogic.withLoadMeter`), Kern-Haken `SectionLogic.fillsFromWork` | `passive/PassiveCounters.java` (Attachment), `passive/PassiveLogic.java` |
+| Fisherman bleibt beim Wurf stehen: Kern-Haken `ExtensionHooks.registerStayPut` (Gründe, ein Villager steht still) – `station/PausedWhileAway` pausiert damit Vanillas Schlendern wie beim Handelsblock-Ruf | `api/ExtensionHooks.java`, `station/PausedWhileAway.java`, `passive/FishingWork.isHeld` |
+| Gemeinsames Verhalten: Last aufnehmen, bei voll oder Stillstand zum Korb, alle 5 s eine Einheit herausnehmen und würfeln | `passive/CarryingWork.java` |
+| Debug: `/vo counters` (zeigt die Zähler des nächsten Villagers), `/vo counters give <punkte>` | `passive/CountersCommand.java` |
+
+### Farmer (Vanilla, Teil-Gerüst)
+| Was | Dateien |
+|---|---|
+| Stationen: Glasurstation (Master, Placeholder-Würfel), Erntekorbstation (Passive) | `farmer/FarmerBlocks.java`, `TradeReworkSections.java` |
+| Ernte zählen (NeoForge-`BlockDropsEvent`: Vanillas `HarvestFarmland` bricht mit dem Villager als Breaker; eine Einheit je Ernte bis zur Kapazität) | `farmer/HarvestCounting.java` |
+| Passive: je Einheit am Korb Gold-Wurf (Chance auf die goldene Sorte: Rang 0 = 0 %, Rang 6 = 20 %; kein goldener Apfel) | `passive/HarvestWork.java` |
+| Items: goldenes Brot/Rote Bete/Kartoffel, Kandierter Apfel, goldene Rote-Bete-Suppe, glasierte Karotte, Goldtoast | `farmer/FarmerItems.java` |
+| Kandierter Apfel: „danach Geschwindigkeit“ über den unsichtbaren Effekt Zuckerschub (gibt beim Ablaufen Speed) | `farmer/SugarRushEffect.java` |
+| Suppen stapeln bis 16 (alle Items mit Stapel 1 und Schüssel als Rückgabe) | `farmer/SoupStacking.java` |
+| Trades: Stationen Basic 4, leere Zeilen Basic 0–3, 5, 6, Masteries 1–4 | `exchange/farmer_*.json` |
+| Rezept der goldenen Karotte entfernt | `data/minecraft/recipe/golden_carrot.json`, `data/minecraft/advancement/recipes/brewing/golden_carrot.json` (`neoforge:never`) |
+
+### Fisherman (Vanilla, Teil-Gerüst)
+| Was | Dateien |
+|---|---|
+| Stationen: Werftstation (Master, Placeholder-Würfel), Fischkorbstation (Passive) | `fisherman/FishermanBlocks.java`, `TradeReworkSections.java` |
+| Passive: zum Wasser laufen (Kern-Haken `SectionLogic.workPlace`), Angel in die Hand, Schwimmer werfen (Bogenflug, Biss nach 5–15 s, Einholen = eine Einheit); am Korb je Einheit 1–3 Fische (Kabeljau/Lachs/Biom-Fisch) | `passive/FishingWork.java`, `fisherman/VillagerBobber.java`, `fisherman/FishermanEntities.java`, Darstellung `client/render/VillagerBobberRenderer.java` |
+| Biom-Fische: Datapack-Registry `biome_fish` (Biomgruppe → Fisch), acht Items, Biom-Listen | `fisherman/BiomeFish.java`, `fisherman/FishermanItems.java`, `data/vo_trade_rework/vo_trade_rework/biome_fish/*.json`, `tags/worldgen/biome/fish_*.json` |
+| Spieler fängt den Biom-Fisch mit 8 % statt eines Fischs (Loot-Modifier, nur `gameplay/fishing`) | `fisherman/BiomeFishModifier.java`, `data/vo_trade_rework/loot_modifiers/biome_fish.json` |
+| Trades: Stationen Basic 4, leere Zeilen Basic 0–3, 5, 6, Masteries 1–4 | `exchange/fisherman_*.json` |
+
 ### Entdeckerkarten als Trade-Output (gemeinsam für alle Berufe)
 | Was | Dateien |
 |---|---|
-| Feld `explorer_map` im Trade: genau eins von `destination` (Struktur-Tag), `feature` (Platziertes Feature), `ore_vein` (`copper`/`iron`), dazu Markierung + Name | Kern: `data/ExplorerMap.java`, `data/ItemExchange.java` |
-| Suche einmal pro Villager + Trade beim ersten Handeln, fertige Karte am Villager gespeichert; vorher Platzhalter, nichts gefunden = ausverkauft (1 Tag Pause bis zur nächsten Suche); Geoden-/Aderkarten zeigen die Höhe im Tooltip | `trade/ExplorerMaps.java` (Attachment `explorer_maps`), eingehängt über `ExtensionHooks.setExplorerMaps` (Kern: `trade/VillagerOffers.build`) |
+| Erweiterung `explorer_map` im Trade: genau eins von `destination` (Struktur-Tag), `feature` (Platziertes Feature), `ore_vein` (`copper`/`iron`), dazu Markierung + Name | `trade/ExplorerMap.java` (Erweiterungstyp der Extension) |
+| Suche einmal pro Villager + Trade beim ersten Handeln, fertige Karte am Villager gespeichert; vorher Platzhalter, nichts gefunden = ausverkauft (1 Tag Pause bis zur nächsten Suche); Geoden-/Aderkarten zeigen die Höhe im Tooltip | `trade/ExplorerMaps.java` (Attachment `explorer_maps`) (Kern: `trade/VillagerOffers.build`) |
 | Strukturen: Vanilla-Suche (100 Chunks, noch nicht verwendete Struktur) | `ServerLevel.findNearestMapStructure` |
 | Geoden (Mason) + Verliese (Veteran): Platzierung aus dem Weltseed nachgerechnet, ohne Chunks zu laden (Deko-Seed, Feature-Index, Platzierungsregeln, Biom aus der Biom-Quelle); Verliese zusätzlich in der Welt nachgeprüft (`verify_block` Spawner, max. 64 Kandidaten, lädt den Chunk) | `explore/FeatureLocator.java`, `mixin/ChunkGeneratorAccessor.java` |
 | Erzadern (Goldsmith): Ader-Rauschen (`OreVeinifier`) aus dem Weltseed ausgewertet | `explore/OreVeinLocator.java` |

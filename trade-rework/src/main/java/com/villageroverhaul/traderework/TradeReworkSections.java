@@ -5,12 +5,16 @@ import com.villageroverhaul.api.SectionDefinition;
 import com.villageroverhaul.api.StationDefinition;
 import com.villageroverhaul.section.CoreSections;
 import com.villageroverhaul.traderework.cartographer.CartographerBlocks;
+import com.villageroverhaul.traderework.farmer.FarmerBlocks;
+import com.villageroverhaul.traderework.fisherman.FishermanBlocks;
 import com.villageroverhaul.traderework.librarian.ExperienceBottles;
 import com.villageroverhaul.traderework.librarian.LibrarianBlocks;
 import com.villageroverhaul.traderework.mason.MasonBlocks;
 import com.villageroverhaul.traderework.mason.VillagerStatueHappiness;
 import com.villageroverhaul.traderework.passive.BookUpgradeWork;
 import com.villageroverhaul.traderework.passive.CrushingWork;
+import com.villageroverhaul.traderework.passive.FishingWork;
+import com.villageroverhaul.traderework.passive.HarvestWork;
 import com.villageroverhaul.traderework.passive.PassiveLogic;
 import com.villageroverhaul.traderework.passive.RepairWork;
 import com.villageroverhaul.traderework.passive.SalvageWork;
@@ -77,7 +81,9 @@ public final class TradeReworkSections {
                     VillagerProfession.LIBRARIAN, new BookUpgradeWork(),
                     VillagerProfession.MASON, new CrushingWork(),
                     VillagerProfession.TOOLSMITH, new RepairWork(),
-                    VillagerProfession.ARMORER, new SalvageWork())))
+                    VillagerProfession.ARMORER, new SalvageWork(),
+                    VillagerProfession.FARMER, new HarvestWork(),
+                    VillagerProfession.FISHERMAN, new FishingWork())))
             .build();
 
     private TradeReworkSections() {
@@ -90,11 +96,15 @@ public final class TradeReworkSections {
         masterStation(VillagerProfession.WEAPONSMITH, PoiTypes.WEAPONSMITH, VeteranBlocks.CHALLENGE_STATION);
         masterStation(VillagerProfession.CARTOGRAPHER, PoiTypes.CARTOGRAPHER, CartographerBlocks.EXPLORE_STATION);
         masterStation(VillagerProfession.ARMORER, PoiTypes.ARMORER, GoldsmithBlocks.GILDING_STATION);
+        masterStation(VillagerProfession.FARMER, PoiTypes.FARMER, FarmerBlocks.GLAZING_STATION);
+        masterStation(VillagerProfession.FISHERMAN, PoiTypes.FISHERMAN, FishermanBlocks.SHIPYARD_STATION);
 
         passiveStation(VillagerProfession.LIBRARIAN, PoiTypes.LIBRARIAN, LibrarianBlocks.ENCHANTMENT_STATION);
         passiveStation(VillagerProfession.MASON, PoiTypes.MASON, MasonBlocks.CRUSHING_STATION);
         passiveStation(VillagerProfession.TOOLSMITH, PoiTypes.TOOLSMITH, RunesmithBlocks.REPAIR_STATION);
         passiveStation(VillagerProfession.ARMORER, PoiTypes.ARMORER, GoldsmithBlocks.SALVAGE_STATION);
+        passiveStation(VillagerProfession.FARMER, PoiTypes.FARMER, FarmerBlocks.HARVEST_BASKET_STATION);
+        passiveStation(VillagerProfession.FISHERMAN, PoiTypes.FISHERMAN, FishermanBlocks.FISH_BASKET_STATION);
 
         ExtensionHooks.registerSection(QUESTS);
         ExtensionHooks.registerSection(MASTERIES);
@@ -107,6 +117,7 @@ public final class TradeReworkSections {
         ExtensionHooks.registerHappinessElement(VillagerStatueHappiness.ELEMENT);
 
         ExtensionHooks.setMobWeaponComponent(MobWeapons.MOB_WEAPON);
+        ExtensionHooks.registerStayPut(FishingWork::isHeld);
         ExtensionHooks.setPlayerXpCost(ExperienceBottles::playerXpCost);
     }
 

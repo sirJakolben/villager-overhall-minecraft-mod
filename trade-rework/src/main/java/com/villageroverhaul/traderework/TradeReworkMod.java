@@ -3,7 +3,16 @@ package com.villageroverhaul.traderework;
 import com.mojang.logging.LogUtils;
 import com.villageroverhaul.traderework.cartographer.CartographerBlocks;
 import com.villageroverhaul.traderework.cartographer.CartographerItems;
+import com.villageroverhaul.traderework.basket.BasketBlockEntities;
 import com.villageroverhaul.traderework.client.ui.TradeReworkMenus;
+import com.villageroverhaul.traderework.farmer.FarmerBlocks;
+import com.villageroverhaul.traderework.farmer.ScarecrowBlock;
+import com.villageroverhaul.traderework.farmer.FarmerItems;
+import com.villageroverhaul.traderework.fisherman.BiomeFishModifier;
+import com.villageroverhaul.traderework.fisherman.FishermanBlocks;
+import com.villageroverhaul.traderework.fisherman.FishermanEntities;
+import com.villageroverhaul.traderework.fisherman.FishermanItems;
+import com.villageroverhaul.traderework.passive.PassiveCounters;
 import com.villageroverhaul.traderework.librarian.LibrarianBlockEntities;
 import com.villageroverhaul.traderework.librarian.LibrarianBlocks;
 import com.villageroverhaul.traderework.librarian.LibrarianEntities;
@@ -45,6 +54,7 @@ public class TradeReworkMod {
     public TradeReworkMod(IEventBus modEventBus, ModContainer modContainer) {
         ExplorerMaps.ATTACHMENT_TYPES.register(modEventBus);
         QuestState.ATTACHMENT_TYPES.register(modEventBus);
+        PassiveCounters.ATTACHMENT_TYPES.register(modEventBus);
         LoreScrollItem.DATA_COMPONENTS.register(modEventBus);
         MobWeapons.DATA_COMPONENTS.register(modEventBus);
         BonusDurability.DATA_COMPONENTS.register(modEventBus);
@@ -69,6 +79,17 @@ public class TradeReworkMod {
         GoldsmithBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         GoldsmithBlocks.ITEMS.register(modEventBus);
         GoldsmithParticles.PARTICLE_TYPES.register(modEventBus);
+        FarmerBlocks.BLOCKS.register(modEventBus);
+        FarmerBlocks.ITEMS.register(modEventBus);
+        ScarecrowBlock.POI_TYPES.register(modEventBus);
+        FarmerItems.ITEMS.register(modEventBus);
+        FarmerItems.MOB_EFFECTS.register(modEventBus);
+        FishermanBlocks.BLOCKS.register(modEventBus);
+        FishermanBlocks.ITEMS.register(modEventBus);
+        FishermanItems.ITEMS.register(modEventBus);
+        FishermanEntities.ENTITY_TYPES.register(modEventBus);
+        BasketBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
+        BiomeFishModifier.LOOT_MODIFIERS.register(modEventBus);
 
         TradeReworkSections.register();
     }
