@@ -8,6 +8,8 @@ import com.villageroverhaul.traderework.mapping.MapStationBlockEntity;
 import com.villageroverhaul.traderework.mapping.MappingBlocks;
 import com.villageroverhaul.traderework.cavemap.CaveMapDrawer;
 import com.villageroverhaul.traderework.cavemap.CaveMapItems;
+import com.villageroverhaul.traderework.cavemap.CaveMapMemory;
+import com.villageroverhaul.traderework.cavemap.CaveLayer;
 import com.villageroverhaul.traderework.cavemap.CaveMapKind;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +18,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Holder;
@@ -53,6 +56,8 @@ public final class MapGameTests {
         FUNCTIONS.register("cave_map_use", () -> MapGameTests::caveMapUse);
         FUNCTIONS.register("cave_map_height_shading", () -> MapGameTests::caveMapHeightShading);
         FUNCTIONS.register("cave_map_surface_black", () -> MapGameTests::caveMapSurfaceBlack);
+        FUNCTIONS.register("cave_map_layers", () -> MapGameTests::caveMapLayers);
+        FUNCTIONS.register("cave_map_memory_saves", () -> MapGameTests::caveMapMemorySaves);
     }
 
     private MapGameTests() {
@@ -66,7 +71,7 @@ public final class MapGameTests {
     static void onRegisterGameTests(RegisterGameTestsEvent event) {
         Holder<TestEnvironmentDefinition<?>> environment = event.registerEnvironment(id("maps"));
         Identifier structure = Identifier.withDefaultNamespace("empty");
-        for (String name : new String[]{"map_pools_load", "map_station_inventory", "cave_map_use", "cave_map_height_shading", "cave_map_surface_black"}) {
+        for (String name : new String[]{"map_pools_load", "map_station_inventory", "cave_map_use", "cave_map_height_shading", "cave_map_surface_black", "cave_map_layers", "cave_map_memory_saves"}) {
             event.registerTest(id(name), new FunctionGameTestInstance(ResourceKey.create(Registries.TEST_FUNCTION, id(name)),
                     new TestData<>(environment, structure, 20, 0, true, Rotation.NONE, false, 1, 1, false, 1)));
         }
@@ -161,6 +166,22 @@ public final class MapGameTests {
         int coloured = drawn - black;
         helper.assertTrue(coloured >= 20 && coloured <= 120, "the room floor is drawn in colour, nothing beyond the walls (the room may straddle the map edge, so not all 81 floor pixels): " + coloured + " coloured pixels");
         helper.assertTrue(black >= 500, "the unknown around the player is black: " + black + " black pixels");
+        // Zoomed out at the cartography table (paper): the picture moves to a map with twice as coarse pixels, and it keeps drawing there.
+        MapId oldId = filled.get(net.minecraft.core.component.DataComponents.MAP_ID);
+        filled.set(net.minecraft.core.component.DataComponents.MAP_POST_PROCESSING, net.minecraft.world.item.component.MapPostProcessing.SCALE);
+        filled.getItem().onCraftedPostProcess(filled, helper.getLevel());
+        MapId zoomedId = filled.get(net.minecraft.core.component.DataComponents.MAP_ID);
+        MapItemSavedData zoomed = MapItem.getSavedData(filled, helper.getLevel());
+        helper.assertTrue(zoomedId != null && !zoomedId.equals(oldId) && zoomed != null && zoomed.scale == 1, "zooming out makes a new map one scale up");
+        int movedColoured = 0;
+        for (byte color : zoomed.colors) {
+            if (color != 0 && color != MapColor.COLOR_BLACK.getPackedId(MapColor.Brightness.LOWEST)) {
+                movedColoured++;
+            }
+        }
+        helper.assertTrue(movedColoured >= 5, "the explored room moved to the zoomed map: " + movedColoured + " coloured pixels");
+        CaveMapDrawer.draw(helper.getLevel(), player, zoomedId, zoomed, CaveMapKind.CAVE, filled.get(CaveMapItems.CAVE_LAYER.get()));
+        helper.assertTrue(zoomed.colors.length == 16384, "the zoomed map is drawn without trouble");
         helper.succeed();
     }
 
@@ -168,15 +189,18 @@ public final class MapGameTests {
     private static void caveMapHeightShading(GameTestHelper helper) {
         MapColor stone = MapColor.STONE;
         double normal = luminance(stone.getPackedId(MapColor.Brightness.NORMAL));
-        double top = luminance(CaveMapDrawer.heightShaded(stone, 0, -64, 0));
+        double top = luminance(CaveMapDrawer.heightShaded(CaveMapKind.CAVE, stone, 0, -64, 0));
         helper.assertTrue(top > normal, "the top of the layer is brighter than normal");
-        helper.assertTrue(CaveMapDrawer.heightShaded(stone, -32, -64, 0) == stone.getPackedId(MapColor.Brightness.NORMAL), "the middle of the layer keeps its colour");
-        double bottom = luminance(CaveMapDrawer.heightShaded(stone, -64, -64, 0));
+        helper.assertTrue(CaveMapDrawer.heightShaded(CaveMapKind.CAVE, stone, -32, -64, 0) == stone.getPackedId(MapColor.Brightness.NORMAL), "the middle of the layer keeps its colour");
+        double bottom = luminance(CaveMapDrawer.heightShaded(CaveMapKind.CAVE, stone, -64, -64, 0));
         helper.assertTrue(bottom < normal, "the bottom of the layer is darker");
-        double below = luminance(CaveMapDrawer.heightShaded(stone, -66, -64, 0));
+        double below = luminance(CaveMapDrawer.heightShaded(CaveMapKind.CAVE, stone, -66, -64, 0));
         helper.assertTrue(below < bottom, "below the layer it is darker still");
-        helper.assertTrue(luminance(CaveMapDrawer.heightShaded(stone, -74, -64, 0)) < below, "ten blocks below the layer it is darker still");
-        byte deepest = CaveMapDrawer.heightShaded(stone, -300, -64, 0);
+        helper.assertTrue(luminance(CaveMapDrawer.heightShaded(CaveMapKind.CAVE, stone, -74, -64, 0)) < below, "ten blocks below the layer it is darker still");
+        // The Nether: 30 % darker at the bottom of a layer, 50 % brighter at the top, so its middle is already brighter than the normal colour.
+        helper.assertTrue(luminance(CaveMapDrawer.heightShaded(CaveMapKind.NETHER, stone, 100, 0, 100)) > top, "the top of a Nether layer is brighter than the top of an Overworld layer");
+        helper.assertTrue(luminance(CaveMapDrawer.heightShaded(CaveMapKind.NETHER, stone, 0, 0, 100)) > luminance(CaveMapDrawer.heightShaded(CaveMapKind.CAVE, stone, 0, 0, 100)), "and its bottom is less dark");
+        byte deepest = CaveMapDrawer.heightShaded(CaveMapKind.CAVE, stone, -300, -64, 0);
         helper.assertTrue(luminance(deepest) < 16, "far below it is almost black (90 % darker at most)");
         helper.succeed();
     }
@@ -191,6 +215,38 @@ public final class MapGameTests {
         helper.assertTrue(Blocks.TUFF_BRICKS.defaultBlockState().is(CaveMapDrawer.STRUCTURE_BLOCKS), "trial chamber tuff bricks are a structure block");
         helper.assertTrue(Blocks.OAK_PLANKS.defaultBlockState().is(CaveMapDrawer.STRUCTURE_BLOCKS), "mineshaft wood is a structure block");
         helper.assertTrue(!Blocks.STONE.defaultBlockState().is(CaveMapDrawer.STRUCTURE_BLOCKS), "plain stone is not");
+        helper.succeed();
+    }
+
+    /** Overworld two layers, Nether four; the Middle and Top Nether Map draw from the lava sea up to Y 105 without rays, the Top one lets the higher floor win. */
+    private static void caveMapLayers(GameTestHelper helper) {
+        CaveMapKind nether = CaveMapKind.NETHER;
+        helper.assertTrue(nether.layerAt(10).get() == CaveLayer.BOTTOM && nether.layerAt(40).get() == CaveLayer.MIDDLE && nether.layerAt(69).get() == CaveLayer.MIDDLE
+                && nether.layerAt(70).get() == CaveLayer.TOP && nether.layerAt(105).get() == CaveLayer.TOP && nether.layerAt(106).get() == CaveLayer.CEILING
+                && nether.layerAt(127).get() == CaveLayer.CEILING && nether.layerAt(128).isEmpty(), "a Nether map is made as bottom below 32, middle to 69, top 70 to 105, ceiling above 105");
+        helper.assertTrue(CaveMapKind.CAVE.layerAt(-10).get() == CaveLayer.BOTTOM && CaveMapKind.CAVE.layerAt(10).get() == CaveLayer.TOP, "the Overworld has two layers");
+        helper.assertTrue(nether.drawsAt(CaveLayer.MIDDLE, 105) && !nether.drawsAt(CaveLayer.MIDDLE, 106) && nether.drawsAt(CaveLayer.TOP, 33) && nether.drawsAt(CaveLayer.TOP, 31)
+                && !nether.drawsAt(CaveLayer.TOP, 20) && nether.drawsAt(CaveLayer.TOP, 105) && !nether.drawsAt(CaveLayer.TOP, 106), "the Middle and Top Nether Map draw from the lava sea up to Y 105");
+        helper.assertTrue(nether.drawsAt(CaveLayer.BOTTOM, 20) && !nether.drawsAt(CaveLayer.BOTTOM, 40) && nether.drawsAt(CaveLayer.CEILING, 110) && !nether.drawsAt(CaveLayer.CEILING, 100),
+                "the Nether Cave Maps draw in their own band");
+        helper.assertTrue(nether.upperWins(CaveLayer.TOP) && !nether.upperWins(CaveLayer.MIDDLE) && !nether.upperWins(CaveLayer.CEILING) && !CaveMapKind.CAVE.upperWins(CaveLayer.TOP),
+                "only the Top Nether Map lets the higher floor win");
+        helper.assertTrue(nether.usesRays(CaveLayer.BOTTOM) && nether.usesRays(CaveLayer.CEILING) && !nether.usesRays(CaveLayer.MIDDLE) && !nether.usesRays(CaveLayer.TOP)
+                && CaveMapKind.CAVE.usesRays(CaveLayer.TOP) && CaveMapKind.CAVE.usesRays(CaveLayer.BOTTOM), "everything with Cave in its name has rays, nothing else");
+        helper.succeed();
+    }
+
+    /** What a map remembers per pixel (floor heights, structure locks) survives saving and loading. */
+    private static void caveMapMemorySaves(GameTestHelper helper) {
+        CaveMapMemory memory = new CaveMapMemory();
+        memory.floors[5] = -33;
+        memory.floors[16383] = 90;
+        memory.structure.set(7);
+        memory.structure.set(12000);
+        var encoded = CaveMapMemory.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, memory).getOrThrow();
+        CaveMapMemory loaded = CaveMapMemory.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, encoded).getOrThrow();
+        helper.assertTrue(loaded.floors[5] == -33 && loaded.floors[16383] == 90 && loaded.floors[6] == CaveMapMemory.NO_FLOOR, "the floor heights are saved");
+        helper.assertTrue(loaded.structure.get(7) && loaded.structure.get(12000) && !loaded.structure.get(8), "the structure locks are saved");
         helper.succeed();
     }
 

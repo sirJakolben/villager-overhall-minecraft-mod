@@ -1,16 +1,22 @@
 package com.villageroverhaul.traderework.cavemap;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.StringRepresentable;
 
-/** One of the two height bands a cave map is bound to (CaveMapKind holds the limits); the name shows in the map's tooltip (lang key cave_layer.*). */
+/**
+ * One of the height bands a cave map is bound to (CaveMapKind holds the limits; the Overworld has BOTTOM and TOP, the Nether all four); the name
+ * shows in the map's tooltip (lang key cave_layer.*).
+ */
 public enum CaveLayer implements StringRepresentable {
 
     BOTTOM("bottom"),
-    TOP("top");
+    MIDDLE("middle"),
+    TOP("top"),
+    /** The Nether's highest layer, above the Middle and Top Nether Map band (Top Nether Cave Map). */
+    CEILING("ceiling");
 
     public static final Codec<CaveLayer> CODEC = StringRepresentable.fromEnum(CaveLayer::values);
     public static final StreamCodec<RegistryFriendlyByteBuf, CaveLayer> STREAM_CODEC =
