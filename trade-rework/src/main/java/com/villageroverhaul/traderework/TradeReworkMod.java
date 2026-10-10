@@ -1,6 +1,10 @@
 package com.villageroverhaul.traderework;
 
 import com.mojang.logging.LogUtils;
+import com.villageroverhaul.traderework.cage.Cages;
+import com.villageroverhaul.traderework.cavemap.CaveMapItems;
+import com.villageroverhaul.traderework.cage.test.CageGameTests;
+import com.villageroverhaul.traderework.cage.ZombieCaptives;
 import com.villageroverhaul.traderework.cartographer.CartographerBlocks;
 import com.villageroverhaul.traderework.cartographer.CartographerItems;
 import com.villageroverhaul.traderework.basket.BasketBlockEntities;
@@ -18,6 +22,8 @@ import com.villageroverhaul.traderework.librarian.LibrarianBlocks;
 import com.villageroverhaul.traderework.librarian.LibrarianEntities;
 import com.villageroverhaul.traderework.librarian.LibrarianItems;
 import com.villageroverhaul.traderework.librarian.LoreScrollItem;
+import com.villageroverhaul.traderework.mapping.MappingBlocks;
+import com.villageroverhaul.traderework.mapping.test.MapGameTests;
 import com.villageroverhaul.traderework.mason.MasonBlockEntities;
 import com.villageroverhaul.traderework.mason.MasonBlocks;
 import com.villageroverhaul.traderework.mason.MasonItems;
@@ -73,8 +79,14 @@ public class TradeReworkMod {
         VeteranBlocks.BLOCKS.register(modEventBus);
         VeteranBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         VeteranItems.ITEMS.register(modEventBus);
+        ZombieCaptives.ATTACHMENT_TYPES.register(modEventBus);
+        Cages.register(modEventBus);
+        CageGameTests.register(modEventBus);
         CartographerBlocks.BLOCKS.register(modEventBus);
         CartographerItems.ITEMS.register(modEventBus);
+        MappingBlocks.register(modEventBus);
+        CaveMapItems.register(modEventBus);
+        MapGameTests.register(modEventBus);
         GoldsmithBlocks.BLOCKS.register(modEventBus);
         GoldsmithBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         GoldsmithBlocks.ITEMS.register(modEventBus);

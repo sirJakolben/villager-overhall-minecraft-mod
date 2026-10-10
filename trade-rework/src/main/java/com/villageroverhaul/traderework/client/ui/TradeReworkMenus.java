@@ -34,6 +34,16 @@ public final class TradeReworkMenus {
             () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.SALVAGE_STATION_MENU.get(), id, inventory), FeatureFlags.VANILLA_SET)
     );
 
+    public static final DeferredHolder<MenuType<?>, MenuType<ThreeInThreeOutMenu>> ADVENTURE_STATION_MENU = MENU_TYPES.register(
+            "adventure_station",
+            () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.ADVENTURE_STATION_MENU.get(), id, inventory), FeatureFlags.VANILLA_SET)
+    );
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ThreeInThreeOutMenu>> CHALLENGE_STATION_MENU = MENU_TYPES.register(
+            "challenge_station",
+            () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.CHALLENGE_STATION_MENU.get(), id, inventory), FeatureFlags.VANILLA_SET)
+    );
+
     private TradeReworkMenus() {
     }
 }

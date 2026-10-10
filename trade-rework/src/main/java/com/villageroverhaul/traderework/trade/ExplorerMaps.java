@@ -7,6 +7,7 @@ import com.villageroverhaul.traderework.explore.FeatureLocator;
 import com.villageroverhaul.traderework.explore.OreVeinLocator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -59,7 +61,7 @@ public final class ExplorerMaps {
                     .build()
     );
 
-    private static final int SEARCH_RADIUS_CHUNKS = 100;
+    public static final int SEARCH_RADIUS_CHUNKS = 100;
     /** Geodes and ore veins are common - a smaller radius keeps the seed search short. */
     private static final int SEED_SEARCH_RADIUS_CHUNKS = 32;
     private static final byte MAP_SCALE = 2;
@@ -91,10 +93,7 @@ public final class ExplorerMaps {
             return new Output(placeholder(spec), true);
         }
         BlockPos target = found.get();
-        ItemStack map = MapItem.create(level, target.getX(), target.getZ(), MAP_SCALE, true, true);
-        MapItem.renderBiomePreviewMap(level, map);
-        MapItemSavedData.addTargetDecoration(map, target, "+", spec.decoration());
-        map.set(DataComponents.ITEM_NAME, Component.translatable(spec.name()));
+        ItemStack map = createMap(level, target, spec.decoration(), spec.name());
         if (spec.showsDepth()) {
             map.set(DataComponents.LORE, new ItemLore(List.of(
                     Component.translatable("filled_map.vo_trade_rework.depth", target.getY()).withStyle(ChatFormatting.GRAY))));
@@ -104,6 +103,15 @@ public final class ExplorerMaps {
         maps.put(tradeId, map);
         villager.setData(MAPS, Map.copyOf(maps));
         return new Output(map.copy(), false);
+    }
+
+    /** A filled map centered on the target, marked with the decoration and named with the translation key - also used by the passive stations' maps (mapping/MapTargets). */
+    public static ItemStack createMap(ServerLevel level, BlockPos target, Holder<MapDecorationType> decoration, String nameKey) {
+        ItemStack map = MapItem.create(level, target.getX(), target.getZ(), MAP_SCALE, true, true);
+        MapItem.renderBiomePreviewMap(level, map);
+        MapItemSavedData.addTargetDecoration(map, target, "+", decoration);
+        map.set(DataComponents.ITEM_NAME, Component.translatable(nameKey));
+        return map;
     }
 
     private static Optional<BlockPos> findTarget(ServerLevel level, ExplorerMap spec, BlockPos origin) {

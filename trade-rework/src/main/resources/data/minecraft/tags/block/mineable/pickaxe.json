@@ -1,5 +1,6 @@
 {
   "values": [
+    "vo_trade_rework:zombie_villager_cage",
     "vo_trade_rework:brown_sandstone",
     "vo_trade_rework:brown_sandstone_stairs",
     "vo_trade_rework:brown_sandstone_slab",
@@ -25,6 +26,8 @@
     "vo_trade_rework:repair_station",
     "vo_trade_rework:gilding_station",
     "vo_trade_rework:salvage_station",
+    "vo_trade_rework:adventure_station",
+    "vo_trade_rework:challenge_station",
     "vo_trade_rework:reinforced_glass",
     "vo_trade_rework:iron_framed_redstone",
     "vo_trade_rework:gold_framed_lapis",

@@ -17,7 +17,7 @@ public final class CartographerBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TradeReworkMod.MODID);
 
     /** Master workstation (placeholder cube for now). */
-    public static final DeferredBlock<Block> EXPLORE_STATION = BLOCKS.registerSimpleBlock("explore_station",
+    public static final DeferredBlock<Block> MAP_STATION = BLOCKS.registerSimpleBlock("map_station",
             properties -> properties.mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD));
 
     private CartographerBlocks() {

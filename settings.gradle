@@ -12,3 +12,4 @@ rootProject.name = 'improved-villagers'
 
 include 'core'
 include 'trade-rework'
+include 'smart-golem'

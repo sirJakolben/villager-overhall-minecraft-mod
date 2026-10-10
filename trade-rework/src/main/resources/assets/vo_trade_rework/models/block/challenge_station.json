@@ -1,4 +1,4 @@
 {
   "parent": "vo_trade_rework:block/placeholder_block",
-  "textures": { "particle": "minecraft:block/grindstone_side" }
+  "textures": { "particle": "minecraft:block/polished_deepslate" }
 }

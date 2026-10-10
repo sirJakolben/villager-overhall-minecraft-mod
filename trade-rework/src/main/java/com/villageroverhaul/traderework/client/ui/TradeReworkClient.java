@@ -25,6 +25,8 @@ public final class TradeReworkClient {
         event.register(TradeReworkMenus.CRUSHING_STATION_MENU.get(), ThreeInThreeOutScreen::new);
         event.register(TradeReworkMenus.REPAIR_STATION_MENU.get(), ThreeInThreeOutScreen::new);
         event.register(TradeReworkMenus.SALVAGE_STATION_MENU.get(), ThreeInThreeOutScreen::new);
+        event.register(TradeReworkMenus.ADVENTURE_STATION_MENU.get(), ThreeInThreeOutScreen::new);
+        event.register(TradeReworkMenus.CHALLENGE_STATION_MENU.get(), ThreeInThreeOutScreen::new);
     }
 
     @SubscribeEvent

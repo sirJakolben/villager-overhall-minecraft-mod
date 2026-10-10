@@ -1,5 +1,6 @@
 package com.villageroverhaul.traderework;
 
+import com.villageroverhaul.traderework.mapping.MapPool;
 import com.villageroverhaul.traderework.mason.CrushingRule;
 import com.villageroverhaul.traderework.goldsmith.SalvageRule;
 import com.villageroverhaul.traderework.fisherman.BiomeFish;
@@ -34,6 +35,10 @@ public final class TradeReworkRegistries {
     public static final ResourceKey<Registry<BiomeFish>> BIOME_FISH =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "biome_fish"));
 
+    /** Which structures a passive station's maps may point to (mapping/MapPool), server-only. */
+    public static final ResourceKey<Registry<MapPool>> MAP_POOL =
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "map_pool"));
+
     private TradeReworkRegistries() {
     }
 
@@ -42,6 +47,7 @@ public final class TradeReworkRegistries {
         event.dataPackRegistry(CRUSHING, CrushingRule.CODEC);
         event.dataPackRegistry(SALVAGE, SalvageRule.CODEC);
         event.dataPackRegistry(BIOME_FISH, BiomeFish.CODEC);
+        event.dataPackRegistry(MAP_POOL, MapPool.CODEC);
         event.dataPackRegistry(MOB_WEAPON, MobWeaponDefinition.CODEC, MobWeaponDefinition.CODEC);
     }
 }

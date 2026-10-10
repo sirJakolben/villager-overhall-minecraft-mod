@@ -37,7 +37,8 @@ public record PassiveLogic(Map<ResourceKey<VillagerProfession>, PassiveWork> wor
             return capacity * UNIT_POINTS;
         }
         int steps = work(villager).map(work -> work.stepsPerDay(state.rank(section.id()))).orElse(NO_WORK_STEPS_PER_DAY);
-        return RestockService.FULL_DAY_POINTS / steps;
+        int days = work(villager).map(work -> work.daysPerStep(state.rank(section.id()))).orElse(1);
+        return RestockService.FULL_DAY_POINTS / steps * days;
     }
 
     @Override

@@ -22,6 +22,11 @@ public interface PassiveWork {
     /** How many steps a full, 100 % happy work day brings at this passive rank - sizes the meter. */
     int stepsPerDay(int rank);
 
+    /** More than 1: a step takes this many full work days (the map drawing) - the meter is that many times bigger. Default: stepsPerDay decides. */
+    default int daysPerStep(int passiveRank) {
+        return 1;
+    }
+
     /**
      * More than 0: a carrying passive (CarryingWork) - the passive bar then shows how full the villager's load is, out of this many units at this
      * passive rank, instead of filling from work (PassiveLogic).

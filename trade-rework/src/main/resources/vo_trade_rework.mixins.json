@@ -10,7 +10,9 @@
     "ItemStackBonusDurabilityMixin",
     "SmithingUpgradeDurabilityMixin",
     "ChunkGeneratorAccessor",
-    "CrossbowChargeMixin"
+    "CrossbowChargeMixin",
+    "CageIronGolemMixin",
+    "CageMobMixin"
   ],
   "client": [],
   "server": []

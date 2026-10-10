@@ -17,7 +17,7 @@ public final class VeteranBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TradeReworkMod.MODID);
 
     /** Master workstation (placeholder cube for now). */
-    public static final DeferredBlock<Block> CHALLENGE_STATION = BLOCKS.registerSimpleBlock("challenge_station",
+    public static final DeferredBlock<Block> TRAPPINGS_STATION = BLOCKS.registerSimpleBlock("trappings_station",
             properties -> properties.mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD));
 
     /** Wall rack for one weapon (WeaponRackBlock), placeholder look for now. */

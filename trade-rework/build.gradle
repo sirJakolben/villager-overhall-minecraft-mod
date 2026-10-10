@@ -6,6 +6,7 @@ plugins {
 
 // The core's source set is referenced in the mods block below (same pattern as ModDevGradle's own test project).
 evaluationDependsOn(':core')
+evaluationDependsOn(':smart-golem')
 
 version = ext_mod_version
 group = ext_mod_group_id
@@ -55,6 +56,10 @@ neoForge {
         }
         "${ext_mod_id}" {
             sourceSet(sourceSets.main)
+        }
+        // Smart Iron Golem is a mod of its own; the full-game run loads it too.
+        "${golem_mod_id}" {
+            sourceSet(project(':smart-golem').sourceSets.main)
         }
     }
 }

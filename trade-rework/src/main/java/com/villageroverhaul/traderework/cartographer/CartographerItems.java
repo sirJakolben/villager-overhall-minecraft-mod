@@ -13,17 +13,16 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.List;
 
 /**
- * The Cartographer's explore station and blank maps (Obsidian Cartographer.md, 2026-09-27). The maps are plain items that other professions
- * take as the second payment for an explorer map (trade/ExplorerMaps). Adventure map -> villages
- * (Cartographer), pillager outpost (Veteran), later geode (Mason) and ore veins (Goldsmith); challenge map ->
- * trial chambers, mansion, monument, ancient city (Veteran). Placeholder texture: Vanilla's empty map.
+ * The Cartographer's blank maps (Obsidian Cartographer.md, 2026-09-27; since 2026-10-10 sold by his Masteries). The maps are plain items: the Adventure map
+ * is the second payment for the Mason's geode and the Goldsmith's ore vein maps (trade/ExplorerMaps) and what the Adventure Station draws from, the Challenge map
+ * what the Veteran's Challenge Station draws from (mapping/). Placeholder texture: Vanilla's empty map.
  */
 @EventBusSubscriber(modid = TradeReworkMod.MODID)
 public final class CartographerItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TradeReworkMod.MODID);
 
-    public static final DeferredItem<BlockItem> EXPLORE_STATION = ITEMS.registerSimpleBlockItem(CartographerBlocks.EXPLORE_STATION);
+    public static final DeferredItem<BlockItem> MAP_STATION = ITEMS.registerSimpleBlockItem(CartographerBlocks.MAP_STATION);
     public static final DeferredItem<Item> ADVENTURE_MAP = ITEMS.registerSimpleItem("adventure_map");
     public static final DeferredItem<Item> CHALLENGE_MAP = ITEMS.registerSimpleItem("challenge_map");
 
@@ -33,7 +32,7 @@ public final class CartographerItems {
     @SubscribeEvent
     static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            event.accept(EXPLORE_STATION);
+            event.accept(MAP_STATION);
         } else if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             List.of(ADVENTURE_MAP, CHALLENGE_MAP).forEach(event::accept);
         }
