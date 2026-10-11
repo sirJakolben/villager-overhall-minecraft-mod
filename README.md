@@ -15,7 +15,7 @@ Abhängigkeit nur nach unten, wie eine Leiter: Professions → Progression (übe
 
 | Was | Wo |
 |---|---|
-| Arbeitsregeln für Sessions (inkl. Pflege der Dokumente) | [arbeitsregeln.md](arbeitsregeln.md) (geladen über `CLAUDE.md`) |
+| Arbeitsregeln für Sessions (inkl. Pflege der Dokumente) | [CLAUDE.md](CLAUDE.md) (in jeder Session geladen) |
 | Zahlen, Trade-Tabellen, Design je Beruf | Obsidian `Jakobs Vault/Improved Villagers/` (`02_Tweak-Werte`, `<Beruf>.md`) |
 | Ungetestetes, Edge Cases | Obsidian `04_Testliste` |
 | Fehlende Texturen/Modelle | Obsidian `03_Fehlende Texturen und Modelle` |
@@ -37,7 +37,7 @@ Abhängigkeit nur nach unten, wie eine Leiter: Professions → Progression (übe
 ## Grundentscheidungen und Fallen
 
 - Zustand als Data Attachment am Vanilla-Villager (kein eigener Entity-Typ): Spawning, Zucht, Raids, Heilen bleiben Vanilla
-- Vanilla-Erhalt: so spät und eng wie möglich eingreifen (Regeln in `arbeitsregeln.md`)
+- Vanilla-Erhalt: so spät und eng wie möglich eingreifen (Regeln in `CLAUDE.md`)
 - Handelsliste = Ansicht des eigenen Zustands (Vanillas `MerchantOffers` wird neu gebaut); Werte als Datapack-JSON
 - Datapack-Falle: Einträge liegen unter `data/<Namespace der Datei>/<Namespace der Registry>/<registry>/` (Extension-Trades: `data/smartvillager_professions/smartvillager_progression/exchange/`)
 - 26.1: `ResourceLocation` heißt `Identifier`; Screens rendern über `GuiGraphicsExtractor` / `extractBackground`
