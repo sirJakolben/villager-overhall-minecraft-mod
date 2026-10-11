@@ -6,7 +6,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
 /**
- * Smart Iron Golem - a smarter Iron Golem, as native to Vanilla as possible (plan-iron-golem-ai.md): it patrols the village along its paths at night,
+ * Smart Iron Golem - a smarter Iron Golem, as native to Vanilla as possible (see docs/smart-golem.md): it patrols the village along its paths at night,
  * climbs walls two blocks high, follows an iron ingot and swims faster. The Vanilla AI stays; the mod adds to it through one narrow mixin on the
  * IronGolem (mixin/IronGolemMixin), subclasses of Vanilla's own navigation classes (ai/) and NeoForge events.
  */

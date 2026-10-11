@@ -24,7 +24,7 @@ import java.util.List;
  * The Farmer's food (Obsidian Farmer.md, 2026-09-30): the golden crops the harvest basket makes (passive/HarvestWork) and the
  * dishes the glazing station makes of them (Masteries 1-4, exchange/farmer_*.json). Golden carrot and golden apple are Vanilla's.
  * The golden potato only waits for the Hot Potato (chain jump) - not a Mastery yet. Amounts, durations and the bread's effect are
- * placeholders (tweaks/farmer.md); the item textures too (they still point at Vanilla's textures, "Fehlende Texturen und Modelle.md").
+ * placeholders (Obsidian 02_Tweak-Werte); the item textures too (they still point at Vanilla's textures, "Fehlende Texturen und Modelle.md").
  */
 @EventBusSubscriber(modid = TradeReworkMod.MODID)
 public final class FarmerItems {

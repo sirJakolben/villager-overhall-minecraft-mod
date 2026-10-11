@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  */
 public final class HarvestWork extends CarryingWork {
 
-    /** Chance in percent per unit for the golden version of its crop at the highest passive rank (tweaks/farmer.md); rank 0 has none, the steps between are even. */
+    /** Chance in percent per unit for the golden version of its crop at the highest passive rank (Obsidian 02_Tweak-Werte); rank 0 has none, the steps between are even. */
     public static final double MAX_GOLD_CHANCE_PERCENT = 20.0;
     private static final int MAX_RANK = 6;
 

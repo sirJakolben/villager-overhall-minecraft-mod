@@ -17,7 +17,7 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
  */
 public class SugarRushEffect extends MobEffect {
 
-    /** Speed after the Regeneration, in ticks (tweaks/farmer.md). */
+    /** Speed after the Regeneration, in ticks (Obsidian 02_Tweak-Werte). */
     public static final int SPEED_TICKS = 1200;
 
     protected SugarRushEffect() {

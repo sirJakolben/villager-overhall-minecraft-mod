@@ -51,7 +51,7 @@ import java.util.Optional;
  */
 public final class FishingWork extends CarryingWork {
 
-    /** Water must be within this many blocks (sideways) of the Fisherman, and within WATER_HEIGHT above or below (tweaks/fisherman.md). */
+    /** Water must be within this many blocks (sideways) of the Fisherman, and within WATER_HEIGHT above or below (Obsidian 02_Tweak-Werte). */
     public static final int WATER_REACH = 14;
     public static final int WATER_HEIGHT = 5;
     /** Standing places are looked for this far around the water (the cast is a throw of a few blocks), and the water may be at most MAX_CAST_DISTANCE from the hand. */
@@ -82,7 +82,7 @@ public final class FishingWork extends CarryingWork {
     /** He casts from his fixed spot when he stands within this of its middle, and is nudged the last steps when closer than NUDGE_DISTANCE. */
     private static final double SPOT_RADIUS = 0.8;
     private static final double NUDGE_DISTANCE = 2.5;
-    /** Of the fish that are not the biome fish: this many percent are cod, the rest salmon (tweaks/fisherman.md). */
+    /** Of the fish that are not the biome fish: this many percent are cod, the rest salmon (Obsidian 02_Tweak-Werte). */
     private static final int COD_PERCENT = 60;
 
     @Override
