@@ -6,6 +6,7 @@ plugins {
 
 // The core's source set is referenced in the mods block below (same pattern as ModDevGradle's own test project).
 evaluationDependsOn(':smart-villager-progression')
+evaluationDependsOn(':smart-villager')
 evaluationDependsOn(':smart-golem')
 
 version = ext_mod_version
@@ -51,6 +52,9 @@ neoForge {
     }
 
     mods {
+        "${villager_mod_id}" {
+            sourceSet(project(':smart-villager').sourceSets.main)
+        }
         "${mod_id}" {
             sourceSet(project(':smart-villager-progression').sourceSets.main)
         }
@@ -68,6 +72,7 @@ dependencies {
     // compileOnly: at runtime the core is loaded from its own source set (mods block above); as a jar on the
     // classpath it would be found twice.
     compileOnly project(":smart-villager-progression")
+    compileOnly project(":smart-villager")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

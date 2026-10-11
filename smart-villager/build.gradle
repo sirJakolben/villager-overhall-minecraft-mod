@@ -1,0 +1,82 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.146'
+    id 'idea'
+}
+
+version = villager_mod_version
+group = villager_mod_group_id
+
+base {
+    archivesName = villager_mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+sourceSets.main.resources {
+    exclude("**/*.bbmodel")
+}
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        // Smart Villager alone - its own folder.
+        client {
+            client()
+            gameDirectory = rootProject.file('run-villager')
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            gameDirectory = rootProject.file('run-villager-server')
+        }
+
+        // Loads the mod headless and runs its gametests, then stops.
+        gameTestServer {
+            type = "gameTestServer"
+            gameDirectory = rootProject.file("run-gametest-golem")
+            systemProperty "neoforge.enabledGameTestNamespaces", project.villager_mod_id
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${villager_mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            mod_license            : mod_license,
+            villager_mod_id           : villager_mod_id,
+            villager_mod_name         : villager_mod_name,
+            villager_mod_version      : villager_mod_version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

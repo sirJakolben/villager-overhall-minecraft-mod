@@ -8,7 +8,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
 
-import java.util.Map;
 
 /**
  * Keeps a villager's progress through a zombie conversion and back (2026-09-28): Vanilla turns a villager
@@ -17,8 +16,7 @@ import java.util.Map;
  * cured → villager), right where Vanilla copies its own data (LivingConversionEvent.Post).
  *
  * Workplaces are not carried: dying released them (StationClaims.onDeath) and another villager may own them
- * by the time it is cured, so it claims its workplaces anew. Its Trading Block assignment stays - that is no
- * reservation, and StationClaims drops it if it no longer fits.
+ * by the time it is cured, so it claims its workplaces anew. The Trading Block assignment is Smart Villager's own and carries itself.
  *
  * Done here rather than with the attachment's copyOnDeath, which would carry the stale workplaces along.
  * Other conversions (lightning → witch) don't carry it.
@@ -37,7 +35,7 @@ public final class VillagerConversion {
             return;
         }
         VillagerState state = from.getData(ModAttachments.VILLAGER_STATE);
-        VillagerState carried = state.withStations(new Stations(Map.of(), false, state.stations().tradingBlock()));
+        VillagerState carried = state.withStations(Stations.NONE);
         if (to instanceof Villager villager) {
             // Through the access, so the cured villager's profession locks and its offers are rebuilt.
             VillagerStateAccess.of(villager).setState(carried);

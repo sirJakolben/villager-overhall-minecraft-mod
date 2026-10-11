@@ -1,10 +1,12 @@
 package com.smartvillager.progression;
 
 import com.mojang.logging.LogUtils;
-import com.smartvillager.progression.interaction.TradingBlocks;
+import com.smartvillager.base.api.SmartVillagerApi;
 import com.smartvillager.progression.menu.ModMenuTypes;
 import com.smartvillager.progression.section.CoreSections;
 import com.smartvillager.progression.state.ModAttachments;
+import com.smartvillager.progression.station.StationClaimHandler;
+import com.smartvillager.progression.station.StationFocus;
 import com.smartvillager.progression.trade.MissingTrade;
 import com.smartvillager.progression.trade.RequiredEnchantmentCost;
 import net.neoforged.bus.api.IEventBus;
@@ -23,9 +25,11 @@ public class SmartVillagerProgressionMod {
         RequiredEnchantmentCost.DATA_COMPONENTS.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
         MissingTrade.ITEMS.register(modEventBus);
-        TradingBlocks.BLOCKS.register(modEventBus);
-        TradingBlocks.ITEMS.register(modEventBus);
 
         CoreSections.register();
+
+        // Smart Villager (the rung below) pauses Vanilla's place-bound behaviors and runs the emerald claim; we tell it about stations.
+        SmartVillagerApi.registerStayPutWhileWorking(villager -> StationFocus.awayStation(villager).isPresent());
+        SmartVillagerApi.registerClaimHandler(new StationClaimHandler());
     }
 }

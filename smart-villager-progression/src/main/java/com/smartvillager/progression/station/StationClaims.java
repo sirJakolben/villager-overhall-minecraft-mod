@@ -2,8 +2,6 @@ package com.smartvillager.progression.station;
 
 import com.mojang.datafixers.util.Pair;
 import com.smartvillager.progression.SmartVillagerProgressionMod;
-import com.smartvillager.progression.interaction.TradingBlockCall;
-import com.smartvillager.progression.interaction.TradingBlocks;
 import com.smartvillager.progression.section.Sections;
 import com.smartvillager.progression.state.Stations;
 import com.smartvillager.progression.state.VillagerState;
@@ -73,26 +71,9 @@ public final class StationClaims {
             stations = acquire(level, villager, profession, stations);
         }
         stations = keepJob(villager, state, stations);
-        VillagerState updated = stations.equals(state.stations()) ? state : state.withStations(stations);
-        Stations checked = forgetUnusableTradingBlock(level, villager, updated);
-        return checked.equals(updated.stations()) ? updated : updated.withStations(checked);
+        return stations.equals(state.stations()) ? state : state.withStations(stations);
     }
 
-    /**
-     * A Trading Block that was broken (or replaced), or that ended up more than 48 blocks from all of the
-     * villager's workplaces (e.g. after it moved to a new workplace), no longer calls its villager. With no
-     * workplace at all for the moment, the block is kept.
-     */
-    private static Stations forgetUnusableTradingBlock(ServerLevel level, Villager villager, VillagerState state) {
-        Stations stations = state.stations();
-        Optional<GlobalPos> block = stations.tradingBlock().filter(pos -> pos.dimension() == level.dimension());
-        if (block.isEmpty()) {
-            return stations;
-        }
-        boolean broken = level.isLoaded(block.get().pos()) && !level.getBlockState(block.get().pos()).is(TradingBlocks.TRADING_BLOCK.get());
-        boolean tooFar = !TradingBlockCall.withinReach(villager, state, block.get().pos()).orElse(true);
-        return broken || tooFar ? stations.withTradingBlock(Optional.empty()) : stations;
-    }
 
     private static Stations mirrorJobSite(ServerLevel level, Holder<VillagerProfession> profession, Stations stations, Optional<GlobalPos> jobSite) {
         if (jobSite.isEmpty()) {

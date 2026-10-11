@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.smartvillager.base.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "VillagerLureMixin",
+    "VillagerGoalPackagesMixin",
+    "ZombieVillagerInvoker",
+    "BrewingStandAccessor"
+  ],
+  "client": [],
+  "server": []
+}

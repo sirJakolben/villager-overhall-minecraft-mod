@@ -1,5 +1,6 @@
 package com.smartvillager.progression.api;
 
+import com.smartvillager.base.api.SmartVillagerApi;
 import com.smartvillager.progression.data.ExchangeExtensions;
 import com.smartvillager.progression.happiness.HappinessElements;
 import com.smartvillager.progression.section.Sections;
@@ -26,27 +27,18 @@ public final class ExtensionHooks {
 
     private static volatile Supplier<@Nullable DataComponentType<EntityType<?>>> mobWeaponComponent = () -> null;
     private static volatile ToIntFunction<MerchantOffer> playerXpCost = offer -> 0;
-    private static final java.util.List<Predicate<Villager>> STAY_PUT = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private ExtensionHooks() {
     }
 
     /**
      * A reason for a villager to stand still right now (the Fisherman while his cast is in the air): while it holds, Vanilla's place-bound behaviors
-     * (strolling around the job site, walking back to it, meeting at the bell) pause exactly as for a station or a Trading Block call (station/PausedWhileAway).
+     * (strolling around the job site, walking back to it, meeting at the bell) pause exactly as for a Trading Block call (Smart Villager, api/SmartVillagerApi).
      */
     public static void registerStayPut(Predicate<Villager> reason) {
-        STAY_PUT.add(reason);
+        SmartVillagerApi.registerStayPut(reason);
     }
 
-    public static boolean isStayingPut(Villager villager) {
-        for (Predicate<Villager> reason : STAY_PUT) {
-            if (reason.test(villager)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /** A station a profession has besides its Vanilla job site - see StationDefinition. */
     public static void registerStation(StationDefinition station) {

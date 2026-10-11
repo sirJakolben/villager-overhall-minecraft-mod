@@ -6,8 +6,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Pair;
-import com.smartvillager.progression.interaction.GoToTradingBlock;
-import com.smartvillager.progression.station.PausedWhileAway;
 import com.smartvillager.progression.station.UnemployedPriority;
 import com.smartvillager.progression.station.WorkAtStation;
 import net.minecraft.core.BlockPos;
@@ -16,7 +14,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
-import net.minecraft.world.entity.ai.behavior.RunOne;
 import net.minecraft.world.entity.ai.behavior.VillagerGoalPackages;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
@@ -30,28 +27,20 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
- * Blocks W and B: narrow additions to Vanilla's villager behavior packages - everything else in them stays.
+ * Narrow additions to Vanilla's villager behavior packages - everything else in them stays.
  *
  * - Core package, the job-site search (AcquirePoi): a villager that already has a profession skips a
  *   free job site while a jobless villager nearby could take it. Only the "is this site OK" test is
- *   extended; jobless villagers search exactly as in Vanilla.
- * - Work package: adds WorkAtStation, and pauses the job-site-bound behaviors (walk back to the job site,
- *   the work/stroll choice) while the villager works at another station or is called to its Trading Block.
- *   With no station focus and no call, the work activity is exactly Vanilla's.
- * - Meet package: the bell-bound behaviors pause while it is called to its Trading Block.
+ * - Work package: adds WorkAtStation. The pause of the job-site-bound behaviors while the villager works at another
+ *   station is Smart Villager's (SmartVillagerApi stay-put, registered in SmartVillagerProgressionMod). With no station
+ *   focus, the work activity is exactly Vanilla's.
  * - Core package: adds GoToTradingBlock (the Trading Block call).
  */
 @Mixin(VillagerGoalPackages.class)
 public abstract class VillagerGoalPackagesMixin {
 
-    /** Vanilla's walk-to-job-site behavior is the work package's only priority-2 entry. */
-    private static final int JOB_SITE_WALK_PRIORITY = 2;
-    /** The meet package's bell-bound entries: the stroll/socialize choice and the walk to the bell. */
-    private static final int MEETING_WALK_PRIORITY = 2;
     /** Just before Vanilla's walk-to-job-site, so a station's walk target wins. */
     private static final int WORK_AT_STATION_PRIORITY = 1;
-    /** Same as Vanilla's panic trigger and door handling - before the walk-target sink (1) acts on it. */
-    private static final int TRADING_BLOCK_CALL_PRIORITY = 0;
 
     @WrapOperation(
             method = "getCorePackage",
@@ -68,40 +57,13 @@ public abstract class VillagerGoalPackagesMixin {
         return original.call(poiType, toValidate, toAcquire, onlyIfAdult, event, test);
     }
 
-    /** The Trading Block call joins Vanilla's always-active core behaviors, ahead of everything that walks. */
-    @ModifyReturnValue(method = "getCorePackage", at = @At("RETURN"), require = 1)
-    private static ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> smartvillager_progression$addTradingBlockCall(
-            ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> original) {
-        return ImmutableList.<Pair<Integer, ? extends BehaviorControl<? super Villager>>>builder()
-                .addAll(original)
-                .add(Pair.of(TRADING_BLOCK_CALL_PRIORITY, new GoToTradingBlock()))
-                .build();
-    }
-
+    /** The station work joins the work package; the pause of the job-site-bound behaviors while away is Smart Villager's (it listens to StationFocus). */
     @ModifyReturnValue(method = "getWorkPackage", at = @At("RETURN"), require = 1)
     private static ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> smartvillager_progression$addStationWork(
             ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> original) {
-        ImmutableList.Builder<Pair<Integer, ? extends BehaviorControl<? super Villager>>> builder = ImmutableList.builder();
-        for (Pair<Integer, ? extends BehaviorControl<? super Villager>> entry : original) {
-            boolean lecternBound = entry.getSecond() instanceof RunOne<?> || entry.getFirst() == JOB_SITE_WALK_PRIORITY;
-            builder.add(lecternBound ? Pair.of(entry.getFirst(), PausedWhileAway.atStation(entry.getSecond())) : entry);
-        }
-        builder.add(Pair.of(WORK_AT_STATION_PRIORITY, new WorkAtStation()));
-        return builder.build();
-    }
-
-    /**
-     * Meet package: the stroll/socialize choice at the bell and the walk to it (both priority 2) pause while the
-     * villager is called to its Trading Block - strolling and socializing set their walk target even over ours.
-     */
-    @ModifyReturnValue(method = "getMeetPackage", at = @At("RETURN"), require = 1)
-    private static ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> smartvillager_progression$pauseMeetingWhenCalled(
-            ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> original) {
-        ImmutableList.Builder<Pair<Integer, ? extends BehaviorControl<? super Villager>>> builder = ImmutableList.builder();
-        for (Pair<Integer, ? extends BehaviorControl<? super Villager>> entry : original) {
-            boolean bellBound = entry.getFirst() == MEETING_WALK_PRIORITY;
-            builder.add(bellBound ? Pair.of(entry.getFirst(), PausedWhileAway.called(entry.getSecond())) : entry);
-        }
-        return builder.build();
+        return ImmutableList.<Pair<Integer, ? extends BehaviorControl<? super Villager>>>builder()
+                .addAll(original)
+                .add(Pair.of(WORK_AT_STATION_PRIORITY, new WorkAtStation()))
+                .build();
     }
 }

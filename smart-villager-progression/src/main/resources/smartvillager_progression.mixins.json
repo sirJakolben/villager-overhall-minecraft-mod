@@ -8,7 +8,6 @@
     "VillagerTradingMixin",
     "VillagerGossipMixin",
     "VillagerGoalPackagesMixin",
-    "VillagerLureMixin",
     "ItemCostMixin",
     "VillagerWorkSoundMixin"
   ],

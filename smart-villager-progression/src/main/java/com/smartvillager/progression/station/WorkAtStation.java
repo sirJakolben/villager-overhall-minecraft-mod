@@ -1,7 +1,7 @@
 package com.smartvillager.progression.station;
 
 import com.google.common.collect.ImmutableMap;
-import com.smartvillager.progression.interaction.TradingBlockCall;
+import com.smartvillager.base.trading.TradingBlockCall;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
