@@ -25,6 +25,7 @@ public final class ModEntityRenderers {
         event.registerEntityRenderer(LibrarianEntities.VILLAGER_EXPERIENCE_BOTTLE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(LibrarianEntities.VILLAGER_EXPERIENCE_ORB.get(), VillagerExperienceOrbRenderer::new);
         event.registerEntityRenderer(FishermanEntities.VILLAGER_BOBBER.get(), VillagerBobberRenderer::new);
+        event.registerEntityRenderer(FishermanEntities.CANNONBALL.get(), ThrownItemRenderer::new);
         event.registerBlockEntityRenderer(VeteranBlockEntities.WEAPON_RACK.get(), WeaponRackRenderer::new);
         event.registerBlockEntityRenderer(MasonBlockEntities.VILLAGER_STATUE.get(), VillagerStatueRenderer::new);
     }

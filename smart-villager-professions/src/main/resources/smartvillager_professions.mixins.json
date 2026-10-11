@@ -12,8 +12,15 @@
     "ChunkGeneratorAccessor",
     "CrossbowChargeMixin",
     "CageIronGolemMixin",
-    "CageMobMixin"
+    "CageMobMixin",
+    "AbstractBoatMixin",
+    "VehicleEntityDropMixin",
+    "EntityTypeBoatItemMixin"
   ],
-  "client": [],
+  "client": [
+    "LocalPlayerCannonChargeMixin",
+    "BoatRenderStateMixin",
+    "AbstractBoatRendererMixin"
+  ],
   "server": []
 }

@@ -1,6 +1,7 @@
 package com.smartvillager.professions;
 
 import com.mojang.logging.LogUtils;
+import com.smartvillager.professions.boat.BoatUpgrades;
 import com.smartvillager.professions.cage.Cages;
 import com.smartvillager.professions.cavemap.CaveMapItems;
 import com.smartvillager.professions.cage.test.CageGameTests;
@@ -61,6 +62,8 @@ public class SmartVillagerProfessionsMod {
         ExplorerMaps.ATTACHMENT_TYPES.register(modEventBus);
         QuestState.ATTACHMENT_TYPES.register(modEventBus);
         PassiveCounters.ATTACHMENT_TYPES.register(modEventBus);
+        BoatUpgrades.ATTACHMENT_TYPES.register(modEventBus);
+        BoatUpgrades.DATA_COMPONENTS.register(modEventBus);
         LoreScrollItem.DATA_COMPONENTS.register(modEventBus);
         MobWeapons.DATA_COMPONENTS.register(modEventBus);
         BonusDurability.DATA_COMPONENTS.register(modEventBus);
@@ -82,6 +85,8 @@ public class SmartVillagerProfessionsMod {
         ZombieCaptives.ATTACHMENT_TYPES.register(modEventBus);
         Cages.register(modEventBus);
         CageGameTests.register(modEventBus);
+        com.smartvillager.professions.boat.test.BoatGameTests.register(modEventBus);
+        com.smartvillager.professions.veteran.test.MobWeaponGameTests.register(modEventBus);
         CartographerBlocks.BLOCKS.register(modEventBus);
         CartographerItems.ITEMS.register(modEventBus);
         MappingBlocks.register(modEventBus);

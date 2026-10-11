@@ -31,6 +31,8 @@ public final class FishermanItems {
     public static final DeferredItem<Item> FROST_FISH = ITEMS.registerSimpleItem("frost_fish");
     public static final DeferredItem<Item> CANOPY_FISH = ITEMS.registerSimpleItem("canopy_fish");
     public static final DeferredItem<Item> SPORE_FISH = ITEMS.registerSimpleItem("spore_fish");
+    /** Ammunition of the boat cannon (boat/Cannon); a placeholder texture until the real one exists. */
+    public static final DeferredItem<Item> CANNONBALL = ITEMS.registerSimpleItem("cannonball");
 
     private FishermanItems() {
     }
