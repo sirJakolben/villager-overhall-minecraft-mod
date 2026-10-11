@@ -25,28 +25,42 @@ import java.util.Optional;
 
 /**
  * The inventory of the Cartographer's adventure station and the Veteran's challenge station (2026-10-10): slots 0-2 take blank maps
- * (adventure map / challenge map - only the kind of this station), slots 3-5 hold the finished maps. Hopper rules like the crushing
+ * (adventure map / challenge map - only the kind of this station), slots 3-5 hold the finished maps; the challenge station has 1 blank-map slot and 4 output slots (2026-10-11). Hopper rules like the crushing
  * station: from above or the sides only maps go in, a hopper below pulls only from the output; players may put anything into the
  * output. The drawing itself happens when the owning villager works here (MappingWork calls draw): one blank map is used up and a
  * filled one with a drawn target (MapTargets) lands in the output.
  */
 public class MapStationBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
 
-    public static final int INPUT_SLOTS = ThreeInThreeOutMenu.INPUT_SLOTS;
-    public static final int SLOTS = ThreeInThreeOutMenu.SLOTS;
     /** Ticks to wait after a draw that found no structure in reach before the next one - the search is expensive (one minute). */
     public static final int RETRY_TICKS = 1200;
-    private static final int[] INPUT = {0, 1, 2};
-    private static final int[] OUTPUT = {3, 4, 5};
 
     private final MapPool.Kind kind;
-    private NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+    private final int inputSlots;
+    private final int slots;
+    private final int[] input;
+    private final int[] output;
+    private NonNullList<ItemStack> items;
     /** Game time before which no new draw starts - not saved, a reload simply tries again. */
     private long retryAt;
 
     public MapStationBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, MapPool.Kind kind) {
         super(type, pos, state);
         this.kind = kind;
+        this.inputSlots = inputSlotsOf(kind);
+        this.slots = inputSlots + outputSlotsOf(kind);
+        this.input = java.util.stream.IntStream.range(0, inputSlots).toArray();
+        this.output = java.util.stream.IntStream.range(inputSlots, slots).toArray();
+        this.items = NonNullList.withSize(slots, ItemStack.EMPTY);
+    }
+
+    /** The adventure station has 3 + 3 slots, the challenge station 1 blank map in and 4 maps out. */
+    public static int inputSlotsOf(MapPool.Kind kind) {
+        return kind == MapPool.Kind.ADVENTURE ? 3 : 1;
+    }
+
+    public static int outputSlotsOf(MapPool.Kind kind) {
+        return kind == MapPool.Kind.ADVENTURE ? 3 : 4;
     }
 
     public MapPool.Kind kind() {
@@ -61,8 +75,8 @@ public class MapStationBlockEntity extends BaseContainerBlockEntity implements W
         return "filled_map.vo_trade_rework." + kind.getSerializedName();
     }
 
-    public static boolean isInput(int slot) {
-        return slot < INPUT_SLOTS;
+    public boolean isInput(int slot) {
+        return slot < inputSlots;
     }
 
     /** A blank map waits in the input, a free output slot is there for the result, and the last draw did not fail just now. */
@@ -92,7 +106,7 @@ public class MapStationBlockEntity extends BaseContainerBlockEntity implements W
     }
 
     private int firstInput() {
-        for (int slot : INPUT) {
+        for (int slot : input) {
             if (!items.get(slot).isEmpty()) {
                 return slot;
             }
@@ -101,7 +115,7 @@ public class MapStationBlockEntity extends BaseContainerBlockEntity implements W
     }
 
     private int firstFreeOutput() {
-        for (int slot : OUTPUT) {
+        for (int slot : output) {
             if (items.get(slot).isEmpty()) {
                 return slot;
             }
@@ -111,7 +125,7 @@ public class MapStationBlockEntity extends BaseContainerBlockEntity implements W
 
     @Override
     public int getContainerSize() {
-        return SLOTS;
+        return slots;
     }
 
     @Override
@@ -121,7 +135,7 @@ public class MapStationBlockEntity extends BaseContainerBlockEntity implements W
 
     @Override
     public int[] getSlotsForFace(Direction side) {
-        return side == Direction.DOWN ? OUTPUT : INPUT;
+        return side == Direction.DOWN ? output : input;
     }
 
     @Override
@@ -152,7 +166,7 @@ public class MapStationBlockEntity extends BaseContainerBlockEntity implements W
     @Override
     protected AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
         return new ThreeInThreeOutMenu((kind == MapPool.Kind.ADVENTURE ? TradeReworkMenus.ADVENTURE_STATION_MENU : TradeReworkMenus.CHALLENGE_STATION_MENU).get(),
-                containerId, inventory, this);
+                containerId, inventory, this, inputSlots, slots - inputSlots);
     }
 
     @Override

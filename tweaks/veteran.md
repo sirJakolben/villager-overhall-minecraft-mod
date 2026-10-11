@@ -41,15 +41,10 @@ Umbau umgesetzt 2026-09-27: Dateien `veteran_*`, Code `veteran/`; Vorlage + Repa
 | Karte aus | 1 Herausforderungskarte (Station nimmt nur diese) |
 | Dauer je Karte (ganze Arbeitstage) nach Passive-Rang 0–6 | 6, 5, 4, 4, 3, 3, 2 (halb so schnell wie der Kartograf) |
 | Ziel | zufällig, nach Gewicht aus dem Herausforderungs-Pool, erst beim Fertigwerden gewürfelt; Suche und Wiederholung wie beim Kartograf (`tweaks/cartographer.md`) |
-| Name der Karte | „Gezeichnete Herausforderungskarte“, Ziel-X ohne Hinweis |
+| Slots | 1 Eingabe (leere Herausforderungskarte) + Pfeil + 4 Ausgabe (Fenster `ThreeInThreeOutMenu` mit 1 + 4, Reihe symmetrisch; Abenteuerstation bleibt 3 + 3) |
+| Name der Karte | „Herausforderungskarte: <Struktur>“ (z. B. „Herausforderungskarte: Antike Stadt“) |
 
-### Herausforderungs-Pool – `map_pool/challenge.json`
-| Gewicht | Struktur |
-|---|---|
-| 8 | Minenschächte |
-| 3 | Festung (Stronghold), Trial Chambers |
-| 2 | Antike Stadt, Anwesen, Ozeanmonument |
-- Weitere Dateien (auch von Mods) mit `"pool": "challenge"` ergänzen; Strukturen ohne Eintrag: Untergrund-/Festungs-Schritt → hier, sonst Abenteuer-Pool
+Die Gewichte des Pools stehen in der Tabelle in `tweaks/cartographer.md` (Karten-Pools).
 
 ## Zombie Villager Cage — `cage/*`, Basic 3 (8 Smaragde, `exchange/veteran_zombie_villager_cage.json`)
 | Wert | Aktuell |

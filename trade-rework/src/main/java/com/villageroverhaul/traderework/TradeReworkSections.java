@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  * data/vo_trade_rework/villageroverhaul/exchange/ this is what makes a profession "ours" - one with its own
  * entries or stations no longer runs on its Vanilla trades.
  *
- * - Quests: rotating easy/hard slots and a permanent quest (quest/QuestLogic), no station, no meter shown.
+ * - Quests: rotating easy/hard slots and a permanent quest (quest/QuestLogic), at the Vanilla job site like the basic trades (2026-10-11 - without it a villager had quests with no workplace), no meter shown.
  * - Masteries: the entries of the master station, which also is where the villager starts its work day.
  * - Passive: the badge at the top left; the work at the passive station (passive/PassiveLogic).
  * The basic trades are the core's own Trades section (at the Vanilla job site).
@@ -61,6 +61,7 @@ public final class TradeReworkSections {
 
     public static final SectionDefinition QUESTS = SectionDefinition.builder(id("quests"))
             .order(0)
+            .station(StationDefinition.JOB_SITE)
             .hiddenMeter()
             .upgradeCosts(CoreSections.UPGRADE_COSTS, CoreSections.FULL_UNLOCK_RANK)
             .logic(new QuestLogic())

@@ -1,6 +1,6 @@
 # Tweaks – Cartographer / Kartograph (teilweise umgesetzt)
 
-Zwilling von Obsidian `Cartographer.md`, kompakt. Fehlende Werte = 1. Bei Abweichung gilt Obsidian. Stand: 2026-10-10.
+Zwilling von Obsidian `Cartographer.md`, kompakt. Fehlende Werte = 1. Bei Abweichung gilt Obsidian. Stand: 2026-10-11.
 
 ## Basic Trades
 | Rang | Trade | Preis | 2. Slot | Output | Stock |
@@ -27,17 +27,31 @@ Zwilling von Obsidian `Cartographer.md`, kompakt. Fehlende Werte = 1. Bei Abweic
 | Ziel | zufällig, nach Gewicht aus dem Abenteuer-Pool (unten), erst beim Fertigwerden gewürfelt |
 | Suche | Radius 100 Chunks, nur Strukturen ohne Karte, bis zu 3 Würfe je Versuch (`MapTargets.MAX_SEARCHES`) |
 | Nichts gefunden | Meter bleibt voll, nächster Versuch nach 1200 Ticks (`MapStationBlockEntity.RETRY_TICKS`) |
-| Name der Karte | „Gezeichnete Abenteuerkarte“, Ziel-X ohne Hinweis auf die Struktur |
+| Name der Karte | „Abenteuerkarte: <Struktur>“ (z. B. „Abenteuerkarte: Wüstentempel“); Vanilla-Namen in `de_de.json` (`structure.minecraft.*`), Mod-Strukturen: Pfad lesbar gemacht oder eigener Sprachschlüssel `structure.<namespace>.<pfad>` (`MapTargets.structureName`) |
 
-## Abenteuer-Pool – `data/vo_trade_rework/vo_trade_rework/map_pool/adventure.json`
-| Gewicht | Struktur |
-|---|---|
-| 10 | Dörfer (Tag `minecraft:village`) |
-| 6 | Außenposten, Ruinenportale |
-| 5 | Wüstentempel, Dschungeltempel, Schiffswracks, Ozeanruinen |
-| 4 | Iglu, Sumpfhütte |
-| 3 | Vergrabener Schatz, Pfadruinen |
-- Weitere Dateien (auch von anderen Mods) mit `"pool": "adventure"` ergänzen den Pool. Eine Struktur ohne Eintrag in irgendeiner Datei kommt mit Gewicht 1 dazu: Untergrund- und Festungs-Schritt → Herausforderungs-Pool, sonst Abenteuer-Pool (`MapTargets.fallbackKind`)
+## Karten-Pools – Abenteuerkarte (Kartograf) / Herausforderungskarte (Veteran)
+Dateien `data/vo_trade_rework/vo_trade_rework/map_pool/adventure.json` und `challenge.json`; Chance = Gewicht / Summe des Pools (Abenteuer 56, Herausforderung 20).
+| Pool | Struktur | Gewicht | Chance |
+|---|---|---|---|
+| Abenteuer | Dörfer (Tag `minecraft:village`) | 10 | 18 % |
+| Abenteuer | Plünderer-Außenposten | 6 | 11 % |
+| Abenteuer | Portalruinen (Tag `minecraft:ruined_portal`) | 6 | 11 % |
+| Abenteuer | Wüstentempel | 5 | 9 % |
+| Abenteuer | Dschungeltempel | 5 | 9 % |
+| Abenteuer | Schiffswracks (Tag `minecraft:shipwreck`) | 5 | 9 % |
+| Abenteuer | Ozeanruinen (Tag `minecraft:ocean_ruin`) | 5 | 9 % |
+| Abenteuer | Iglu | 4 | 7 % |
+| Abenteuer | Hexenhütte | 4 | 7 % |
+| Abenteuer | Vergrabener Schatz | 3 | 5 % |
+| Abenteuer | Pfadruinen | 3 | 5 % |
+| Herausforderung | Minenschächte (Tag `minecraft:mineshaft`) | 8 | 40 % |
+| Herausforderung | Festung (Stronghold) | 3 | 15 % |
+| Herausforderung | Trial Chambers | 3 | 15 % |
+| Herausforderung | Antike Stadt | 2 | 10 % |
+| Herausforderung | Waldanwesen | 2 | 10 % |
+| Herausforderung | Ozeanmonument | 2 | 10 % |
+- Weitere Dateien (auch von anderen Mods) mit `"pool": "adventure"` oder `"challenge"` ergänzen den Pool. Eine Struktur ohne Eintrag in irgendeiner Datei kommt mit Gewicht 1 dazu: Untergrund- und Festungs-Schritt → Herausforderungs-Pool, sonst Abenteuer-Pool (`MapTargets.fallbackKind`)
+- Eine Struktur, die in der Welt nicht erzeugt wird (z. B. Nether-Festung in der Overworld), fällt aus dem Wurf
 - Dungeon-Karte (Spawner-Verlies) fällt weg: Verliese sind Features, keine Strukturen, und stehen in keinem Pool
 
 ## Höhlenkarte + Netherkarte (`cavemap/*`)

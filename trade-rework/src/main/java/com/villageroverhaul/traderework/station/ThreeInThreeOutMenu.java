@@ -21,23 +21,34 @@ public class ThreeInThreeOutMenu extends AbstractContainerMenu {
 
     public static final int INPUT_SLOTS = 3;
     public static final int SLOTS = INPUT_SLOTS * 2;
-    /** Row columns of the output slots - the input uses columns 0-2. */
-    private static final int OUTPUT_FIRST_COLUMN = 6;
 
     private final Container station;
+    private final int inputSlots;
+    private final int outputSlots;
 
     /** Client side: an empty stand-in container, synced from the server. */
     public ThreeInThreeOutMenu(MenuType<?> type, int containerId, Inventory inventory) {
-        this(type, containerId, inventory, new SimpleContainer(SLOTS));
+        this(type, containerId, inventory, new SimpleContainer(SLOTS), INPUT_SLOTS, INPUT_SLOTS);
     }
 
     public ThreeInThreeOutMenu(MenuType<?> type, int containerId, Inventory inventory, Container station) {
+        this(type, containerId, inventory, station, INPUT_SLOTS, INPUT_SLOTS);
+    }
+
+    /** Client side of a station with its own slot counts (the challenge station: 1 + 4). */
+    public ThreeInThreeOutMenu(MenuType<?> type, int containerId, Inventory inventory, int inputSlots, int outputSlots) {
+        this(type, containerId, inventory, new SimpleContainer(inputSlots + outputSlots), inputSlots, outputSlots);
+    }
+
+    public ThreeInThreeOutMenu(MenuType<?> type, int containerId, Inventory inventory, Container station, int inputSlots, int outputSlots) {
         super(type, containerId);
         this.station = station;
-        checkContainerSize(station, SLOTS);
+        this.inputSlots = inputSlots;
+        this.outputSlots = outputSlots;
+        checkContainerSize(station, inputSlots + outputSlots);
         station.startOpen(inventory.player);
-        for (int slot = 0; slot < SLOTS; slot++) {
-            int column = isInput(slot) ? slot : OUTPUT_FIRST_COLUMN + slot - INPUT_SLOTS;
+        for (int slot = 0; slot < inputSlots + outputSlots; slot++) {
+            int column = columnOf(slot);
             int index = slot;
             addSlot(new Slot(station, slot, 8 + column * 18, 18) {
                 @Override
@@ -51,6 +62,28 @@ public class ThreeInThreeOutMenu extends AbstractContainerMenu {
 
     public static boolean isInput(int slot) {
         return slot < INPUT_SLOTS;
+    }
+
+    public int inputSlots() {
+        return inputSlots;
+    }
+
+    public int outputSlots() {
+        return outputSlots;
+    }
+
+    /** First row column of the input: 0 for 3 + 3 slots, one column in for fewer so the row stays centred. */
+    public int firstInputColumn() {
+        return inputSlots >= 3 ? 0 : 1;
+    }
+
+    /** First row column of the output slots (the row has 9 columns, the layout mirrors left to right). */
+    public int firstOutputColumn() {
+        return 9 - outputSlots - firstInputColumn();
+    }
+
+    public int columnOf(int slot) {
+        return slot < inputSlots ? firstInputColumn() + slot : firstOutputColumn() + slot - inputSlots;
     }
 
     @Override
@@ -70,7 +103,7 @@ public class ThreeInThreeOutMenu extends AbstractContainerMenu {
                 if (!moveItemStackTo(stack, stationSize, slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!moveItemStackTo(stack, 0, INPUT_SLOTS, false)) {
+            } else if (!moveItemStackTo(stack, 0, inputSlots, false)) {
                 return ItemStack.EMPTY;
             }
             if (stack.isEmpty()) {

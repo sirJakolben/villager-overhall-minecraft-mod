@@ -16,6 +16,7 @@ Was noch aussteht. Erledigtes steht in [README.md](README.md). Zahlen: [tweaks/]
 - **Runesmith**: Upgrade-Vorlage, Reparaturstation, Polster, Master 3 + 4
 - **Veteran**: Waffenständer, Mob-Waffen, Piglin-Armbrust, Challengestation (Passive)
 - **Goldsmith**: Basic 0 + 1 + 4, Masteries 1–4 (Blöcke, Texturen, Ornated Redstone als Leitung), Verwertungsstation
+- **Quests an den Vanilla-Arbeitsplatz gekoppelt** (2026-10-11): Quests, Basic Trades gelten nur mit dem Vanilla-Job-Site; Masteries brauchen die Master-, Passive die Passive-Station (gekaufte Ränge bleiben offen)
 - **Cartographer**: Kartenstation (vier Masteries), Abenteuerstation (Passive, Abenteuer-/Herausforderungs-Pools), Höhlen-/Netherkarte
 - **Entdeckerkarten** zu Geoden, Erzadern, Verliesen (`/vo locate` zum Prüfen)
 - **Farmer**: Erntekorb, Glasurstation, vier Masteries

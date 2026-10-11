@@ -4,6 +4,10 @@ import com.mojang.datafixers.util.Pair;
 import com.villageroverhaul.traderework.TradeReworkRegistries;
 import com.villageroverhaul.traderework.trade.ExplorerMaps;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -51,10 +55,27 @@ public final class MapTargets {
             Pair<BlockPos, Holder<Structure>> found = level.getChunkSource().getGenerator()
                     .findNearestMapStructure(level, drawn.structures(), origin, ExplorerMaps.SEARCH_RADIUS_CHUNKS, true);
             if (found != null) {
-                return Optional.of(ExplorerMaps.createMap(level, found.getFirst(), MapDecorationTypes.TARGET_X, nameKey));
+                ItemStack map = ExplorerMaps.createMap(level, found.getFirst(), MapDecorationTypes.TARGET_X, nameKey);
+                map.set(DataComponents.ITEM_NAME, Component.translatable(nameKey, structureName(found.getSecond())));
+                return Optional.of(map);
             }
         }
         return Optional.empty();
+    }
+
+    /** "structure.<namespace>.<path>" if a language file has it (the mod ships the Vanilla ones), otherwise the path made readable (modded structures). */
+    static Component structureName(Holder<Structure> structure) {
+        Identifier id = structure.unwrapKey().map(ResourceKey::identifier).orElse(null);
+        if (id == null) {
+            return Component.translatable("structure.vo_trade_rework.unknown");
+        }
+        StringBuilder readable = new StringBuilder();
+        for (String word : id.getPath().replace('/', '_').split("_")) {
+            if (!word.isEmpty()) {
+                readable.append(readable.isEmpty() ? "" : " ").append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+            }
+        }
+        return Component.translatableWithFallback("structure." + id.getNamespace() + "." + id.getPath().replace('/', '.'), readable.toString());
     }
 
     private static Candidate pick(List<Candidate> candidates, RandomSource random) {
