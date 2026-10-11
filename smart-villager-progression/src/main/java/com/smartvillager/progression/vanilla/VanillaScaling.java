@@ -99,6 +99,6 @@ public final class VanillaScaling {
     }
 
     private static ItemAmount withCount(ItemAmount amount, int count) {
-        return new ItemAmount(amount.item(), count, amount.enchantment(), amount.mob());
+        return amount.withCount(count);
     }
 }

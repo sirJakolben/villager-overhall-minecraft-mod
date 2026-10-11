@@ -167,6 +167,23 @@ public class VillagerMenu extends AbstractContainerMenu {
     /** Re-resolves the result slot against the current offer list - after a rebuild, the old offer objects are gone. */
     public void refreshActiveOffer() {
         tradeContainer.updateSellItem();
+        transformResult();
+    }
+
+    /**
+     * Lets an extension derive the result from the payments (api/ResultTransform) once Vanilla has put the offer's own result in.
+     * Both sides run it, so the client's prediction shows the same stack the server hands out.
+     */
+    private void transformResult() {
+        MerchantOffer offer = tradeContainer.getActiveOffer();
+        ItemStack result = tradeContainer.getItem(RESULT_CONTAINER_SLOT);
+        if (offer == null || result.isEmpty()) {
+            return;
+        }
+        ItemStack transformed = ExtensionHooks.transformResult(offer, tradeContainer.getItem(PAYMENT_A_CONTAINER_SLOT), tradeContainer.getItem(PAYMENT_B_CONTAINER_SLOT), result);
+        if (transformed != result) {
+            tradeContainer.setItem(RESULT_CONTAINER_SLOT, transformed);
+        }
     }
 
     public void setSelectionHint(int hint) {
@@ -176,6 +193,7 @@ public class VillagerMenu extends AbstractContainerMenu {
     @Override
     public void slotsChanged(Container container) {
         tradeContainer.updateSellItem();
+        transformResult();
         super.slotsChanged(container);
     }
 

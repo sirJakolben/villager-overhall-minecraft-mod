@@ -7,6 +7,7 @@ import com.smartvillager.progression.section.Sections;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import org.jspecify.annotations.Nullable;
 
@@ -27,6 +28,7 @@ public final class ExtensionHooks {
 
     private static volatile Supplier<@Nullable DataComponentType<EntityType<?>>> mobWeaponComponent = () -> null;
     private static volatile ToIntFunction<MerchantOffer> playerXpCost = offer -> 0;
+    private static volatile ResultTransform resultTransform = (offer, paymentA, paymentB, result) -> result;
 
     private ExtensionHooks() {
     }
@@ -76,6 +78,15 @@ public final class ExtensionHooks {
     /** Player XP an offer costs on top of its items (menu/VillagerMenu) - 0 unless an extension says otherwise. */
     public static void setPlayerXpCost(ToIntFunction<MerchantOffer> cost) {
         playerXpCost = cost;
+    }
+
+    /** The result slot's stack from the payments - see ResultTransform; unchanged unless an extension sets one (the last one wins). */
+    public static void setResultTransform(ResultTransform transform) {
+        resultTransform = transform;
+    }
+
+    public static ItemStack transformResult(MerchantOffer offer, ItemStack paymentA, ItemStack paymentB, ItemStack result) {
+        return resultTransform.apply(offer, paymentA, paymentB, result);
     }
 
     public static int playerXpCost(@Nullable MerchantOffer offer) {

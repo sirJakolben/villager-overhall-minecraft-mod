@@ -33,7 +33,7 @@ public final class ExchangeScaling {
     }
 
     private static ItemAmount scaleAmount(ItemAmount base, ItemAmount max, int rank, SectionDefinition section) {
-        return new ItemAmount(base.item(), scale(base.count(), max.count(), rank, section), base.enchantment(), base.mob());
+        return base.withCount(scale(base.count(), max.count(), rank, section));
     }
 
     public static int lerp(int base, int max, int rank, int maxRank) {

@@ -20,7 +20,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -155,7 +154,7 @@ public final class VillagerOffers {
         }
         MerchantOffer offer = new MerchantOffer(
                 RequiredEnchantmentCost.of(exchange.basePrice(), villager.registryAccess()),
-                exchange.secondInput().map(second -> new ItemCost(second.item(), second.count())),
+                exchange.secondInput().map(second -> RequiredEnchantmentCost.of(second, villager.registryAccess())),
                 result,
                 uses,
                 exchange.maxUses(),

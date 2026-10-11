@@ -49,6 +49,9 @@ public final class RequiredEnchantmentCost {
      * Vanilla's ItemCost does anyway; only the enchantment needs the marked "any level" comparison.
      */
     public static ItemCost of(ItemAmount amount, HolderLookup.Provider registries) {
+        if (amount.tag().isPresent()) {
+            return TagCost.of(amount);
+        }
         Optional<Holder.Reference<Enchantment>> enchantment = amount.enchantment()
                 .flatMap(key -> registries.lookupOrThrow(Registries.ENCHANTMENT).get(key));
         if (enchantment.isEmpty() && amount.mob().isEmpty()) {
