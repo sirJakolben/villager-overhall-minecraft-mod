@@ -1,13 +1,13 @@
-# Villager Overhaul: Trade Rework – Extension (`trade-rework/`, `vo_trade_rework`)
+# Smart Villager Professions – Extension (`smart-villager-professions/`, `smartvillager_professions`)
 
-Die designten Berufe mit eigenen Trades, Items, Blöcken und Stationen; braucht den Kern ([core.md](core.md)) und hängt sich über `api/ExtensionHooks` ein. Zahlen und Trade-Tabellen: Obsidian `<Beruf>.md`. Texturen: Obsidian `03_Fehlende Texturen und Modelle`.
-Pfade: Java `trade-rework/src/main/java/com/villageroverhaul/traderework/`, Daten `trade-rework/src/main/resources/`. Einstieg: `TradeReworkMod`, `TradeReworkSections` (Stationen, Sektionen, Haken), `TradeReworkRegistries` (`crushing`, `salvage`, `mob_weapon`, `biome_fish`, `map_pool`). Einträge: `data/vo_trade_rework/villageroverhaul/exchange/<beruf>_*.json`. Texte: `assets/vo_trade_rework/lang/de_de.json`, `en_us.json`.
+Die designten Berufe mit eigenen Trades, Items, Blöcken und Stationen; braucht Progression ([progression.md](progression.md)) und hängt sich über `api/ExtensionHooks` ein. Zahlen und Trade-Tabellen: Obsidian `<Beruf>.md`. Texturen: Obsidian `03_Fehlende Texturen und Modelle`.
+Pfade: Java `smart-villager-professions/src/main/java/com/smartvillager/professions/`, Daten `smart-villager-professions/src/main/resources/`. Einstieg: `SmartVillagerProfessionsMod`, `ProfessionsSections` (Stationen, Sektionen, Haken), `ProfessionsRegistries` (`crushing`, `salvage`, `mob_weapon`, `biome_fish`, `map_pool`). Einträge: `data/smartvillager_professions/smartvillager_progression/exchange/<beruf>_*.json`. Texte: `assets/smartvillager_professions/lang/de_de.json`, `en_us.json`.
 Aufbau: je Bereich/Beruf eine Tabelle der vorhandenen Features (Feature | Was | Wo im Code), darunter **Geplant**.
 
 ## Gemeinsame Systeme
 | Feature | Was | Wo |
 |---|---|---|
-| Sektionen Quests / Masteries / Passive | Quests nur am Vanilla-Arbeitsplatz; Easy/Hard/Dauer-Plätze, Tageslimit, Reroll mit Wartezeit; Masteries an der Master-Station; Passive (Plakette oben links) an der Passiv-Station | `TradeReworkSections`, `quest/QuestSlots`, `QuestLogic`, `QuestState`, `QuestEntry`, `client/ui/QuestClientLogic`, `RerollButtonWidget`, `TradeReworkClient` |
+| Sektionen Quests / Masteries / Passive | Quests nur am Vanilla-Arbeitsplatz; Easy/Hard/Dauer-Plätze, Tageslimit, Reroll mit Wartezeit; Masteries an der Master-Station; Passive (Plakette oben links) an der Passiv-Station | `ProfessionsSections`, `quest/QuestSlots`, `QuestLogic`, `QuestState`, `QuestEntry`, `client/ui/QuestClientLogic`, `RerollButtonWidget`, `ProfessionsClient` |
 | Passive-Arbeit | Leiste je Beruf, ein Schritt an der Station | `passive/PassiveLogic`, `PassiveWork` + `passive/*Work` |
 | Passive Stationsblöcke | Menü, Redstone-Puls, Komparator, nicht begehbar; Basis aller Passive-Stationen | `station/PassiveStationBlock`, `FacingPassiveStationBlock`, `ThreeInThreeOutMenu`, `client/ui/ThreeInThreeOutScreen` |
 | Korb-Station (Farmer + Fisherman) | 5 Slots im Trichterfenster, Füllstand, Trichter unten | `basket/BasketStationBlock`, `BasketStationBlockEntity`, `BasketBlockEntities` |
@@ -18,7 +18,7 @@ Aufbau: je Bereich/Beruf eine Tabelle der vorhandenen Features (Feature | Was | 
 | Stations-Partikel | Blockmodell-`particle` = Vanilla-Workstation des Berufs (lectern_sides, stonecutter_bottom, smithing_table_front, grindstone_side, cartography_table_side3, blast_furnace_front, composter_side, barrel_side) | `models/block/*.json` |
 
 **Geplant**
-- Kern-API-Ausbau, der die Extension betrifft (Components statt `enchantment`/`mob`, `TradeRequirement` statt XP-Hook): [core.md](core.md)
+- Kern-API-Ausbau, der die Extension betrifft (Components statt `enchantment`/`mob`, `TradeRequirement` statt XP-Hook): [progression.md](progression.md)
 - Alle Features sind im Spiel noch ungetestet – Tests: Obsidian `04_Testliste`
 
 ## Librarian
@@ -29,7 +29,7 @@ Aufbau: je Bereich/Beruf eine Tabelle der vorhandenen Features (Feature | Was | 
 | Spezialbücher | vier Bücher; Zaubertisch nur Kategorie, Ergebnis verzaubertes Buch | `librarian/SpecialBookItem`, `mixin/EnchantmentMenuMixin`, `tags/enchantment/*_book.json` |
 | Verbesserungsstation | 5 Slots, Trichter, Komparator | `librarian/EnchantmentStationBlock`, `EnchantmentStationBlockEntity`, `EnchantmentStationMenu`, `client/ui/EnchantmentStationScreen` |
 | Buch-Upgrade (Passive) | niedrigste Stufe zuerst, Stufen-Obergrenze, Gang zur Station | `passive/BookUpgradeWork`, `librarian/BookUpgrades` |
-| Lore-Schriftrollen | 12 Items, Buch-Fenster, Fundorte per Loot-Modifier | `librarian/LoreScrollItem`, `network/OpenLoreScrollPayload`, `client/ui/LoreScrollScreens`, `data/vo_trade_rework/loot_modifiers/`, `loot_table/lore_scroll/` |
+| Lore-Schriftrollen | 12 Items, Buch-Fenster, Fundorte per Loot-Modifier | `librarian/LoreScrollItem`, `network/OpenLoreScrollPayload`, `client/ui/LoreScrollScreens`, `data/smartvillager_professions/loot_modifiers/`, `loot_table/lore_scroll/` |
 
 **Geplant**
 - Papierstapel-Block (Item-Icon da)

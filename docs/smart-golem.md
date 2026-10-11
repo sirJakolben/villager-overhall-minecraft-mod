@@ -1,7 +1,7 @@
 # Smart Iron Golem (`smart-golem/`, `smartgolem`)
 
-Eigenständige Mod (braucht weder Kern noch Extension). Ein schmaler Mixin auf den `IronGolem`, sonst Unterklassen von Vanillas Navigation, NeoForge-Events und Vanillas `TemptGoal`; Renderer bleibt Vanilla. Zahlen: Obsidian `02_Tweak-Werte`.
-Pfade: Java `smart-golem/src/main/java/com/smartgolem/`. Zombie-Cage-Tragen des Golems: [trade-rework.md](trade-rework.md), Veteran.
+Eigenständige Mod (braucht keine der anderen Mods). Ein schmaler Mixin auf den `IronGolem`, sonst Unterklassen von Vanillas Navigation, NeoForge-Events und Vanillas `TemptGoal`; Renderer bleibt Vanilla. Zahlen: Obsidian `02_Tweak-Werte`.
+Pfade: Java `smart-golem/src/main/java/com/smartgolem/`. Zombie-Cage-Tragen des Golems: [professions.md](professions.md), Veteran.
 
 ## Vorhanden
 

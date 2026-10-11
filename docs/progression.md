@@ -1,7 +1,7 @@
-# Villager Overhaul – Kern (`core/`, `villageroverhaul`)
+# Smart Villager Progression (`smart-villager-progression/`, `smartvillager_progression`)
 
-Alles, was für jeden Villager gleich gilt; kennt keinen Beruf. Ohne Extension läuft jeder Beruf (auch fremder Mods) mit seinen Vanilla-Trades. Claim, Anlocken und Handelsblock: [smart-villager.md](smart-villager.md). Zahlen: Obsidian `02_Tweak-Werte`.
-Pfade: Java `core/src/main/java/com/villageroverhaul/`, Daten `core/src/main/resources/`.
+Zweite Stufe der Leiter (braucht Smart Villager): alles, was für jeden Villager gleich gilt; kennt keinen Beruf. Ohne Professions läuft jeder Beruf (auch fremder Mods) mit seinen Vanilla-Trades. Claim, Anlocken, Handelsblock, Zombie-Heilen und Brauständer liegen eine Stufe tiefer in Smart Villager: [smart-villager.md](smart-villager.md). Zahlen: Obsidian `02_Tweak-Werte`.
+Pfade: Java `smart-villager-progression/src/main/java/com/smartvillager/progression/`, Daten `smart-villager-progression/src/main/resources/`.
 
 ## Vorhanden
 
@@ -25,15 +25,14 @@ Pfade: Java `core/src/main/java/com/villageroverhaul/`, Daten `core/src/main/res
 | Beruf wird fest | nach Handel oder XP | `progression/ProfessionLock` |
 | Restock über Leisten | eine Leiste je Sektion statt Vanilla-Restock, Glück wirkt | `work/RestockService`, `state/Productivity`, `mixin/VillagerWorkSoundMixin` |
 | Glücklichkeit | Bett, Dorfzentrum, Kontakt, Begleiter; Angst/Held überlagern | `happiness/HappinessCalculator`, `HappinessTracker`, `HappinessElements`, `mixin/VillagerGossipMixin`, Tag `happiness_companions` |
-| Arbeitsplätze | Vanilla-Block + registrierte Stationen, ein Besitzer je Station, Fokus zwischen Sektionen | `station/ProfessionStations`, `StationClaims`, `StationOwners`, `StationFocus`, `UnemployedPriority`, `WorkAtStation`, `PausedWhileAway`, `mixin/VillagerGoalPackagesMixin` |
-| Arbeitszeit | Tick 1400–9600, `/time set work` | `data/minecraft/timeline/villager_schedule.json`, `data/villageroverhaul/timeline/work_time_marker.json`, `work/DayClock` |
+| Arbeitsplätze | Vanilla-Block + registrierte Stationen, ein Besitzer je Station, Fokus zwischen Sektionen | `station/ProfessionStations`, `StationClaims`, `StationOwners`, `StationFocus`, `UnemployedPriority`, `WorkAtStation`, `StationClaimHandler` (Claim-Anschluss an Smart Villager), `mixin/VillagerGoalPackagesMixin` |
+| Arbeitszeit | Tick 1400–9600, `/time set work` | `data/minecraft/timeline/villager_schedule.json`, `data/smartvillager_progression/timeline/work_time_marker.json`, `work/DayClock` |
 
 ### Zustand und Welt
 | Feature | Was | Wo |
 |---|---|---|
 | Zustand am Villager | Attachment (kein eigener Entity-Typ), automatisch synchronisiert | `state/VillagerState`, `ModAttachments`, `AttachmentVillagerStateAccess`, `Stations`, `Happiness` |
 | Zombie-Umwandlung | Level, Punkte, Ränge, Bestand überstehen Zombie + Heilen | `state/VillagerConversion` |
-| Leichteres Heilen | 20 % der Zombies als Zombie-Villager; Lohenstaub in Dorf-Brauständen | `world/ZombieVillagerSpawns`, `VillageBrewingStands` |
 | Debug `/vo` | `state`, `grant_xp`, `grant_points`, `invest`, `list`, `trade`, `action`, `restock`, `reset` | `debug/DebugCommands` |
 
 ## Geplant
