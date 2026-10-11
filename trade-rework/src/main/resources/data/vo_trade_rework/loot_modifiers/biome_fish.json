@@ -1,7 +1,0 @@
-{
-  "type": "vo_trade_rework:biome_fish",
-  "conditions": [
-    { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:gameplay/fishing" }
-  ],
-  "chance": 0.08
-}

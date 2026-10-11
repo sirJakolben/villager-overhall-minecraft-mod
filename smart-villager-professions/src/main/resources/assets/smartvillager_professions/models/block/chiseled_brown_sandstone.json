@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "smartvillager_professions:block/brown_sandstone_top",
+    "side": "smartvillager_professions:block/chiseled_brown_sandstone"
+  }
+}

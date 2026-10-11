@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": "vo_trade_rework:gold_framed_lapis",
-  "result": {
-    "id": "vo_trade_rework:ornated_lapis_pillar"
-  }
-}

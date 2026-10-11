@@ -1,0 +1,22 @@
+{
+  "gui.smartvillager_progression.happiness.afraid": "Verängstigt: 0 %% (sonst %s %%)",
+  "gui.smartvillager_progression.happiness.hero": "Held des Dorfes: 100 %% (sonst %s %%)",
+  "gui.smartvillager_progression.happiness": "Glücklichkeit: %s %%",
+  "gui.smartvillager_progression.meter.restock": "%s Restock: %s %%",
+  "gui.smartvillager_progression.meter.restock.none": "%s Restock: –",
+  "gui.smartvillager_progression.meter.progress": "%s: %s %%",
+  "section.smartvillager_progression.quests": "Quests",
+  "section.smartvillager_progression.trades": "Trades",
+  "message.smartvillager_progression.claim.assigned": "%s arbeitet jetzt hier",
+  "message.smartvillager_progression.claim.already": "%s arbeitet schon hier",
+  "message.smartvillager_progression.claim.settled": "%s hat schon einen festen Beruf",
+  "message.smartvillager_progression.claim.cannot_work": "%s kann nicht arbeiten",
+  "message.smartvillager_progression.claim.not_workplace": "Das ist kein Arbeitsplatz",
+  "message.smartvillager_progression.claim.gone": "Der ausgewählte Dorfbewohner ist nicht mehr da",
+  "message.smartvillager_progression.claim.too_far": "Zu weit weg – der Handelsblock darf höchstens %2$s Blöcke vom Arbeitsplatz von %1$s entfernt sein",
+  "message.smartvillager_progression.claim.no_workplace": "%s braucht erst einen Arbeitsplatz",
+  "gui.smartvillager_progression.upgrade.cost": "Nächstes Upgrade kostet %s Punkt(e) (verfügbar: %s)",
+  "gui.smartvillager_progression.upgrade.maxed": "Voll ausgebaut",
+  "block.smartvillager_progression.trading_block": "Handelsblock",
+  "item.smartvillager_progression.missing_trade": "Noch offen"
+}

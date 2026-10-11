@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "smartvillager_professions:block/enhancement_station" },
+    "powered=true": { "model": "smartvillager_professions:block/enhancement_station" }
+  }
+}

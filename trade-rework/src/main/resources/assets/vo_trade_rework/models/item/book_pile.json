@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "vo_trade_rework:item/book_pile"
-  }
-}

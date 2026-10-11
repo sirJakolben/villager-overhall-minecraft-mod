@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": "vo_trade_rework:gold_framed_lapis",
-  "result": {
-    "id": "vo_trade_rework:gold_framed_lapis_slab",
-    "count": 2
-  }
-}

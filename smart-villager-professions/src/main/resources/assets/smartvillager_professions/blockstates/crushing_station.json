@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east,powered=false,working=false": { "model": "smartvillager_professions:block/crushing_station" },
+    "facing=east,powered=true,working=false": { "model": "smartvillager_professions:block/crushing_station" },
+    "facing=south,powered=false,working=false": { "model": "smartvillager_professions:block/crushing_station", "y": 90 },
+    "facing=south,powered=true,working=false": { "model": "smartvillager_professions:block/crushing_station", "y": 90 },
+    "facing=west,powered=false,working=false": { "model": "smartvillager_professions:block/crushing_station", "y": 180 },
+    "facing=west,powered=true,working=false": { "model": "smartvillager_professions:block/crushing_station", "y": 180 },
+    "facing=north,powered=false,working=false": { "model": "smartvillager_professions:block/crushing_station", "y": 270 },
+    "facing=north,powered=true,working=false": { "model": "smartvillager_professions:block/crushing_station", "y": 270 },
+    "facing=east,powered=false,working=true": { "model": "smartvillager_professions:block/crushing_station_working" },
+    "facing=east,powered=true,working=true": { "model": "smartvillager_professions:block/crushing_station_working" },
+    "facing=south,powered=false,working=true": { "model": "smartvillager_professions:block/crushing_station_working", "y": 90 },
+    "facing=south,powered=true,working=true": { "model": "smartvillager_professions:block/crushing_station_working", "y": 90 },
+    "facing=west,powered=false,working=true": { "model": "smartvillager_professions:block/crushing_station_working", "y": 180 },
+    "facing=west,powered=true,working=true": { "model": "smartvillager_professions:block/crushing_station_working", "y": 180 },
+    "facing=north,powered=false,working=true": { "model": "smartvillager_professions:block/crushing_station_working", "y": 270 },
+    "facing=north,powered=true,working=true": { "model": "smartvillager_professions:block/crushing_station_working", "y": 270 }
+  }
+}

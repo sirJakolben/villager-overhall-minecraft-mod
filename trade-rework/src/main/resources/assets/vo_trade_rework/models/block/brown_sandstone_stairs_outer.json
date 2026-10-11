@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/outer_stairs",
-  "textures": {
-    "bottom": "vo_trade_rework:block/brown_sandstone_bottom",
-    "side": "vo_trade_rework:block/brown_sandstone",
-    "top": "vo_trade_rework:block/brown_sandstone_top"
-  }
-}

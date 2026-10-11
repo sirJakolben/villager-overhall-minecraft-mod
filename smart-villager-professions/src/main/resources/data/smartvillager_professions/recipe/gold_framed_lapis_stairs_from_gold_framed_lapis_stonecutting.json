@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "smartvillager_professions:gold_framed_lapis",
+  "result": {
+    "id": "smartvillager_professions:gold_framed_lapis_stairs"
+  }
+}

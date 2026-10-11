@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": { "layer0": "smartvillager_professions:block/placeholder_texture" }
+}

@@ -1,0 +1,184 @@
+{
+    "variants":  {
+                     "facing=north,fill=0,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station"
+                                                           },
+                     "facing=north,fill=1,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_1"
+                                                           },
+                     "facing=north,fill=2,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_2"
+                                                           },
+                     "facing=north,fill=3,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_3"
+                                                           },
+                     "facing=north,fill=4,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_4"
+                                                           },
+                     "facing=north,fill=5,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_5"
+                                                           },
+                     "facing=north,fill=0,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station"
+                                                          },
+                     "facing=north,fill=1,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_1"
+                                                          },
+                     "facing=north,fill=2,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_2"
+                                                          },
+                     "facing=north,fill=3,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_3"
+                                                          },
+                     "facing=north,fill=4,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_4"
+                                                          },
+                     "facing=north,fill=5,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_5"
+                                                          },
+                     "facing=south,fill=0,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station",
+                                                               "y":  180
+                                                           },
+                     "facing=south,fill=1,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_1",
+                                                               "y":  180
+                                                           },
+                     "facing=south,fill=2,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_2",
+                                                               "y":  180
+                                                           },
+                     "facing=south,fill=3,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_3",
+                                                               "y":  180
+                                                           },
+                     "facing=south,fill=4,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_4",
+                                                               "y":  180
+                                                           },
+                     "facing=south,fill=5,powered=false":  {
+                                                               "model":  "smartvillager_professions:block/fish_basket_station_5",
+                                                               "y":  180
+                                                           },
+                     "facing=south,fill=0,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station",
+                                                              "y":  180
+                                                          },
+                     "facing=south,fill=1,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_1",
+                                                              "y":  180
+                                                          },
+                     "facing=south,fill=2,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_2",
+                                                              "y":  180
+                                                          },
+                     "facing=south,fill=3,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_3",
+                                                              "y":  180
+                                                          },
+                     "facing=south,fill=4,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_4",
+                                                              "y":  180
+                                                          },
+                     "facing=south,fill=5,powered=true":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_5",
+                                                              "y":  180
+                                                          },
+                     "facing=west,fill=0,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station",
+                                                              "y":  270
+                                                          },
+                     "facing=west,fill=1,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_1",
+                                                              "y":  270
+                                                          },
+                     "facing=west,fill=2,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_2",
+                                                              "y":  270
+                                                          },
+                     "facing=west,fill=3,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_3",
+                                                              "y":  270
+                                                          },
+                     "facing=west,fill=4,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_4",
+                                                              "y":  270
+                                                          },
+                     "facing=west,fill=5,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_5",
+                                                              "y":  270
+                                                          },
+                     "facing=west,fill=0,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station",
+                                                             "y":  270
+                                                         },
+                     "facing=west,fill=1,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_1",
+                                                             "y":  270
+                                                         },
+                     "facing=west,fill=2,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_2",
+                                                             "y":  270
+                                                         },
+                     "facing=west,fill=3,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_3",
+                                                             "y":  270
+                                                         },
+                     "facing=west,fill=4,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_4",
+                                                             "y":  270
+                                                         },
+                     "facing=west,fill=5,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_5",
+                                                             "y":  270
+                                                         },
+                     "facing=east,fill=0,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station",
+                                                              "y":  90
+                                                          },
+                     "facing=east,fill=1,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_1",
+                                                              "y":  90
+                                                          },
+                     "facing=east,fill=2,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_2",
+                                                              "y":  90
+                                                          },
+                     "facing=east,fill=3,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_3",
+                                                              "y":  90
+                                                          },
+                     "facing=east,fill=4,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_4",
+                                                              "y":  90
+                                                          },
+                     "facing=east,fill=5,powered=false":  {
+                                                              "model":  "smartvillager_professions:block/fish_basket_station_5",
+                                                              "y":  90
+                                                          },
+                     "facing=east,fill=0,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station",
+                                                             "y":  90
+                                                         },
+                     "facing=east,fill=1,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_1",
+                                                             "y":  90
+                                                         },
+                     "facing=east,fill=2,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_2",
+                                                             "y":  90
+                                                         },
+                     "facing=east,fill=3,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_3",
+                                                             "y":  90
+                                                         },
+                     "facing=east,fill=4,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_4",
+                                                             "y":  90
+                                                         },
+                     "facing=east,fill=5,powered=true":  {
+                                                             "model":  "smartvillager_professions:block/fish_basket_station_5",
+                                                             "y":  90
+                                                         }
+                 }
+}

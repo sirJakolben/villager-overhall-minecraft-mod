@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up": { "model": "smartvillager_professions:block/ornated_lapis" },
+    "facing=down": { "model": "smartvillager_professions:block/ornated_lapis", "x": 180 },
+    "facing=north": { "model": "smartvillager_professions:block/ornated_lapis", "x": 90 },
+    "facing=south": { "model": "smartvillager_professions:block/ornated_lapis", "x": 90, "y": 180 },
+    "facing=west": { "model": "smartvillager_professions:block/ornated_lapis", "x": 90, "y": 270 },
+    "facing=east": { "model": "smartvillager_professions:block/ornated_lapis", "x": 90, "y": 90 }
+  }
+}

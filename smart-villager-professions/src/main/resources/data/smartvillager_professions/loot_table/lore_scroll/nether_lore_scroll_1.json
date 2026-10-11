@@ -1,0 +1,8 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "smartvillager_professions:nether_lore_scroll_1" } ]
+    }
+  ]
+}

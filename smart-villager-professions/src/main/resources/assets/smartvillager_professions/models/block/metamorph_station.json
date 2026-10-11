@@ -1,0 +1,4 @@
+{
+  "parent": "smartvillager_professions:block/placeholder_block",
+  "textures": { "particle": "minecraft:block/stonecutter_bottom" }
+}

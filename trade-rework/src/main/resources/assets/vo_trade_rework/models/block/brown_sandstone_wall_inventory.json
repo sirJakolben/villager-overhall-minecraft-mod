@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/wall_inventory",
-  "textures": {
-    "wall": "vo_trade_rework:block/brown_sandstone"
-  }
-}

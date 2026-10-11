@@ -10,6 +10,6 @@ plugins {
 
 rootProject.name = 'improved-villagers'
 
-include 'core'
-include 'trade-rework'
+include 'smart-villager-progression'
+include 'smart-villager-professions'
 include 'smart-golem'

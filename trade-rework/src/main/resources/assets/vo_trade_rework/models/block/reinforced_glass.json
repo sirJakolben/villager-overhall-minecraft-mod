@@ -1,9 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": {
-      "force_translucent": true,
-      "sprite": "vo_trade_rework:block/reinforced_glass"
-    }
-  }
-}

@@ -1,0 +1,6 @@
+{
+	"parent": "smartvillager_professions:block/crushing_station",
+	"textures": {
+		"1": "smartvillager_professions:block/crushing_blades_moving"
+	}
+}

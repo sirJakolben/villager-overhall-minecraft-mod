@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron_framed_redstone": {
+      "conditions": {
+        "items": [
+          {
+            "items": "smartvillager_professions:iron_framed_redstone"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "smartvillager_professions:ornated_redstone_from_iron_framed_redstone_stonecutting"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_iron_framed_redstone"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "smartvillager_professions:ornated_redstone_from_iron_framed_redstone_stonecutting"
+    ]
+  }
+}

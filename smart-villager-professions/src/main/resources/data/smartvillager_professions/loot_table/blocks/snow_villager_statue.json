@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "smartvillager_professions:snow_villager_statue",
+          "conditions": [
+            { "condition": "minecraft:block_state_property", "block": "smartvillager_professions:snow_villager_statue", "properties": { "half": "lower" } }
+          ]
+        }
+      ],
+      "conditions": [ { "condition": "minecraft:survives_explosion" } ]
+    }
+  ]
+}

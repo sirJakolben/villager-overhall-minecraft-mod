@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": "vo_trade_rework:brown_sandstone",
-  "result": {
-    "id": "vo_trade_rework:chiseled_brown_sandstone"
-  }
-}

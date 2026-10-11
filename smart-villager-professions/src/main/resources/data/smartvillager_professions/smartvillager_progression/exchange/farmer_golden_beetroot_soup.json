@@ -1,0 +1,11 @@
+{
+  "profession": "minecraft:farmer",
+  "section": "smartvillager_professions:masteries",
+  "unlock_rank": 2,
+  "base_input": { "item": "smartvillager_professions:golden_beetroot", "count": 1 },
+  "max_input": { "item": "smartvillager_professions:golden_beetroot", "count": 1 },
+  "base_output": { "item": "smartvillager_professions:golden_beetroot_soup", "count": 1 },
+  "max_output": { "item": "smartvillager_professions:golden_beetroot_soup", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

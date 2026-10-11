@@ -1,0 +1,22 @@
+{
+  "gui.smartvillager_progression.happiness.afraid": "Afraid: 0%% (normally %s%%)",
+  "gui.smartvillager_progression.happiness.hero": "Hero of the Village: 100%% (normally %s%%)",
+  "gui.smartvillager_progression.happiness": "Happiness: %s%%",
+  "gui.smartvillager_progression.meter.restock": "%s Restock: %s%%",
+  "gui.smartvillager_progression.meter.restock.none": "%s Restock: –",
+  "gui.smartvillager_progression.meter.progress": "%s: %s%%",
+  "section.smartvillager_progression.quests": "Quests",
+  "section.smartvillager_progression.trades": "Trades",
+  "message.smartvillager_progression.claim.assigned": "%s works here now",
+  "message.smartvillager_progression.claim.already": "%s already works here",
+  "message.smartvillager_progression.claim.settled": "%s already has a settled profession",
+  "message.smartvillager_progression.claim.cannot_work": "%s cannot work",
+  "message.smartvillager_progression.claim.not_workplace": "That is not a workplace",
+  "message.smartvillager_progression.claim.gone": "The selected villager is gone",
+  "message.smartvillager_progression.claim.too_far": "Too far - the Trading Block must be within %2$s blocks of %1$s's workplace",
+  "message.smartvillager_progression.claim.no_workplace": "%s needs a workplace first",
+  "gui.smartvillager_progression.upgrade.cost": "Next upgrade costs %s point(s) (available: %s)",
+  "gui.smartvillager_progression.upgrade.maxed": "Fully upgraded",
+  "block.smartvillager_progression.trading_block": "Trading Block",
+  "item.smartvillager_progression.missing_trade": "Not designed yet"
+}

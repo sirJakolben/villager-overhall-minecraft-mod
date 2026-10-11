@@ -1,0 +1,13 @@
+{
+  "profession": "minecraft:librarian",
+  "section": "smartvillager_professions:quests",
+  "base_input": { "item": "smartvillager_professions:overworld_lore_scroll_2", "count": 1 },
+  "max_input": { "item": "smartvillager_professions:overworld_lore_scroll_2", "count": 1 },
+  "base_output": { "item": "minecraft:emerald", "count": 30 },
+  "max_output": { "item": "minecraft:emerald", "count": 45 },
+  "base_max_uses": 1,
+  "max_max_uses": 1,
+  "extensions": {
+    "smartvillager_professions:quest": { "pool": "hard", "input_variants": ["smartvillager_professions:overworld_lore_scroll_2", "smartvillager_professions:cave_lore_scroll_2", "smartvillager_professions:underwater_lore_scroll_2", "smartvillager_professions:nether_lore_scroll_2"] }
+  }
+}

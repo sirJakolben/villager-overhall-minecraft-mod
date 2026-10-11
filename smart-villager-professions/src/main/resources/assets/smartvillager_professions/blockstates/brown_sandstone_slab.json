@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "smartvillager_professions:block/brown_sandstone_slab"
+    },
+    "type=double": {
+      "model": "smartvillager_professions:block/brown_sandstone"
+    },
+    "type=top": {
+      "model": "smartvillager_professions:block/brown_sandstone_slab_top"
+    }
+  }
+}

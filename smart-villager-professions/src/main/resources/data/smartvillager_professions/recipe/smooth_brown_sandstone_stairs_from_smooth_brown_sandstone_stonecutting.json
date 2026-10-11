@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "smartvillager_professions:smooth_brown_sandstone",
+  "result": {
+    "id": "smartvillager_professions:smooth_brown_sandstone_stairs"
+  }
+}

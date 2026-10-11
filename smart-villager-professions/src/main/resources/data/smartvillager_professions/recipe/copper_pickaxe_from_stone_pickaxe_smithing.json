@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:copper_block",
+  "base": "minecraft:stone_pickaxe",
+  "result": {
+    "id": "minecraft:copper_pickaxe"
+  },
+  "template": "smartvillager_professions:upgrade_smithing_template"
+}

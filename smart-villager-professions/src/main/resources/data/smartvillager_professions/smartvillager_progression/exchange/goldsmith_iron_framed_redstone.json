@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:armorer",
+  "section": "smartvillager_professions:masteries",
+  "unlock_rank": 2,
+  "base_input": { "item": "minecraft:iron_ingot", "count": 1 },
+  "max_input": { "item": "minecraft:iron_ingot", "count": 1 },
+  "second_input": { "item": "minecraft:redstone_block", "count": 1 },
+  "base_output": { "item": "smartvillager_professions:iron_framed_redstone", "count": 1 },
+  "max_output": { "item": "smartvillager_professions:iron_framed_redstone", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:copper_block",
+  "base": "minecraft:stone_axe",
+  "result": {
+    "id": "minecraft:copper_axe"
+  },
+  "template": "smartvillager_professions:upgrade_smithing_template"
+}

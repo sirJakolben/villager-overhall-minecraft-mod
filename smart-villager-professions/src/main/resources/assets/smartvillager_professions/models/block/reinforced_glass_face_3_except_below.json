@@ -1,0 +1,18 @@
+{
+  "textures": {
+    "glass": {
+      "force_translucent": true,
+      "sprite": "smartvillager_professions:block/reinforced_glass_3_except_below"
+    },
+    "particle": "smartvillager_professions:block/reinforced_glass"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#glass", "cullface": "north"}
+      }
+    }
+  ]
+}

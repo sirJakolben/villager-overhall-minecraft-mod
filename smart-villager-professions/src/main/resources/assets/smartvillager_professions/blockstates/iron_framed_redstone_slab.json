@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "smartvillager_professions:block/iron_framed_redstone_slab" },
+    "type=top": { "model": "smartvillager_professions:block/iron_framed_redstone_slab_top" },
+    "type=double": { "model": "smartvillager_professions:block/iron_framed_redstone_slab_double" }
+  }
+}
