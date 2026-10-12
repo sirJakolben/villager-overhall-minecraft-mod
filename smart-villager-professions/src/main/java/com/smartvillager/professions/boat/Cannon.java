@@ -34,11 +34,13 @@ public final class Cannon {
     /** Where the cannon sits in the model (the front slot of a Vanilla boat), in blocks along the boat: another boat shifts the cannon with its front slot. */
     public static final double MODEL_SLOT_OFFSET = 0.2;
     /** Launch speed in blocks per tick: the least a released bar gives, and what a full bar adds. */
-    public static final float MIN_SPEED = 0.8F;
-    public static final float CHARGE_SPEED_GAIN = 1.7F;
+    public static final float MIN_SPEED = 0.4F;
+    public static final float CHARGE_SPEED_GAIN = 0.85F;
+    /** The bar must be filled over this many percent when released, or nothing is fired (and nothing is used up). */
+    public static final int MIN_CHARGE = 50;
     public static final double GRAVITY = 0.04;
-    /** The barrel is tilted this far up. */
-    private static final double PITCH = Math.toRadians(20.0);
+    /** The ball leaves 5 degrees above the horizon (the model's barrel is tilted more, for the look). */
+    private static final double PITCH = Math.toRadians(5.0);
     /** Muzzle centre in front of and above the boat's middle, in blocks (model: 20.8 px forward, 14.6 px above the hitbox bottom). */
     private static final double MUZZLE_FORWARD = 20.79 / 16.0;
     private static final double MUZZLE_UP = 14.55 / 16.0;
@@ -57,14 +59,14 @@ public final class Cannon {
         return boat.position().add(forward(boat).scale(ahead)).add(0.0, MUZZLE_UP, 0.0);
     }
 
-    /** The barrel's direction: forward, tilted up. */
+    /** The ball's direction: forward, a little above the horizon. */
     public static Vec3 direction(AbstractBoat boat) {
         return forward(boat).scale(Math.cos(PITCH)).add(0.0, Math.sin(PITCH), 0.0);
     }
 
-    /** The shot: charge is 1..100 (the bar's fill in percent). Without a cannonball the cannon only thuds. */
+    /** The shot: charge is 1..100 (the bar's fill in percent) and must be over MIN_CHARGE. Without a cannonball the cannon only thuds. */
     public static void fire(AbstractBoat boat, int charge) {
-        if (!(boat.level() instanceof ServerLevel level)) {
+        if (!(boat.level() instanceof ServerLevel level) || charge <= MIN_CHARGE) {
             return;
         }
         BoatState state = BoatUpgrades.state(boat);

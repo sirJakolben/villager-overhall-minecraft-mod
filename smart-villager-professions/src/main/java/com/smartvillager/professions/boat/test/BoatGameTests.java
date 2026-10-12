@@ -252,15 +252,19 @@ public final class BoatGameTests {
         player.setGameMode(GameType.SURVIVAL);
         player.setPos(boat.getX(), boat.getY(), boat.getZ());
         helper.assertTrue(player.startRiding(boat), "the player boards");
-        Cannon.fire(boat, 50);
+        player.getInventory().add(new ItemStack(FishermanItems.CANNONBALL.get(), 1));
+        Cannon.fire(boat, 40);
+        helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty() && player.getInventory().countItem(FishermanItems.CANNONBALL.get()) == 1, "a bar under half fires nothing and uses nothing");
+        player.getInventory().clearContent();
+        Cannon.fire(boat, 80);
         helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty(), "no ball without a cannonball");
         helper.assertTrue(BoatUpgrades.state(boat).cooldown(helper.getLevel().getGameTime()) == 0, "a thud does not start the reload");
 
         player.getInventory().add(new ItemStack(FishermanItems.CANNONBALL.get(), 2));
-        Cannon.fire(boat, 50);
+        Cannon.fire(boat, 80);
         helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).size() == 1, "one ball in the air");
         helper.assertTrue(player.getInventory().countItem(FishermanItems.CANNONBALL.get()) == 1, "one cannonball used up");
-        Cannon.fire(boat, 50);
+        Cannon.fire(boat, 80);
         helper.assertTrue(player.getInventory().countItem(FishermanItems.CANNONBALL.get()) == 1, "still reloading: no second shot");
         helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).forEach(CannonballEntity::discard);
         helper.succeed();
@@ -275,7 +279,7 @@ public final class BoatGameTests {
         player.setGameMode(GameType.CREATIVE);
         player.setPos(boat.getX(), boat.getY(), boat.getZ());
         helper.assertTrue(player.startRiding(boat), "the player boards");
-        Cannon.fire(boat, 1);
+        Cannon.fire(boat, 60);
         AABB area = new AABB(helper.absolutePos(new BlockPos(0, 0, 0))).inflate(40.0);
         helper.assertTrue(!helper.getLevel().getEntitiesOfClass(CannonballEntity.class, area, ball -> ball.getOwner() == player).isEmpty(), "the ball flies");
         helper.succeedWhen(() -> {
