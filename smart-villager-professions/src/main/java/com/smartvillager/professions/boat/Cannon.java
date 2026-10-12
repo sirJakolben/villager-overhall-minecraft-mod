@@ -37,10 +37,10 @@ public final class Cannon {
     public static final float MIN_SPEED = 0.5F;
     public static final float CHARGE_SPEED_GAIN = 2.0F;
     /** The bar must be filled over this many percent when released, or nothing is fired (and nothing is used up). */
-    public static final int MIN_CHARGE = 10;
+    public static final int MIN_CHARGE = 50;
     public static final double GRAVITY = 0.04;
-    /** The ball leaves 5 degrees above the horizon (the model's barrel is tilted more, for the look). */
-    private static final double PITCH = Math.toRadians(5.0);
+    /** The ball leaves 10 degrees above the horizon (the model's barrel is tilted more, for the look). */
+    private static final double PITCH = Math.toRadians(10.0);
     /** Muzzle centre in front of and above the boat's middle, in blocks (model: 20.8 px forward, 14.6 px above the hitbox bottom). */
     private static final double MUZZLE_FORWARD = 20.79 / 16.0;
     private static final double MUZZLE_UP = 14.55 / 16.0;

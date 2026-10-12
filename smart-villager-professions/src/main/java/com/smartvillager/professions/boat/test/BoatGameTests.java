@@ -253,8 +253,8 @@ public final class BoatGameTests {
         player.setPos(boat.getX(), boat.getY(), boat.getZ());
         helper.assertTrue(player.startRiding(boat), "the player boards");
         player.getInventory().add(new ItemStack(FishermanItems.CANNONBALL.get(), 1));
-        Cannon.fire(boat, 5);
-        helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty() && player.getInventory().countItem(FishermanItems.CANNONBALL.get()) == 1, "a bar under 10 % fires nothing and uses nothing");
+        Cannon.fire(boat, 40);
+        helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty() && player.getInventory().countItem(FishermanItems.CANNONBALL.get()) == 1, "a bar under half fires nothing and uses nothing");
         player.getInventory().clearContent();
         Cannon.fire(boat, 80);
         helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty(), "no ball without a cannonball");
@@ -272,14 +272,14 @@ public final class BoatGameTests {
 
     /** The ball lands in a floor of dirt (which TNT would crater) and explodes - no hole appears (neighbouring tests may have turned some dirt into stone, never into air). */
     private static void ballKeepsBlocks(GameTestHelper helper) {
-        floor(helper, 30, 30, Blocks.DIRT);
+        floor(helper, 40, 40, Blocks.DIRT);
         AbstractBoat boat = boat(helper, 15, 1, 2);
         BoatUpgrades.setState(boat, withCannon(BoatUpgrades.state(boat)));
         @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
         player.setGameMode(GameType.CREATIVE);
         player.setPos(boat.getX(), boat.getY(), boat.getZ());
         helper.assertTrue(player.startRiding(boat), "the player boards");
-        Cannon.fire(boat, 60);
+        Cannon.fire(boat, 51);
         AABB area = new AABB(helper.absolutePos(new BlockPos(0, 0, 0))).inflate(40.0);
         helper.assertTrue(!helper.getLevel().getEntitiesOfClass(CannonballEntity.class, area, ball -> ball.getOwner() == player).isEmpty(), "the ball flies");
         helper.succeedWhen(() -> {
