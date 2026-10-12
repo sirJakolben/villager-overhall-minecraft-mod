@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.UUID;
 
-/** Vanilla's private "start the cure" - the golden food cure (world/ZombieVillagerCure) starts it without the weakness check. */
+/** Vanilla's private "start the cure" - the weakness cure (world/ZombieVillagerCure) starts it as soon as the effect is on. */
 @Mixin(ZombieVillager.class)
 public interface ZombieVillagerInvoker {
 

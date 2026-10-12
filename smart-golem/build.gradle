@@ -80,3 +80,20 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// Dev tool, not part of the mod: bakes the climb animation of the Blockbench project into tables (src/bake, tools/bake-climb.md).
+sourceSets {
+    bake {
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.compileClasspath
+    }
+}
+
+tasks.register('bakeClimb', JavaExec) {
+    group = 'tools'
+    description = 'Bakes assets/Block References/iron_golem/iron_golem.bbmodel into ClimbPose.java'
+    classpath = sourceSets.bake.runtimeClasspath
+    mainClass = 'com.smartgolem.client.BakeClimb'
+    args rootProject.file('assets/Block References/iron_golem/iron_golem.bbmodel').absolutePath,
+            file('src/main/java/com/smartgolem/climb').absolutePath
+}

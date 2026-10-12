@@ -55,9 +55,13 @@ public final class GolemGameTests {
             FUNCTIONS.register("plan_over_wall_2_" + side.getName(), () -> helper -> planOverWall2(helper, side));
             FUNCTIONS.register("climb_wall_" + side.getName(), () -> helper -> climbWall(helper, side));
         }
+        FUNCTIONS.register("plan_no_climb_with_passenger", () -> GolemGameTests::planNoClimbWithPassenger);
         FUNCTIONS.register("plan_no_wall_3", () -> GolemGameTests::planNoWall3);
         FUNCTIONS.register("plan_no_climb_1", () -> GolemGameTests::planNoClimb1);
         FUNCTIONS.register("climb_out_of_hole", () -> GolemGameTests::climbOutOfHole);
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            FUNCTIONS.register("plan_out_of_hole_onto_narrow_strip_" + side.getName(), () -> helper -> planOutOfHoleOntoNarrowStrip(helper, side));
+        }
         FUNCTIONS.register("climb_in_water", () -> GolemGameTests::climbInWater);
         FUNCTIONS.register("tempt_ingot", () -> GolemGameTests::temptIngot);
         FUNCTIONS.register("tempt_ingot_night", () -> GolemGameTests::temptIngotNight);
@@ -82,9 +86,13 @@ public final class GolemGameTests {
             register(event, environment, structure, "plan_over_wall_2_" + side.getName(), 120);
             register(event, environment, structure, "climb_wall_" + side.getName(), 600);
         }
+        register(event, environment, structure, "plan_no_climb_with_passenger", 120);
         register(event, environment, structure, "plan_no_wall_3", 120);
         register(event, environment, structure, "plan_no_climb_1", 120);
         register(event, environment, structure, "climb_out_of_hole", 600);
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            register(event, environment, structure, "plan_out_of_hole_onto_narrow_strip_" + side.getName(), 120);
+        }
         register(event, environment, structure, "climb_in_water", 600);
         register(event, environment, structure, "tempt_ingot", 200);
         register(event, environment, structure, "tempt_ingot_night", 300);
@@ -245,6 +253,24 @@ public final class GolemGameTests {
             helper.assertTrue(hasClimbEdge(path[0]), "the path has a climb edge (" + side + ")");
         });
     }
+    /** A golem with a passenger (a carried zombie villager - any passenger will do here) plans no way over the wall: no climb edge. */
+    private static void planNoClimbWithPassenger(GameTestHelper helper) {
+        area(helper);
+        wall(helper, 2, Direction.EAST);
+        BlockPos start = startFor(Direction.EAST);
+        IronGolem golem = golem(helper, start.getX(), start.getY(), start.getZ());
+        net.minecraft.world.entity.animal.chicken.Chicken passenger = helper.spawn(EntityType.CHICKEN, start.getX(), start.getY(), start.getZ());
+        passenger.setPersistenceRequired();
+        passenger.startRiding(golem, true, false);
+        boolean[] planned = {false};
+        Path[] path = plan(helper, golem, goalFor(Direction.EAST), planned);
+        helper.succeedWhen(() -> {
+            helper.assertTrue(planned[0], "planned");
+            helper.assertTrue(golem.isVehicle(), "the golem carries the passenger");
+            helper.assertTrue(path[0] == null || !hasClimbEdge(path[0]), "no climb edge in the path with a passenger");
+        });
+    }
+
     private static void planNoWall3(GameTestHelper helper) {
         area(helper);
         wall(helper, 3);
@@ -277,16 +303,37 @@ public final class GolemGameTests {
         BlockPos target = helper.absolutePos(goalFor(side));
         Vec3 wallMiddle = helper.absoluteVec(new Vec3(8.0, 0.0, 8.0));
         boolean[] climbed = {false};
+        // The golem really moves while it climbs: every tick is a small step, the way up only goes up, and it ends two blocks higher.
+        Vec3[] last = {null};
+        double[] biggestStep = {0.0};
+        double[] startY = {0.0};
+        double[] lowestStepY = {0.0};
+        double[] highestY = {-1.0E9};
         helper.onEachTick(() -> {
             if (helper.getTick() == WARM_UP) {
                 golem.getNavigation().moveTo(target.getX() + 0.5, target.getY(), target.getZ() + 0.5, 1.0);
             }
             if (golem.getData(GolemClimb.ATTACHMENT).active()) {
+                if (!climbed[0]) {
+                    startY[0] = golem.getY();
+                }
                 climbed[0] = true;
+                if (last[0] != null) {
+                    biggestStep[0] = Math.max(biggestStep[0], golem.position().distanceTo(last[0]));
+                    lowestStepY[0] = Math.min(lowestStepY[0], golem.getY() - last[0].y);
+                }
+                highestY[0] = Math.max(highestY[0], golem.getY());
+                last[0] = golem.position();
+            } else {
+                // Between two climbs the golem walks: steps are measured only inside one.
+                last[0] = null;
             }
         });
         helper.succeedWhen(() -> {
             helper.assertTrue(climbed[0], "the golem climbed (" + side + ")");
+            helper.assertTrue(biggestStep[0] < 0.3, "it moved smoothly, the biggest step in one tick was " + biggestStep[0] + " (" + side + ")");
+            helper.assertTrue(lowestStepY[0] > -0.01, "it never went down while climbing (" + side + ")");
+            helper.assertTrue(highestY[0] - startY[0] > 1.9, "it rose two blocks, rose " + (highestY[0] - startY[0]) + " (" + side + ")");
             // Beyond the wall: on the target's side of its middle line (the wall is the line 7..8 of the axis, the test may be rotated, so by distance to the target).
             helper.assertTrue(golem.position().distanceTo(Vec3.atBottomCenterOf(target)) < 5.0, "and is on the target's side of the wall (" + side + ")");
         });
@@ -317,6 +364,61 @@ public final class GolemGameTests {
             helper.assertTrue(golem.getY() > groundY, "and is out of the hole");
         });
     }
+    /**
+     * Out of a hole onto ground that is only one row deep, behind it a solid wall: the golem ends close behind the edge, so the second row does not matter -
+     * the path has a climb edge (it used to want a free area of 2 x 2). The hole's other sides are walls three blocks high, so this is the only way out.
+     */
+    private static void planOutOfHoleOntoNarrowStrip(GameTestHelper helper, Direction side) {
+        area(helper);
+        for (int x = 4; x < 8; x++) {
+            for (int z = 6; z < 10; z++) {
+                helper.setBlock(x, 0, z, Blocks.AIR);
+                helper.setBlock(x, -1, z, Blocks.AIR);
+            }
+        }
+        // The hole is x 4..7, z 6..9. Its rim is the row of cells around it; the strip is the rim on the given side, everything else around it is solid.
+        for (int x = 2; x <= 10; x++) {
+            for (int z = 4; z <= 11; z++) {
+                boolean insideHole = x >= 4 && x <= 7 && z >= 6 && z <= 9;
+                if (insideHole) {
+                    continue;
+                }
+                int step = side.getAxisDirection().getStep();
+                boolean east = side.getAxis() == Direction.Axis.X;
+                // distance outwards from the hole's edge on the strip's side, and the position across
+                int out = east ? (step > 0 ? x - 7 : 4 - x) : (step > 0 ? z - 9 : 6 - z);
+                boolean across = east ? z >= 6 && z <= 9 : x >= 4 && x <= 7;
+                boolean strip = out == 1 && across;
+                int height;
+                if (strip) {
+                    continue;
+                } else if (out >= 2) {
+                    height = 5;
+                } else {
+                    // the rest of the rim: a wall of three blocks (one above the ground), which cannot be climbed
+                    boolean rim = x >= 3 && x <= 8 && z >= 5 && z <= 10;
+                    height = rim ? 1 : 0;
+                }
+                for (int y = 1; y <= height; y++) {
+                    helper.setBlock(x, y, z, Blocks.STONE);
+                }
+            }
+        }
+        IronGolem golem = golem(helper, 5, -1, 7);
+        BlockPos target = switch (side) {
+            case EAST -> new BlockPos(8, 1, 8);
+            case WEST -> new BlockPos(3, 1, 8);
+            case SOUTH -> new BlockPos(6, 1, 10);
+            default -> new BlockPos(6, 1, 5);
+        };
+        boolean[] planned = {false};
+        Path[] path = plan(helper, golem, target, planned);
+        helper.succeedWhen(() -> {
+            helper.assertTrue(planned[0], "planned");
+            helper.assertTrue(path[0] != null && hasClimbEdge(path[0]), "a way out of the hole onto the one-row strip (" + side + "), with a climb edge " + describe(path[0], golem, helper));
+        });
+    }
+
     private static void climbInWater(GameTestHelper helper) {
         area(helper);
         // The same wall, standing in water up to the second block of the wall.
@@ -338,7 +440,7 @@ public final class GolemGameTests {
     private static void temptIngot(GameTestHelper helper) {
         area(helper);
         IronGolem golem = golem(helper, 2, 1, 8);
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
         player.snapTo(helper.absoluteVec(new Vec3(11.5, 1.0, 8.5)));
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_INGOT));
         helper.succeedWhen(() -> helper.assertTrue(golem.distanceTo(player) < 5.0F, "the golem has come to the player with the ingot"));
@@ -348,7 +450,7 @@ public final class GolemGameTests {
     private static void temptIngotSurvival(GameTestHelper helper) {
         area(helper);
         IronGolem golem = golem(helper, 2, 1, 8);
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
         player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
         player.snapTo(helper.absoluteVec(new Vec3(11.5, 1.0, 8.5)));
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_INGOT));
@@ -361,7 +463,7 @@ public final class GolemGameTests {
         area(helper, 32);
         helper.setBlock(28, 0, 8, Blocks.DIRT_PATH);
         IronGolem golem = golem(helper, 4, 1, 8);
-        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
         player.snapTo(helper.absoluteVec(new Vec3(12.5, 1.0, 8.5)));
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_INGOT));
         helper.onEachTick(() -> {

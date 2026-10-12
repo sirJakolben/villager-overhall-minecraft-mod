@@ -12,8 +12,7 @@
   },
   "second_input": {
     "item": "minecraft:white_banner",
-    "count": 1,
-    "tag": "minecraft:banners"
+    "count": 1
   },
   "base_output": {
     "item": "smartvillager_professions:boat_sail",

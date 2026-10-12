@@ -1,5 +1,6 @@
 package com.smartgolem.ai;
 
+import com.smartgolem.climb.ClimbPose;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -14,14 +15,15 @@ import net.minecraft.world.phys.Vec3;
  *
  * A climb edge goes from the foot node to the top node: the wall is the column of cells straight ahead of the footprint (all cells across its width,
  * two full blocks high), the top node is the cell of that column the foot node's own row points at - its floor is the wall.
- * The animation begins with the golem's middle START_DISTANCE in front of the wall's face and ends END_PAST_FACE behind it (GolemClimbs).
+ * The animation begins with the golem's middle START_DISTANCE in front of the wall's face and ends END_PAST_FACE behind it, on top (GolemClimbs): it moves by
+ * ClimbPose.ENTITY_FORWARD_PIXELS and two blocks up in between.
  */
 final class ClimbGeometry {
 
     /** The golem's middle is this far in front of the wall's face when the animation begins (a block: the animation starts this far back, its arms reach the wall). */
     static final double START_DISTANCE = 1.0;
     /** ... and this far behind it, on top, when it ends: the animation ends 18.09 px from where it begins in the direction of the wall, in the standing pose. */
-    static final double END_PAST_FACE = 18.09 / 16.0 - START_DISTANCE;
+    static final double END_PAST_FACE = ClimbPose.ENTITY_FORWARD_PIXELS / 16.0 - START_DISTANCE;
 
     private ClimbGeometry() {
     }

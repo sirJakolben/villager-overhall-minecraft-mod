@@ -58,7 +58,11 @@ public class GolemNodeEvaluator extends WalkNodeEvaluator {
 
     @Override
     public int getNeighbors(Node[] neighbors, Node pos) {
-        int count = addClimbs(neighbors, pos, super.getNeighbors(neighbors, pos));
+        int count = super.getNeighbors(neighbors, pos);
+        // A golem with something on its arms (a carried zombie villager) does not climb: no climb edges are planned for it.
+        if (!mob.isVehicle()) {
+            count = addClimbs(neighbors, pos, count);
+        }
         if (patrolMode) {
             for (int i = 0; i < count; i++) {
                 chargeOffPath(neighbors[i]);
@@ -78,7 +82,7 @@ public class GolemNodeEvaluator extends WalkNodeEvaluator {
         return PathBlocks.LIKE.contains(currentContext.level().getBlockState(below).getBlock());
     }
 
-    /** Straight ahead of the footprint a wall of exactly two full blocks, the cell on top of it - if the golem fits there. */
+    /** Straight ahead of the footprint a wall of exactly two full blocks, the cells on top of it - if the golem fits there (one row of them is enough). */
     private int addClimbs(Node[] neighbors, Node pos, int count) {
         CollisionGetter level = currentContext.level();
         int footprint = ClimbGeometry.footprint(mob);
@@ -94,12 +98,24 @@ public class GolemNodeEvaluator extends WalkNodeEvaluator {
             if (!level.noCollision(mob, topBox)) {
                 continue;
             }
-            BlockPos top = ClimbGeometry.topCell(pos, side, ahead);
-            PathType type = getCachedPathType(top.getX(), top.getY(), top.getZ());
-            float malus = mob.getPathfindingMalus(type);
-            if (malus < 0.0F) {
+            // Only the cells the golem stands on count - the row of cells across the wall's top, not the footprint of 2 x 2 Vanilla would test for the node
+            // (that would want a second row behind them, which the golem does not need: it ends close behind the wall's edge, ClimbGeometry.END_PAST_FACE).
+            float malus = 0.0F;
+            boolean blocked = false;
+            for (int across = 0; across < footprint; across++) {
+                BlockPos cell = ClimbGeometry.wallCell(pos, side, ahead, across, pos.y + 2);
+                float cellMalus = mob.getPathfindingMalus(WalkNodeEvaluator.getPathTypeStatic(currentContext, new BlockPos.MutableBlockPos(cell.getX(), cell.getY(), cell.getZ())));
+                if (cellMalus < 0.0F) {
+                    blocked = true;
+                    break;
+                }
+                malus = Math.max(malus, cellMalus);
+            }
+            if (blocked) {
                 continue;
             }
+            BlockPos top = ClimbGeometry.topCell(pos, side, ahead);
+            PathType type = PathType.WALKABLE;
             Node node = getNode(top.getX(), top.getY(), top.getZ());
             node.type = type;
             node.costMalus = Math.max(node.costMalus, malus + CLIMB_COST);

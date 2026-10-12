@@ -15,7 +15,7 @@ Wie an diesem Projekt gearbeitet wird. Überblick: [README.md](README.md); Featu
 ## Vier Mods in einer Rangleiter
 
 Ein Gradle-Projekt. Die Villager-Mods bauen aufeinander auf wie eine Leiter (ganz unten Vanilla); Abhängigkeit nur nach unten, keine Stufe importiert etwas aus einer höheren:
-- **Smart Villager** `smart-villager/` (`smartvillager`): unterste Stufe, braucht nichts – Komfort und Welt für Vanilla-Villager: Claim und Anlocken per Smaragd, Handelsblock, Zombie-Villager (doppelt so viele, Heilen mit goldenem Essen), Brauständer mit Brennstoff. Progress und Professions docken über `api/SmartVillagerApi` an (stay-put-Gründe, Claim-Handler).
+- **Smart Villager** `smart-villager/` (`smartvillager`): unterste Stufe, braucht nichts – Komfort und Welt für Vanilla-Villager: Claim und Anlocken per Smaragd, Handelsblock, Zombie-Villager (doppelt so viele, Heilen per Schwäche-Effekt (ohne goldenes Essen)), Brauständer mit Brennstoff. Progress und Professions docken über `api/SmartVillagerApi` an (stay-put-Gründe, Claim-Handler).
 - **Smart Villager Progress** `smart-villager-progress/` (`smartvillager_progress`): alles, was für jeden Villager gleich gilt – Leveln durch Arbeit, Sektionen, Handelsfenster, Restock, Glück, Arbeitsplätze. Ohne eigene Einträge laufen Berufe (auch fremder Mods) mit ihren Vanilla-Trades. Hängt von Smart Villager ab.
 - **Smart Villager Professions** `smart-villager-professions/` (`smartvillager_professions`): die designten Berufe samt Items, Blöcken, Stationen, Quests/Masteries/Passive. Hängt sich über `api/ExtensionHooks` in Progress ein; Progress importiert nie etwas daraus (fehlt ihm Berufswissen: neutraler Haken in `api/`).
 - **Smart Iron Golem** `smart-golem/` (`smartgolem`): Eisengolem-KI, hängt von nichts ab.

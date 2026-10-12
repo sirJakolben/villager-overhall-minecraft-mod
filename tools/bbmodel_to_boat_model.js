@@ -40,7 +40,10 @@ function cubeJava(element, group, ctx) {
     const t = ctx.textures[f.texture];
     const [u1, v1, u2, v2] = f.uv;
     const texId = ctx.textureId(f.texture);
-    return `new Face(${texId}, ${num(u1 / t.uv_width)}, ${num(v1 / t.uv_height)}, ${num(u2 / t.uv_width)}, ${num(v2 / t.uv_height)}, ${f.rotation || 0})`;
+    // Blockbench (checked against the UVs placed by hand in the editor): the UV space of a texture is uv_width wide and as high as the texture is, so a square
+    // 64 x 64 texture with uv_width 128 has 128 x 128 UV units - the saved uv_height is not what the editor uses
+    const uvHeight = t.uv_width * t.height / t.width;
+    return `new Face(${texId}, ${num(u1 / t.uv_width)}, ${num(v1 / uvHeight)}, ${num(u2 / t.uv_width)}, ${num(v2 / uvHeight)}, ${f.rotation || 0})`;
   });
   return `            new Cube(${arr(element.from)}, ${arr(element.to)}, ${arr(element.origin)}, ${arr(element.rotation || [0, 0, 0])},\n`
     + `                    ${arr(group.origin)}, ${arr(group.rotation || [0, 0, 0])},\n`

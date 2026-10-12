@@ -167,7 +167,7 @@ public class VillagerBobber extends Projectile {
             timeUntilBite = Math.max(MIN_WAIT_TICKS, meanWaitTicks / 2 + random.nextInt(meanWaitTicks + 1));
             level.playSound(null, getX(), getY(), getZ(), SoundEvents.FISHING_BOBBER_SPLASH, SoundSource.NEUTRAL, 0.25F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.4F);
         } else if (onGround() || horizontalCollision || age > MAX_FLIGHT_TICKS) {
-            FishingWork.onLost(villager);
+            FishingWork.onMissed(villager, castFrom);
             discard();
         }
     }

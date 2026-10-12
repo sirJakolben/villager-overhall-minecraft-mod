@@ -49,6 +49,7 @@ public final class CageGameTests {
         FUNCTIONS.register("cage_break_releases", () -> CageGameTests::cageBreakReleases);
         FUNCTIONS.register("cage_golem_distracted", () -> CageGameTests::cageGolemDistracted);
         FUNCTIONS.register("cage_spares_only_with_cage", () -> CageGameTests::cageSparesOnlyWithCage);
+        FUNCTIONS.register("cage_cured_by_weakness_potion", () -> CageGameTests::cageCuredByWeaknessPotion);
         FUNCTIONS.register("lure_with_all_mods", () -> CageGameTests::lureWithAllMods);
     }
 
@@ -67,6 +68,7 @@ public final class CageGameTests {
         register(event, environment, structure, "cage_break_releases", 200);
         register(event, environment, structure, "cage_golem_distracted", 600);
         register(event, environment, structure, "cage_spares_only_with_cage", 300);
+        register(event, environment, structure, "cage_cured_by_weakness_potion", 200);
         register(event, environment, structure, "lure_with_all_mods", 300);
     }
 
@@ -190,6 +192,27 @@ public final class CageGameTests {
             helper.assertTrue(golem.canAttack(zombie), "given up on: the golem attacks it as Vanilla does");
             helper.succeed();
         });
+    }
+
+    /** A potion of weakness on the cage starts the cure (no golden apple); breaking the cage in the middle lets the zombie villager out still being cured. */
+    private static void cageCuredByWeaknessPotion(GameTestHelper helper) {
+        area(helper);
+        ZombieVillagerCageBlockEntity cage = cage(helper, 8, 8);
+        ZombieVillager zombie = zombieVillager(helper, 4, 4);
+        @SuppressWarnings("removal") net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        net.minecraft.world.item.ItemStack potion = net.minecraft.world.item.alchemy.PotionContents.createItemStack(net.minecraft.world.item.Items.POTION,
+                net.minecraft.world.item.alchemy.Potions.WEAKNESS);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, potion);
+        AABB around = new AABB(helper.absolutePos(new BlockPos(8, 1, 8))).inflate(3.0);
+        helper.runAtTickTime(5, () -> {
+            helper.assertTrue(cage.insert(zombie), "the cage takes the zombie villager");
+            helper.assertTrue(cage.interact(player.getMainHandItem(), player, net.minecraft.world.InteractionHand.MAIN_HAND).consumesAction(), "the potion is used on the cage");
+            helper.assertTrue(cage.isCuring() && cage.isOccupied(), "the cure has started and the prisoner is still inside");
+        });
+        helper.runAtTickTime(10, () -> helper.setBlock(8, 1, 8, net.minecraft.world.level.block.Blocks.AIR));
+        helper.succeedWhen(() -> helper.assertTrue(helper.getLevel().getEntitiesOfClass(ZombieVillager.class, around, z -> z.isAlive() && z.isConverting()).size() == 1,
+                "broken in the middle of the cure, the zombie villager is out and still being cured"));
     }
 
     /** Smart Iron Golem's iron ingot lure with every mod loaded: the cage goal in front of it must not get in its way. */

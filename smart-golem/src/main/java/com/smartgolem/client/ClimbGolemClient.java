@@ -2,6 +2,7 @@ package com.smartgolem.client;
 
 import com.smartgolem.SmartGolemMod;
 import com.smartgolem.ai.GolemClimbs;
+import com.smartgolem.climb.ClimbPath;
 import com.smartgolem.climb.GolemClimb;
 import net.minecraft.client.model.animal.golem.IronGolemModel;
 import net.minecraft.client.renderer.entity.IronGolemRenderer;
@@ -9,7 +10,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.IronGolemRenderState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.golem.IronGolem;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,9 +24,6 @@ import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEve
  */
 @EventBusSubscriber(value = Dist.CLIENT, modid = SmartGolemMod.MODID)
 public final class ClimbGolemClient {
-
-    /** The model glides from where the golem stood to where the climb begins in this many ticks. */
-    private static final float GLIDE_TICKS = 6.0F;
 
     private ClimbGolemClient() {
     }
@@ -53,14 +50,12 @@ public final class ClimbGolemClient {
             if (!climb.active()) {
                 return;
             }
-            // Past the end the last pose stays until the server has put the golem on top (a tick or two).
+            // Past the end the last pose stays until the server has cleared the climb (a tick or two).
             float ticks = Math.min(Math.max(golem.level().getGameTime() + state.partialTick - climb.startTick(), 0.0F), GolemClimbs.CLIMB_TICKS);
             state.setRenderData(ClimbGolemModel.CLIMB_MILLIS, ticks * 50.0F);
-            // The entity is on top of the wall the whole time; the model is drawn where the climb begins (gliding there from where the golem stood).
-            float glide = Math.min(ticks / GLIDE_TICKS, 1.0F);
-            glide = glide * glide * (3.0F - 2.0F * glide);
-            Vec3 drawn = climb.from().lerp(climb.start(), glide);
-            state.setRenderData(ClimbGolemModel.CLIMB_OFFSET, drawn.subtract(golem.getPosition(state.partialTick)));
+            // The golem moves along the climb's path (ClimbPath); the packets that carry that movement come every few ticks and are smoothed, so the model is
+            // moved by the small difference to where the golem is by the clock - what is drawn follows the animation exactly.
+            state.setRenderData(ClimbGolemModel.CLIMB_OFFSET, ClimbPath.position(climb, ticks).subtract(golem.getPosition(state.partialTick)));
             state.isInvisible = true;
             state.isInvisibleToPlayer = true;
         });

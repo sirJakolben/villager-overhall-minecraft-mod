@@ -2,7 +2,6 @@ package com.smartvillager.progress.station;
 
 import com.smartvillager.base.api.ClaimHandler;
 import com.smartvillager.base.claim.ManualClaims;
-import com.smartvillager.progress.progression.ProfessionLock;
 import com.smartvillager.progress.state.Stations;
 import com.smartvillager.progress.state.VillagerState;
 import com.smartvillager.progress.state.VillagerStateAccess;
@@ -23,7 +22,7 @@ import java.util.stream.Stream;
 /**
  * Smart Villager's emerald claim (ManualClaims) knows Vanilla's one job site; a villager here owns one workplace per station
  * (state/Stations, StationOwners). This is the bookkeeping the claim hands over to us, registered in SmartVillagerApi:
- * who loses a workplace keeps its profession (ProfessionLock) and lets go of the station; who takes one gets it as the station's
+ * who loses a workplace lets go of the station (and keeps its profession only if it has progress, see ProfessionLock); who takes one gets it as the station's
  * workplace, and as job site if that station was the job site (or there was none).
  */
 public final class StationClaimHandler implements ClaimHandler {
@@ -45,7 +44,8 @@ public final class StationClaimHandler implements ClaimHandler {
             }
         }
         if (owned) {
-            ProfessionLock.lock(villager); // keeps its profession even without any workplace left
+            // No lock here: a villager with real progress is already locked (trade, state XP), so it keeps its
+            // profession; one without falls back to jobless through Vanilla's ResetProfession, look included.
             setStations(villager, stations);
         }
         return owned;

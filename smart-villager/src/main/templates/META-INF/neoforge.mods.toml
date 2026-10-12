@@ -7,7 +7,7 @@ version="${villager_mod_version}"
 displayName="${villager_mod_name}"
 authors="sirJakolben"
 description='''
-Small quality-of-life additions for Vanilla villagers: lure them with an emerald, assign them to a workplace with an emerald, call them to a Trading Block with redstone. Zombie villagers spawn twice as often and are cured with any golden food; naturally generated brewing stands start with fuel.
+Small quality-of-life additions for Vanilla villagers: lure them with an emerald, assign them to a workplace with an emerald, call them to a Trading Block with redstone. Zombie villagers spawn twice as often and a weakness effect is enough to start curing them; naturally generated brewing stands start with fuel.
 '''
 
 [[mixins]]

@@ -82,6 +82,8 @@ public final class BoatUpgradeRenderer {
     /** A chest stands this much towards the bow of its slot (2 px - it was drawn too far back). The floor of the boat is at 3 px (Vanilla boat space, Y down). */
     private static final double CHEST_FORWARD = 2.0 / 16.0;
     private static final float FLOOR = 3.0F / 16.0F;
+    /** The double chest stands 3 px further towards the bow than a single one (as placed by hand in the game, 2026-10-12). */
+    private static final double DOUBLE_CHEST_FORWARD = 3.0 / 16.0;
 
     private final BannerFlagModel flagModel;
     private final SpriteGetter sprites;
@@ -114,7 +116,7 @@ public final class BoatUpgradeRenderer {
             }
             if (state.part(slot + 1).equals(BoatParts.CHEST.id())) {
                 poseStack.pushPose();
-                alongBoat(poseStack, (slotOffset(offsets, slot) + slotOffset(offsets, slot + 1)) / 2.0 + CHEST_FORWARD);
+                alongBoat(poseStack, (slotOffset(offsets, slot) + slotOffset(offsets, slot + 1)) / 2.0 + CHEST_FORWARD + DOUBLE_CHEST_FORWARD);
                 submitQuads(DOUBLE_CHEST_QUADS, poseStack, collector, light);
                 poseStack.popPose();
                 slot++;

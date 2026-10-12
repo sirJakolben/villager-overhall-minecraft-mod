@@ -52,6 +52,20 @@ public abstract class VillagerGoalPackagesMixin {
     }
 
     /**
+     * Rest package: every entry (walk to the bed, sleeping, the stroll around it) pauses while the villager is called, so a woken
+     * sleeper doesn't lie down again at once and the walk to the bed doesn't fight the walk to the block.
+     */
+    @ModifyReturnValue(method = "getRestPackage", at = @At("RETURN"), require = 1)
+    private static ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> smartvillager$pauseRestWhenCalled(
+            ImmutableList<Pair<Integer, ? extends BehaviorControl<? super Villager>>> original) {
+        ImmutableList.Builder<Pair<Integer, ? extends BehaviorControl<? super Villager>>> builder = ImmutableList.builder();
+        for (Pair<Integer, ? extends BehaviorControl<? super Villager>> entry : original) {
+            builder.add(Pair.of(entry.getFirst(), PausedWhileAway.anyTime(entry.getSecond())));
+        }
+        return builder.build();
+    }
+
+    /**
      * Meet package: the stroll/socialize choice at the bell and the walk to it (both priority 2) pause while the
      * villager is called to its Trading Block - strolling and socializing set their walk target even over ours.
      */

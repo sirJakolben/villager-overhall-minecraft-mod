@@ -134,7 +134,7 @@ public final class ManualClaims {
                 || SmartVillagerApi.claimHandlers().stream().anyMatch(handler -> handler.owns(villager, level, pos));
     }
 
-    /** The previous owner loses the block: its reservation is freed, its memory of it dropped, its job kept. */
+    /** The previous owner loses the block: its reservation is freed, its memory of it dropped; Vanilla decides whether it keeps its job (XP above 0) or turns jobless. */
     private static void displaceOwner(ServerLevel level, BlockPos pos, Villager newOwner) {
         GlobalPos target = GlobalPos.of(level.dimension(), pos);
         boolean released = false;
