@@ -4,7 +4,6 @@ import com.smartvillager.progression.api.ExtensionHooks;
 import com.smartvillager.progression.api.SectionDefinition;
 import com.smartvillager.progression.api.StationDefinition;
 import com.smartvillager.progression.section.CoreSections;
-import com.smartvillager.professions.boat.BoatUpgradeEntry;
 import com.smartvillager.professions.boat.BoatUpgrades;
 import com.smartvillager.professions.cartographer.CartographerBlocks;
 import com.smartvillager.professions.farmer.FarmerBlocks;
@@ -123,7 +122,6 @@ public final class ProfessionsSections {
         ExtensionHooks.registerExchangeExtension(QuestEntry.TYPE);
         ExtensionHooks.registerExchangeExtension(ExplorerMap.TYPE);
         ExtensionHooks.registerExchangeExtension(VillagerStatueOutput.TYPE);
-        ExtensionHooks.registerExchangeExtension(BoatUpgradeEntry.TYPE);
 
         ExtensionHooks.registerHappinessElement(VillagerStatueHappiness.ELEMENT);
 

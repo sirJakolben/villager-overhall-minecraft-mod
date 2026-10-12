@@ -2,14 +2,27 @@
   "profession": "minecraft:fisherman",
   "section": "smartvillager_professions:masteries",
   "unlock_rank": 2,
-  "base_input": { "item": "minecraft:emerald", "count": 4 },
-  "max_input": { "item": "minecraft:emerald", "count": 2 },
-  "second_input": { "item": "minecraft:oak_boat", "count": 1, "tag": "minecraft:boats", "without": ["smartvillager_professions:boat_mast"] },
-  "base_output": { "item": "minecraft:oak_boat", "count": 1 },
-  "max_output": { "item": "minecraft:oak_boat", "count": 1 },
-  "base_max_uses": 1,
-  "max_max_uses": 3,
-  "extensions": {
-    "smartvillager_professions:boat_upgrade": { "mast": true }
-  }
+  "base_input": {
+    "item": "minecraft:emerald",
+    "count": 4
+  },
+  "max_input": {
+    "item": "minecraft:emerald",
+    "count": 2
+  },
+  "second_input": {
+    "item": "minecraft:white_banner",
+    "count": 1,
+    "tag": "minecraft:banners"
+  },
+  "base_output": {
+    "item": "smartvillager_professions:boat_mast",
+    "count": 1
+  },
+  "max_output": {
+    "item": "smartvillager_professions:boat_mast",
+    "count": 1
+  },
+  "base_max_uses": 2,
+  "max_max_uses": 6
 }

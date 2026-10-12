@@ -8,4 +8,9 @@ public interface BoatRenderStateExt {
     BoatState smartvillager_professions$upgrades();
 
     void smartvillager_professions$setUpgrades(BoatState state);
+
+    /** Where the boat's slots are along the boat in blocks, front first (BoatSlots.offsets). */
+    double[] smartvillager_professions$offsets();
+
+    void smartvillager_professions$setOffsets(double[] offsets);
 }

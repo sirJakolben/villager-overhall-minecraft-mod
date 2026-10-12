@@ -4,13 +4,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
+import com.smartvillager.professions.boat.BoatParts;
 import com.smartvillager.professions.boat.BoatState;
 import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.object.banner.BannerFlagModel;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
@@ -61,28 +64,70 @@ public final class BoatUpgradeRenderer {
     private static final float FLAG_CUBE_ROTATION_Z = -90.0F;
     private static final float[] FLAG_CUBE_SHIFT = {38.0F, -9.0F, 0.0F};
 
+    /** Where the cannon and the mast sit in the model, along the boat in blocks: the front slot and the rear slot of a Vanilla boat. A boat with other slot positions shifts them. */
+    private static final double CANNON_MODEL_OFFSET = 0.2;
+    private static final double MAST_MODEL_OFFSET = -0.6;
+    /** Vanilla's chest boat draws its chest centred 0.5 blocks behind the middle (chest_bottom: 12 px wide at X = -8 px of the model). */
+    private static final double CHEST_MODEL_OFFSET = -0.5;
+
     private final BannerFlagModel flagModel;
     private final SpriteGetter sprites;
+    private final ModelPart chestBottom;
+    private final ModelPart chestLid;
+    private final ModelPart chestLock;
+    private final Identifier chestTexture;
 
-    public BoatUpgradeRenderer(EntityModelSet modelSet, SpriteGetter sprites) {
+    /** boatTexture is the renderer's own (textures/entity/boat/oak.png); the chest uses the matching wood in textures/entity/chest_boat/. */
+    public BoatUpgradeRenderer(EntityModelSet modelSet, SpriteGetter sprites, Identifier boatTexture) {
         this.flagModel = new BannerFlagModel(modelSet.bakeLayer(ModelLayers.STANDING_BANNER_FLAG));
         this.sprites = sprites;
+        ModelPart chest = modelSet.bakeLayer(ModelLayers.OAK_CHEST_BOAT);
+        this.chestBottom = chest.getChild("chest_bottom");
+        this.chestLid = chest.getChild("chest_lid");
+        this.chestLock = chest.getChild("chest_lock");
+        this.chestTexture = boatTexture.withPath(path -> path.replace("/boat/", "/chest_boat/"));
     }
 
     /** Called inside the boat's pose; does nothing for a plain boat. */
-    public void submit(BoatState state, PoseStack poseStack, SubmitNodeCollector collector, int light, float ageInTicks) {
-        if (!state.cannon() && !state.mast()) {
+    public void submit(BoatState state, double[] offsets, PoseStack poseStack, SubmitNodeCollector collector, int light, float ageInTicks) {
+        if (state.filledSlots() == 0 && !state.mast()) {
             return;
         }
         if (state.cannon()) {
+            poseStack.pushPose();
+            alongBoat(poseStack, slotOffset(offsets, 0) - CANNON_MODEL_OFFSET);
             submitQuads(CANNON_QUADS, CANNON_TEXTURE, CANNON_TEXTURE_ID, poseStack, collector, light);
+            poseStack.popPose();
+        }
+        for (int slot = 0; slot < state.slots().size(); slot++) {
+            if (state.part(slot).equals(BoatParts.CHEST.id())) {
+                poseStack.pushPose();
+                alongBoat(poseStack, slotOffset(offsets, slot) - CHEST_MODEL_OFFSET);
+                RenderType type = RenderTypes.entityCutout(chestTexture);
+                collector.submitModelPart(chestBottom, poseStack, type, light, OverlayTexture.NO_OVERLAY, null);
+                collector.submitModelPart(chestLid, poseStack, type, light, OverlayTexture.NO_OVERLAY, null);
+                collector.submitModelPart(chestLock, poseStack, type, light, OverlayTexture.NO_OVERLAY, null);
+                poseStack.popPose();
+            }
         }
         if (state.mast()) {
+            poseStack.pushPose();
+            alongBoat(poseStack, slotOffset(offsets, state.mastSlot()) - MAST_MODEL_OFFSET);
             submitQuads(MAST_QUADS, MAST_TEXTURE, MAST_TEXTURE_ID, poseStack, collector, light);
             if (state.hasBanner()) {
                 submitSail(state.banner(), poseStack, collector, light, ageInTicks);
             }
+            poseStack.popPose();
         }
+    }
+
+    private static double slotOffset(double[] offsets, int slot) {
+        return slot >= 0 && slot < offsets.length ? offsets[slot] : 0.0;
+    }
+
+    /** Moves everything that follows towards the bow by this many blocks - in Vanilla's boat space the bow is +X. */
+    private static void alongBoat(PoseStack poseStack, double blocks) {
+        poseStack.translate((float) blocks, 0.0F, 0.0F);
     }
 
     private void submitQuads(List<Quad> all, Identifier texture, int textureId, PoseStack poseStack, SubmitNodeCollector collector, int light) {

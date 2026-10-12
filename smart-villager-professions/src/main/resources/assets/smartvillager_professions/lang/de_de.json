@@ -202,10 +202,13 @@
   "effect.smartvillager_professions.sugar_rush": "Zuckerschub",
   "entity.smartvillager_professions.villager_bobber": "Angelschwimmer",
   "item.smartvillager_professions.cannonball": "Kanonenkugel",
-  "item.smartvillager_professions.boat_cannon": "Kanone",
-  "item.smartvillager_professions.boat_mast": "Mast (ohne Banner)",
-  "item.smartvillager_professions.boat_mast_banner": "Mast: %s",
+  "item.smartvillager_professions.boat_cannon": "Schiffskanone",
+  "item.smartvillager_professions.boat_mast": "Schiffsmast",
   "entity.smartvillager_professions.cannonball": "Kanonenkugel",
-  "tag.item.minecraft.boats": "Beliebiges Boot",
-  "tag.item.smartvillager_professions.cannon_boats": "Beliebiges Boot (keine Truhenboote)"
+  "item.smartvillager_professions.boat_chest": "Bootskiste",
+  "item.smartvillager_professions.boat_mast.bare": "Kein Banner",
+  "item.smartvillager_professions.boat_mast.banner": "Segel: %s",
+  "container.smartvillager_professions.boat_chest": "Bootskiste",
+  "message.smartvillager_professions.boat_part_not_possible": "Das passt dort nicht hin",
+  "tag.item.minecraft.banners": "Beliebiges Banner"
 }

@@ -15,7 +15,7 @@ Pfade: Java `smart-villager-progression/src/main/java/com/smartvillager/progress
 | Handelsliste = Ansicht | Vanilla-`MerchantOffers` wird aus Zustand + Sektions-Logik neu gebaut; Rang-Rabatt als Sonderpreis, Mehrertrag durchgestrichen | `trade/VillagerOffers`, `ExchangeScaling`, `ResolvedExchange`, `section/RowView` |
 | Eigenes Fenster | öffnet am letzten Vanilla-Schritt; Sektionen, Plakette, Leisten, Rang-Buttons, Scrollen | `mixin/VillagerTradingMixin`, `menu/VillagerMenu`, `client/ui/VillagerScreen`, `RankButtonWidget`, `SectionClientLogic`, `network/*Payload` |
 | Kosten mit Verzauberung | „Item mit Verzauberung, jede Stufe“ | `trade/RequiredEnchantmentCost`, `mixin/ItemCostMixin` |
-| Zahlung nach Item-Tag | `tag` (+ `without`: verbotene Komponenten) statt eines festen Items, z. B. „beliebiges Boot ohne Kanone“; Marker auf dem Anzeige-Stack, nur markierte Kosten werden anders verglichen | `trade/TagCost`, `data/ItemAmount`, `mixin/ItemCostMixin` |
+| Zahlung nach Item-Tag | `tag` (+ `without`: verbotene Komponenten) statt eines festen Items, z. B. „beliebiges Banner“ (Mast-Trade); Marker auf dem Anzeige-Stack, nur markierte Kosten werden anders verglichen | `trade/TagCost`, `data/ItemAmount`, `mixin/ItemCostMixin` |
 | Ergebnis aus der Zahlung | Haken: das Ergebnisfeld wird aus den Zahlungs-Slots abgeleitet (beide Seiten, Vorhersage stimmt); neutral, solange keine Erweiterung ihn setzt | `api/ResultTransform`, `ExtensionHooks.setResultTransform`, `menu/VillagerMenu.transformResult` |
 | Leere Zeilen | Platzhalter für fehlende Trades: leer, nicht klickbar | Item `trade/MissingTrade`, `VillagerScreen.isEmptyRow` |
 | Trade-Ablauf | Buchen über die Sektions-Logik, `/vo trade` | `trade/TradeEvents`, `TradeActions`, `ExchangeExecutor` |

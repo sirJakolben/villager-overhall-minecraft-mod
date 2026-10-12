@@ -32,8 +32,8 @@ public final class Cannon {
     /** How long soot rises from the muzzle after a shot, and how often it puffs. */
     public static final int SOOT_TICKS = 40;
     public static final int SOOT_INTERVAL = 2;
-    /** The one passenger's seat of a cannon boat: behind the middle (Vanilla's rear seat), in blocks along the boat. */
-    public static final float REAR_SEAT_OFFSET = -0.6F;
+    /** Where the cannon sits in the model (the front slot of a Vanilla boat), in blocks along the boat: another boat shifts the cannon with its front slot. */
+    public static final double MODEL_SLOT_OFFSET = 0.2;
     /** Launch speed in blocks per tick: the least a released bar gives, and what a full bar adds. */
     public static final float MIN_SPEED = 0.8F;
     public static final float CHARGE_SPEED_GAIN = 1.7F;
@@ -54,7 +54,8 @@ public final class Cannon {
     }
 
     public static Vec3 muzzle(AbstractBoat boat) {
-        return boat.position().add(forward(boat).scale(MUZZLE_FORWARD)).add(0.0, MUZZLE_UP, 0.0);
+        double ahead = MUZZLE_FORWARD + BoatSlots.offset(boat, 0) - MODEL_SLOT_OFFSET;
+        return boat.position().add(forward(boat).scale(ahead)).add(0.0, MUZZLE_UP, 0.0);
     }
 
     /** The barrel's direction: forward, tilted up. */

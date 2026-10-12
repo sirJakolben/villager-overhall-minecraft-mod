@@ -1,6 +1,8 @@
 package com.smartvillager.professions.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.smartvillager.professions.boat.BoatSlots;
+import com.smartvillager.professions.boat.BoatState;
 import com.smartvillager.professions.boat.BoatUpgrades;
 import com.smartvillager.professions.client.render.BoatRenderStateExt;
 import com.smartvillager.professions.client.render.BoatUpgradeRenderer;
@@ -30,12 +32,16 @@ public abstract class AbstractBoatRendererMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void smartvillager_professions$createUpgradeRenderer(EntityRendererProvider.Context context, Identifier texture, CallbackInfo ci) {
-        this.smartvillager_professions$upgradeRenderer = new BoatUpgradeRenderer(context.getModelSet(), context.getSprites());
+        this.smartvillager_professions$upgradeRenderer = new BoatUpgradeRenderer(context.getModelSet(), context.getSprites(), texture);
     }
 
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/vehicle/boat/AbstractBoat;Lnet/minecraft/client/renderer/entity/state/BoatRenderState;F)V", at = @At("TAIL"))
     private void smartvillager_professions$extractUpgrades(AbstractBoat entity, BoatRenderState state, float partialTicks, CallbackInfo ci) {
-        ((BoatRenderStateExt) state).smartvillager_professions$setUpgrades(BoatUpgrades.state(entity));
+        BoatState upgrades = BoatUpgrades.state(entity);
+        ((BoatRenderStateExt) state).smartvillager_professions$setUpgrades(upgrades);
+        if (upgrades.filledSlots() > 0 || upgrades.mast()) {
+            ((BoatRenderStateExt) state).smartvillager_professions$setOffsets(BoatSlots.offsets(entity));
+        }
     }
 
     @Inject(
@@ -43,6 +49,7 @@ public abstract class AbstractBoatRendererMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/AbstractBoatRenderer;submitTypeAdditions(Lnet/minecraft/client/renderer/entity/state/BoatRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V")
     )
     private void smartvillager_professions$submitUpgrades(BoatRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera, CallbackInfo ci) {
-        this.smartvillager_professions$upgradeRenderer.submit(((BoatRenderStateExt) state).smartvillager_professions$upgrades(), poseStack, collector, state.lightCoords, state.ageInTicks);
+        BoatRenderStateExt ext = (BoatRenderStateExt) state;
+        this.smartvillager_professions$upgradeRenderer.submit(ext.smartvillager_professions$upgrades(), ext.smartvillager_professions$offsets(), poseStack, collector, state.lightCoords, state.ageInTicks);
     }
 }

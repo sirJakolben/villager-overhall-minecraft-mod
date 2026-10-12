@@ -63,6 +63,7 @@ public class SmartVillagerProfessionsMod {
         QuestState.ATTACHMENT_TYPES.register(modEventBus);
         PassiveCounters.ATTACHMENT_TYPES.register(modEventBus);
         BoatUpgrades.ATTACHMENT_TYPES.register(modEventBus);
+        com.smartvillager.professions.boat.BoatInventory.ATTACHMENT_TYPES.register(modEventBus);
         BoatUpgrades.DATA_COMPONENTS.register(modEventBus);
         LoreScrollItem.DATA_COMPONENTS.register(modEventBus);
         MobWeapons.DATA_COMPONENTS.register(modEventBus);

@@ -1,0 +1,15 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:false"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:chest"
+  ],
+  "result": {
+    "id": "minecraft:dark_oak_chest_boat",
+    "count": 1
+  }
+}

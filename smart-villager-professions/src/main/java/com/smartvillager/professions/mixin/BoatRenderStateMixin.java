@@ -22,4 +22,17 @@ public abstract class BoatRenderStateMixin implements BoatRenderStateExt {
     public void smartvillager_professions$setUpgrades(BoatState state) {
         this.smartvillager_professions$upgrades = state;
     }
+
+    @Unique
+    private double[] smartvillager_professions$offsets = new double[0];
+
+    @Override
+    public double[] smartvillager_professions$offsets() {
+        return smartvillager_professions$offsets;
+    }
+
+    @Override
+    public void smartvillager_professions$setOffsets(double[] offsets) {
+        this.smartvillager_professions$offsets = offsets;
+    }
 }

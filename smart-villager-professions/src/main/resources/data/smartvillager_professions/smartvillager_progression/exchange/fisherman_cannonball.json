@@ -1,11 +1,27 @@
 {
   "profession": "minecraft:fisherman",
   "section": "smartvillager_professions:masteries",
-  "unlock_rank": 3,
-  "base_input": { "item": "minecraft:emerald", "count": 1 },
-  "max_input": { "item": "minecraft:emerald", "count": 1 },
-  "base_output": { "item": "smartvillager_professions:cannonball", "count": 4 },
-  "max_output": { "item": "smartvillager_professions:cannonball", "count": 8 },
+  "unlock_rank": 4,
+  "base_input": {
+    "item": "minecraft:emerald",
+    "count": 1
+  },
+  "max_input": {
+    "item": "minecraft:emerald",
+    "count": 1
+  },
+  "second_input": {
+    "item": "minecraft:iron_ingot",
+    "count": 1
+  },
+  "base_output": {
+    "item": "smartvillager_professions:cannonball",
+    "count": 4
+  },
+  "max_output": {
+    "item": "smartvillager_professions:cannonball",
+    "count": 8
+  },
   "base_max_uses": 2,
   "max_max_uses": 6
 }

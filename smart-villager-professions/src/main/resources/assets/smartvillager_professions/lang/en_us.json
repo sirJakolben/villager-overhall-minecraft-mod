@@ -168,10 +168,13 @@
   "effect.smartvillager_professions.sugar_rush": "Sugar Rush",
   "entity.smartvillager_professions.villager_bobber": "Fishing Bobber",
   "item.smartvillager_professions.cannonball": "Cannonball",
-  "item.smartvillager_professions.boat_cannon": "Cannon",
-  "item.smartvillager_professions.boat_mast": "Mast (no banner)",
-  "item.smartvillager_professions.boat_mast_banner": "Mast: %s",
+  "item.smartvillager_professions.boat_cannon": "Boat Cannon",
+  "item.smartvillager_professions.boat_mast": "Boat Mast",
   "entity.smartvillager_professions.cannonball": "Cannonball",
-  "tag.item.minecraft.boats": "Any boat",
-  "tag.item.smartvillager_professions.cannon_boats": "Any boat (no chest boat)"
+  "item.smartvillager_professions.boat_chest": "Boat Chest",
+  "item.smartvillager_professions.boat_mast.bare": "No banner",
+  "item.smartvillager_professions.boat_mast.banner": "Sail: %s",
+  "container.smartvillager_professions.boat_chest": "Boat Chest",
+  "message.smartvillager_professions.boat_part_not_possible": "That does not fit there",
+  "tag.item.minecraft.banners": "Any banner"
 }
