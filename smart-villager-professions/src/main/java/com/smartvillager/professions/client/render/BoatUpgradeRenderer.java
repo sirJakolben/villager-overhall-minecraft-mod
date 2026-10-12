@@ -52,11 +52,13 @@ public final class BoatUpgradeRenderer {
     private static final Identifier SAIL_TEXTURE = texture("sail");
     private static final Identifier CANNON_TEXTURE = texture("cannon");
     private static final Identifier RAILINGS_TEXTURE = texture("railings");
+    private static final Identifier DOUBLE_CHEST_TEXTURE = texture("double_chest");
     /** Texture ids of the model (BoatUpgradeModel): 0 is the boat's own wood. */
     private static final int WOOD_TEXTURE_ID = 0;
     private static final int SAIL_TEXTURE_ID = 1;
     private static final int CANNON_TEXTURE_ID = 2;
     private static final int RAILINGS_TEXTURE_ID = 3;
+    private static final int DOUBLE_CHEST_TEXTURE_ID = 10;
 
     /** Vanilla's boat renders at 0.375 blocks (6 pixels) above the entity origin: user Y = 6 - boat Y. */
     private static final float HULL_OFFSET = 6.0F;
@@ -64,11 +66,13 @@ public final class BoatUpgradeRenderer {
     private static final List<Quad> CANNON_QUADS = new ArrayList<>();
     private static final List<Quad> SAIL_QUADS = new ArrayList<>();
     private static final List<Quad> STERN_QUADS = new ArrayList<>();
+    private static final List<Quad> DOUBLE_CHEST_QUADS = new ArrayList<>();
 
     static {
         bake(BoatUpgradeModel.CANNON, CANNON_QUADS);
         bake(BoatUpgradeModel.SAIL, SAIL_QUADS);
         bake(BoatUpgradeModel.STERN, STERN_QUADS);
+        bakeDoubleChest(BoatUpgradeModel.DOUBLE_CHEST, DOUBLE_CHEST_QUADS);
     }
 
     /** Where the cannon, the sail and the stern sit in the model, along the boat in blocks: the front slot (cannon) and the rear slot (sail, stern) of a Vanilla boat. A boat with other slot positions shifts them. */
@@ -88,7 +92,7 @@ public final class BoatUpgradeRenderer {
     public BoatUpgradeRenderer(EntityModelSet modelSet, SpriteGetter sprites, Identifier boatTexture) {
         this.flagModel = new BannerFlagModel(modelSet.bakeLayer(ModelLayers.STANDING_BANNER_FLAG));
         this.sprites = sprites;
-        this.chest = smallChest();
+        this.chest = BoatChestModel.bake();
         this.woodTexture = boatTexture;
     }
 
@@ -103,9 +107,18 @@ public final class BoatUpgradeRenderer {
             submitQuads(CANNON_QUADS, poseStack, collector, light);
             poseStack.popPose();
         }
-        // a double chest model will come with its own Blockbench model; until then two chests stand next to each other
+        // two chests in neighbouring slots are one double chest
         for (int slot = 0; slot < state.slots().size(); slot++) {
-            if (state.part(slot).equals(BoatParts.CHEST.id())) {
+            if (!state.part(slot).equals(BoatParts.CHEST.id())) {
+                continue;
+            }
+            if (state.part(slot + 1).equals(BoatParts.CHEST.id())) {
+                poseStack.pushPose();
+                alongBoat(poseStack, (slotOffset(offsets, slot) + slotOffset(offsets, slot + 1)) / 2.0 + CHEST_FORWARD);
+                submitQuads(DOUBLE_CHEST_QUADS, poseStack, collector, light);
+                poseStack.popPose();
+                slot++;
+            } else {
                 submitChest(poseStack, collector, light, slotOffset(offsets, slot) + CHEST_FORWARD);
             }
         }
@@ -137,19 +150,8 @@ public final class BoatUpgradeRenderer {
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(-0.5F, 0.0F, -0.5F);
-        SpriteId chestSprite = Sheets.CHEST_REGULAR.select(ChestType.SINGLE);
-        collector.submitModelPart(chest, poseStack, chestSprite.renderType(RenderTypes::entityCutout), light, OverlayTexture.NO_OVERLAY, this.sprites.get(chestSprite));
+        collector.submitModelPart(chest, poseStack, BoatChestModel.SPRITE.renderType(RenderTypes::entityCutout), light, OverlayTexture.NO_OVERLAY, this.sprites.get(BoatChestModel.SPRITE));
         poseStack.popPose();
-    }
-
-    /** The chest boat's chest on the layout of the normal chest texture (bottom at 0/19, lid and lock at 0/0), centred in its block, bottom 8 high, lid 4. */
-    private static ModelPart smallChest() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("bottom", CubeListBuilder.create().texOffs(0, 19).addBox(2.0F, 0.0F, 2.0F, 12.0F, 8.0F, 12.0F), PartPose.ZERO);
-        root.addOrReplaceChild("lid", CubeListBuilder.create().texOffs(0, 0).addBox(2.0F, 0.0F, 0.0F, 12.0F, 4.0F, 12.0F), PartPose.offset(0.0F, 8.0F, 2.0F));
-        root.addOrReplaceChild("lock", CubeListBuilder.create().texOffs(0, 0).addBox(7.0F, -3.0F, 12.0F, 2.0F, 4.0F, 1.0F), PartPose.offset(0.0F, 8.0F, 2.0F));
-        return LayerDefinition.create(mesh, 64, 64).bakeRoot();
     }
 
     private static double slotOffset(double[] offsets, int slot) {
@@ -166,14 +168,14 @@ public final class BoatUpgradeRenderer {
             case SAIL_TEXTURE_ID -> SAIL_TEXTURE;
             case CANNON_TEXTURE_ID -> CANNON_TEXTURE;
             case RAILINGS_TEXTURE_ID -> RAILINGS_TEXTURE;
+            case DOUBLE_CHEST_TEXTURE_ID -> DOUBLE_CHEST_TEXTURE;
             default -> woodTexture;
         };
     }
 
     /** One draw call per texture the part uses. */
     private void submitQuads(List<Quad> all, PoseStack poseStack, SubmitNodeCollector collector, int light) {
-        for (int id = WOOD_TEXTURE_ID; id <= RAILINGS_TEXTURE_ID; id++) {
-            int textureId = id;
+        for (int textureId : all.stream().map(quad -> quad.texture).distinct().toList()) {
             List<Quad> quads = all.stream().filter(quad -> quad.texture == textureId).toList();
             if (!quads.isEmpty()) {
                 collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(textureOf(textureId)), (pose, buffer) -> {
@@ -231,17 +233,32 @@ public final class BoatUpgradeRenderer {
         }
     }
 
+    /** The model's own space (pixels, Y up) into Vanilla's boat space (blocks, Y down). */
+    private static Matrix4f toBoatSpace() {
+        return new Matrix4f()
+                .translate(0.0F, HULL_OFFSET / 16.0F, 0.0F)
+                .scale(-1.0F / 16.0F, -1.0F / 16.0F, 1.0F / 16.0F);
+    }
+
+    /** Where Blockbench puts this cube in the model's space: its own rotation about its pivot, then its group's about the group's. */
+    private static Matrix4f placeInModel(BoatUpgradeModel.Cube cube) {
+        return new Matrix4f()
+                .translate(cube.groupOrigin()[0], cube.groupOrigin()[1], cube.groupOrigin()[2])
+                .rotateZYX((float) Math.toRadians(cube.groupRotation()[2]), (float) Math.toRadians(cube.groupRotation()[1]), (float) Math.toRadians(cube.groupRotation()[0]))
+                .translate(-cube.groupOrigin()[0], -cube.groupOrigin()[1], -cube.groupOrigin()[2])
+                .translate(cube.origin()[0], cube.origin()[1], cube.origin()[2])
+                .rotateZYX((float) Math.toRadians(cube.rotation()[2]), (float) Math.toRadians(cube.rotation()[1]), (float) Math.toRadians(cube.rotation()[0]))
+                .translate(-cube.origin()[0], -cube.origin()[1], -cube.origin()[2]);
+    }
+
     private static void bake(BoatUpgradeModel.Cube[] cubes, List<Quad> into) {
+        bake(cubes, into, new Matrix4f());
+    }
+
+    /** extra is applied in the model's space after the cubes are placed (the double chest uses it to be centred and turned). */
+    private static void bake(BoatUpgradeModel.Cube[] cubes, List<Quad> into, Matrix4f extra) {
         for (BoatUpgradeModel.Cube cube : cubes) {
-            Matrix4f matrix = new Matrix4f()
-                    .translate(0.0F, HULL_OFFSET / 16.0F, 0.0F)
-                    .scale(-1.0F / 16.0F, -1.0F / 16.0F, 1.0F / 16.0F)
-                    .translate(cube.groupOrigin()[0], cube.groupOrigin()[1], cube.groupOrigin()[2])
-                    .rotateZYX((float) Math.toRadians(cube.groupRotation()[2]), (float) Math.toRadians(cube.groupRotation()[1]), (float) Math.toRadians(cube.groupRotation()[0]))
-                    .translate(-cube.groupOrigin()[0], -cube.groupOrigin()[1], -cube.groupOrigin()[2])
-                    .translate(cube.origin()[0], cube.origin()[1], cube.origin()[2])
-                    .rotateZYX((float) Math.toRadians(cube.rotation()[2]), (float) Math.toRadians(cube.rotation()[1]), (float) Math.toRadians(cube.rotation()[0]))
-                    .translate(-cube.origin()[0], -cube.origin()[1], -cube.origin()[2]);
+            Matrix4f matrix = toBoatSpace().mul(extra).mul(placeInModel(cube));
             for (int face = 0; face < 6; face++) {
                 BoatUpgradeModel.Face uv = cube.faces()[face];
                 if (uv != null) {
@@ -249,6 +266,34 @@ public final class BoatUpgradeRenderer {
                 }
             }
         }
+    }
+
+    /**
+     * The double chest as it was modelled (boats/chest_boat_doublechest.bbmodel: placed at the Vanilla chest's spot, long across the boat), moved to stand on the
+     * floor with its middle at the origin and turned so that its long side lies along the boat - the lock then faces a side; BoatUpgradeRenderer puts it between two slots.
+     */
+    private static void bakeDoubleChest(BoatUpgradeModel.Cube[] cubes, List<Quad> into) {
+        float minX = Float.MAX_VALUE;
+        float maxX = -Float.MAX_VALUE;
+        float minZ = Float.MAX_VALUE;
+        float maxZ = -Float.MAX_VALUE;
+        for (BoatUpgradeModel.Cube cube : cubes) {
+            Matrix4f placed = placeInModel(cube);
+            for (int corner = 0; corner < 8; corner++) {
+                Vector3f p = placed.transformPosition(new Vector3f(
+                        (corner & 1) == 0 ? cube.from()[0] : cube.to()[0], (corner & 2) == 0 ? cube.from()[1] : cube.to()[1], (corner & 4) == 0 ? cube.from()[2] : cube.to()[2]));
+                minX = Math.min(minX, p.x);
+                maxX = Math.max(maxX, p.x);
+                minZ = Math.min(minZ, p.z);
+                maxZ = Math.max(maxZ, p.z);
+            }
+        }
+        float centreX = (minX + maxX) / 2.0F;
+        float centreZ = (minZ + maxZ) / 2.0F;
+        // the longer side of the box is turned onto the boat's length (user X)
+        boolean longAlongZ = maxZ - minZ > maxX - minX;
+        Matrix4f extra = new Matrix4f().rotateY((float) Math.toRadians(longAlongZ ? 90.0 : 0.0)).translate(-centreX, 0.0F, -centreZ);
+        bake(cubes, into, extra);
     }
 
     /** Face order of BoatUpgradeModel: north, east, south, west, up, down. Corners: top-left, top-right, bottom-right, bottom-left as Blockbench's default UV sees the face from outside. */

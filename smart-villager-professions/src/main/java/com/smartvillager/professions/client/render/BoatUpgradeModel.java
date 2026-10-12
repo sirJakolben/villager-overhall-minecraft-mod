@@ -5,7 +5,7 @@ package com.smartvillager.professions.client.render;
  * The cannon, the sail and the stern of an upgraded boat in the model's own coordinates: pixels, Y up, bow towards -X, the hull's middle at X=0 Z=0,
  * Y=0 at the bottom of the boat's hitbox (BoatUpgradeRenderer turns them into Vanilla's boat space). Per cube: from, to, its own pivot and
  * rotation (degrees), its group's pivot and rotation, and six faces (north, east, south, west, up, down; null = not drawn) with a
- * texture id (0 = the boat's own wood, 1 = sail, 2 = cannon, 3 = railings), UV corners as 0..1 fractions of that texture, and a UV rotation.
+ * texture id (0 = the boat's own wood, 1 = sail, 2 = cannon, 3 = railings, 10 = double chest), UV corners as 0..1 fractions of that texture, and a UV rotation.
  */
 final class BoatUpgradeModel {
 
@@ -33,13 +33,13 @@ final class BoatUpgradeModel {
     static final Cube[] SAIL = {
             new Cube(new float[]{-6.0F, 39.0F, -2.0F}, new float[]{34.0F, 41.0F, 0.0F}, new float[]{14.0F, 0.0F, -1.0F}, new float[]{0.0F, 0.0F, 0.0F},
                     new float[]{14.0F, 17.0F, 0.0F}, new float[]{0.0F, 90.0F, 0.0F},
-                    new Face[]{new Face(1, 0.03125F, 0.6875F, 0.34375F, 0.71875F, 0), new Face(1, 0.0F, 0.6875F, 0.03125F, 0.71875F, 0), new Face(1, 0.375F, 0.6875F, 0.6875F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.375F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.03125F, 0.65625F, 0), new Face(1, 0.65625F, 0.65625F, 0.34375F, 0.6875F, 0)}),
+                    new Face[]{new Face(1, 0.03125F, 0.6875F, 0.34375F, 0.71875F, 0), new Face(1, 0.0F, 0.6875F, 0.03125F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.65625F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.375F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.03125F, 0.65625F, 0), new Face(1, 0.65625F, 0.65625F, 0.34375F, 0.6875F, 0)}),
             new Cube(new float[]{13.0F, 3.0F, -1.0F}, new float[]{15.0F, 41.0F, 1.0F}, new float[]{14.0F, 19.0F, 0.0F}, new float[]{0.0F, 0.0F, 0.0F},
                     new float[]{14.0F, 17.0F, 0.0F}, new float[]{0.0F, 90.0F, 0.0F},
-                    new Face[]{new Face(1, 0.71875F, 0.03125F, 0.75F, 0.625F, 0), new Face(1, 0.75F, 0.03125F, 0.78125F, 0.625F, 0), new Face(1, 0.78125F, 0.03125F, 0.8125F, 0.625F, 0), new Face(1, 0.6875F, 0.03125F, 0.71875F, 0.625F, 0), new Face(1, 0.75F, 0.0F, 0.78125F, 0.03125F, 0), new Face(1, 0.71875F, 0.0F, 0.75F, 0.03125F, 0)}),
+                    new Face[]{new Face(1, 0.71875F, 0.0625F, 0.75F, 0.65625F, 0), new Face(1, 0.75F, 0.0625F, 0.78125F, 0.65625F, 0), new Face(1, 0.78125F, 0.0625F, 0.8125F, 0.65625F, 0), new Face(1, 0.6875F, 0.0625F, 0.71875F, 0.65625F, 0), new Face(1, 0.75F, 0.0F, 0.78125F, 0.03125F, 0), new Face(1, 0.71875F, 0.0F, 0.75F, 0.03125F, 0)}),
             new Cube(new float[]{10.5F, 41.0F, -4.0F}, new float[]{17.5F, 47.0F, 3.0F}, new float[]{13.5F, 45.0F, -1.0F}, new float[]{0.0F, 0.0F, 0.0F},
                     new float[]{14.0F, 17.0F, 0.0F}, new float[]{0.0F, 90.0F, 0.0F},
-                    new Face[]{new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), null, new Face(1, 0.8125F, 0.15625F, 0.92188F, 0.26563F, 0)})
+                    new Face[]{new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), null, new Face(1, 0.8125F, 0.3125F, 0.92188F, 0.42188F, 0)})
     };
 
     static final Cube[] STERN = {
@@ -64,6 +64,19 @@ final class BoatUpgradeModel {
             new Cube(new float[]{28.0F, 3.0F, 8.0F}, new float[]{42.0F, 15.0F, 10.0F}, new float[]{28.0F, 2.0F, 9.0F}, new float[]{0.0F, -180.0F, 0.0F},
                     new float[]{0.0F, 0.0F, 0.0F}, new float[]{0.0F, 0.0F, 0.0F},
                     new Face[]{new Face(0, 0.01563F, 0.60938F, 0.125F, 0.79688F, 0), new Face(0, 0.11719F, 0.60938F, 0.125F, 0.79688F, 0), null, new Face(0, 0.23438F, 0.60938F, 0.14063F, 0.79688F, 0), new Face(0, 0.125F, 0.70313F, 0.01563F, 0.67188F, 0), new Face(0, 0.34375F, 0.67188F, 0.23438F, 0.70313F, 0)})
+    };
+
+    /** The double chest (two chests in neighbouring slots), texture id 10; renderer centres it and turns it along the boat. */
+    static final Cube[] DOUBLE_CHEST = {
+            new Cube(new float[]{-22.0F, 3.0F, -6.0F}, new float[]{2.0F, 11.0F, 6.0F}, new float[]{2.0F, 11.0F, -6.0F}, new float[]{0.0F, 0.0F, 0.0F},
+                    new float[]{2.0F, 11.0F, -6.0F}, new float[]{0.0F, 90.0F, 0.0F},
+                    new Face[]{new Face(10, 0.0F, 0.6875F, 0.1875F, 0.75F, 0), new Face(10, 0.0F, 0.75F, 0.09375F, 0.8125F, 0), new Face(10, 0.1875F, 0.6875F, 0.375F, 0.75F, 0), new Face(10, 0.0F, 0.75F, 0.09375F, 0.8125F, 0), new Face(10, 0.1875F, 0.6875F, 0.0F, 0.59375F, 0), new Face(10, 0.375F, 0.59375F, 0.1875F, 0.6875F, 0)}),
+            new Cube(new float[]{-22.0F, 11.0F, -6.0F}, new float[]{2.0F, 15.0F, 6.0F}, new float[]{2.0F, 15.0F, -6.0F}, new float[]{0.0F, 0.0F, 0.0F},
+                    new float[]{2.0F, 15.0F, -6.0F}, new float[]{0.0F, 90.0F, 0.0F},
+                    new Face[]{new Face(10, 0.0F, 0.55469F, 0.1875F, 0.58594F, 0), new Face(10, 0.09375F, 0.75F, 0.1875F, 0.78125F, 0), new Face(10, 0.1875F, 0.55469F, 0.375F, 0.58594F, 0), new Face(10, 0.09375F, 0.75F, 0.1875F, 0.78125F, 0), new Face(10, 0.375F, 0.6875F, 0.1875F, 0.59375F, 0), new Face(10, 0.375F, 0.46094F, 0.1875F, 0.55469F, 0)}),
+            new Cube(new float[]{-1.0F, 8.0F, 5.0F}, new float[]{1.0F, 12.0F, 6.0F}, new float[]{1.0F, 12.0F, 5.0F}, new float[]{0.0F, 0.0F, 0.0F},
+                    new float[]{1.0F, 12.0F, 5.0F}, new float[]{0.0F, 90.0F, 0.0F},
+                    new Face[]{new Face(10, 0.00781F, 0.46875F, 0.02344F, 0.5F, 0), new Face(10, 0.0F, 0.46875F, 0.00781F, 0.5F, 0), new Face(10, 0.03125F, 0.46875F, 0.04688F, 0.5F, 0), new Face(10, 0.02344F, 0.46875F, 0.03125F, 0.5F, 0), new Face(10, 0.02344F, 0.46875F, 0.00781F, 0.46094F, 0), new Face(10, 0.03906F, 0.46094F, 0.02344F, 0.46875F, 0)})
     };
 
     /** Where the sail's flag sits: its group's and its own pivot and rotation, and the shift from Vanilla's flag cube onto it. */

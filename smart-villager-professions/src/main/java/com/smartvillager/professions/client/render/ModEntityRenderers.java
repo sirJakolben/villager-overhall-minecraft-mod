@@ -34,5 +34,6 @@ public final class ModEntityRenderers {
     @SubscribeEvent
     static void onRegisterSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
         event.register(Identifier.fromNamespaceAndPath(SmartVillagerProfessionsMod.MODID, "villager_statue"), VillagerStatueSpecialRenderer.Unbaked.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(SmartVillagerProfessionsMod.MODID, "boat_chest"), BoatChestSpecialRenderer.Unbaked.MAP_CODEC);
     }
 }
