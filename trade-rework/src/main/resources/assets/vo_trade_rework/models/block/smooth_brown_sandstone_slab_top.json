@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "vo_trade_rework:block/brown_sandstone_top",
-    "side": "vo_trade_rework:block/brown_sandstone_top",
-    "top": "vo_trade_rework:block/brown_sandstone_top"
-  }
-}

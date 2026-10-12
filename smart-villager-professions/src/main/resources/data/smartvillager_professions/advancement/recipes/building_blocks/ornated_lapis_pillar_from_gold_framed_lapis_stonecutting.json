@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gold_framed_lapis": {
+      "conditions": {
+        "items": [
+          {
+            "items": "smartvillager_professions:gold_framed_lapis"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "smartvillager_professions:ornated_lapis_pillar_from_gold_framed_lapis_stonecutting"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gold_framed_lapis"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "smartvillager_professions:ornated_lapis_pillar_from_gold_framed_lapis_stonecutting"
+    ]
+  }
+}

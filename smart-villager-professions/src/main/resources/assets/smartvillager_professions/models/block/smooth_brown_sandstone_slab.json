@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "smartvillager_professions:block/brown_sandstone_top",
+    "side": "smartvillager_professions:block/brown_sandstone_top",
+    "top": "smartvillager_professions:block/brown_sandstone_top"
+  }
+}

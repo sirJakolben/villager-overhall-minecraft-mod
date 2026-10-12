@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "powered=false,working=false": { "model": "smartvillager_professions:block/salvage_station" },
+    "powered=true,working=false": { "model": "smartvillager_professions:block/salvage_station" },
+    "powered=false,working=true": { "model": "smartvillager_professions:block/salvage_station_working" },
+    "powered=true,working=true": { "model": "smartvillager_professions:block/salvage_station_working" }
+  }
+}

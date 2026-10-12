@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "smartvillager_professions:scarecrow" } ],
+      "conditions": [
+        { "condition": "minecraft:survives_explosion" },
+        { "condition": "minecraft:block_state_property", "block": "smartvillager_professions:scarecrow", "properties": { "half": "lower" } }
+      ]
+    }
+  ]
+}

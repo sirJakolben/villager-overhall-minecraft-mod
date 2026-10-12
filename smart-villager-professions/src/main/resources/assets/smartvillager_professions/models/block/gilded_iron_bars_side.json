@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_bars_side",
+  "textures": {
+    "bars": "smartvillager_professions:block/gilded_iron_bars",
+    "edge": "smartvillager_professions:block/gilded_iron_bars"
+  }
+}

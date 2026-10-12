@@ -1,0 +1,11 @@
+{
+  "message.smartvillager.claim.assigned": "%s works here now",
+  "message.smartvillager.claim.already": "%s already works here",
+  "message.smartvillager.claim.settled": "%s already has a settled profession",
+  "message.smartvillager.claim.cannot_work": "%s cannot work",
+  "message.smartvillager.claim.not_workplace": "That is not a workplace",
+  "message.smartvillager.claim.gone": "The selected villager is gone",
+  "message.smartvillager.claim.too_far": "Too far - the Trading Block must be within %2$s blocks of %1$s's workplace",
+  "message.smartvillager.claim.no_workplace": "%s needs a workplace first",
+  "block.smartvillager.trading_block": "Trading Block"
+}

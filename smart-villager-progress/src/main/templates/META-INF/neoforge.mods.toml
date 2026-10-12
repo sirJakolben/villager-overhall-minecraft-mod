@@ -1,0 +1,41 @@
+# Mod metadata of the core mod - the placeholder values come from gradle.properties (core/build.gradle).
+
+# CC0-1.0: public domain - anyone may use, change and share everything, for any purpose, no attribution needed.
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="sirJakolben"
+description='''
+Villagers level up by working, not by trading. Every profession - Vanilla or from other mods - keeps its Vanilla trades, sorted into Quests (they pay emeralds) and Trades, in a new trading window: each level brings an upgrade point that unlocks the next trade or improves prices, yields and stock. Reputation discounts (curing, gossip) are replaced by these rank discounts; Hero of the Village still applies.
+
+Villagers restock through work meters that fill while they work and depend on their happiness (bed, village bell, other villagers, companions). They use several workplaces, can be claimed with an emerald, lured with one and called to a Trading Block with redstone. Villagers keep their progress through a zombie conversion and back; more zombie villagers spawn, and village brewing stands start with blaze powder.
+
+Custom professions come with the Professions extension.
+'''
+
+[[mixins]]
+config="${mod_id}.mixins.json"
+
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="${villager_mod_id}"
+    type="required"
+    versionRange="[${villager_mod_version},)"
+    ordering="AFTER"
+    side="BOTH"

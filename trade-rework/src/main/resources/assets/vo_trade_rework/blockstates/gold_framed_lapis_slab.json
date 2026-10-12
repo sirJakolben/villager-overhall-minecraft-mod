@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "type=bottom": { "model": "vo_trade_rework:block/gold_framed_lapis_slab" },
-    "type=top": { "model": "vo_trade_rework:block/gold_framed_lapis_slab_top" },
-    "type=double": { "model": "vo_trade_rework:block/gold_framed_lapis_slab_double" }
-  }
-}

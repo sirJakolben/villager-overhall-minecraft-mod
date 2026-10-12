@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "smartvillager_professions:block/gold_framed_lapis",
+    "top": "smartvillager_professions:block/gold_framed_lapis",
+    "side": "smartvillager_professions:block/gold_framed_lapis"
+  }
+}

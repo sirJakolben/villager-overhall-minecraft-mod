@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": [
+      { "model": "smartvillager_professions:block/brown_sand" },
+      { "model": "smartvillager_professions:block/brown_sand", "y": 90 },
+      { "model": "smartvillager_professions:block/brown_sand", "y": 180 },
+      { "model": "smartvillager_professions:block/brown_sand", "y": 270 }
+    ]
+  }
+}

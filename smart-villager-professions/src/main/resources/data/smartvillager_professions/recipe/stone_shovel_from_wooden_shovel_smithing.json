@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:cobblestone",
+  "base": "minecraft:wooden_shovel",
+  "result": {
+    "id": "minecraft:stone_shovel"
+  },
+  "template": "smartvillager_professions:upgrade_smithing_template"
+}

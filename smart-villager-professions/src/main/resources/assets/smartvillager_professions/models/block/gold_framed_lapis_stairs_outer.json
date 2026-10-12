@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "stair": "smartvillager_professions:block/gold_framed_lapis_stair",
+    "frame": "smartvillager_professions:block/gold_framed_lapis",
+    "particle": "smartvillager_professions:block/gold_framed_lapis"
+  },
+  "elements": [
+    {
+      "from": [8, 0, 8],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": {"uv": [0, 0, 8, 16], "texture": "#frame"},
+        "east": {"uv": [0, 0, 8, 16], "texture": "#stair", "cullface": "east"},
+        "south": {"uv": [8, 0, 0, 16], "texture": "#stair", "cullface": "south"},
+        "west": {"uv": [8, 0, 0, 16], "texture": "#frame"},
+        "up": {"uv": [8, 8, 16, 16], "texture": "#frame", "cullface": "up"},
+        "down": {"uv": [8, 0, 16, 8], "texture": "#frame", "cullface": "down"}
+      }
+    },
+    {
+      "from": [0, 0, 8],
+      "to": [8, 8, 16],
+      "faces": {
+        "south": {"uv": [16, 8, 8, 16], "texture": "#stair", "cullface": "south"},
+        "west": {"uv": [8, 8, 0, 16], "texture": "#frame", "cullface": "west"},
+        "up": {"uv": [0, 8, 8, 16], "texture": "#frame"},
+        "down": {"uv": [0, 0, 8, 8], "texture": "#frame", "cullface": "down"}
+      }
+    },
+    {
+      "from": [0, 0, 0],
+      "to": [16, 8, 8],
+      "faces": {
+        "north": {"uv": [0, 8, 16, 16], "texture": "#frame", "cullface": "north"},
+        "east": {"uv": [8, 8, 16, 16], "texture": "#stair", "cullface": "east"},
+        "west": {"uv": [16, 8, 8, 16], "texture": "#frame", "cullface": "west"},
+        "up": {"uv": [0, 0, 16, 8], "texture": "#frame"},
+        "down": {"uv": [0, 8, 16, 16], "texture": "#frame", "cullface": "down"}
+      }
+    }
+  ]
+}

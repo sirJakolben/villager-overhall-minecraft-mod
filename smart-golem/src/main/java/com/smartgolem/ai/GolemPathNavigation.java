@@ -10,7 +10,7 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Vanilla's ground navigation for the Iron Golem, with two additions (plan-iron-golem-ai.md):
+ * Vanilla's ground navigation for the Iron Golem, with two additions (see docs/smart-golem.md):
  * - the pathfinder knows climb edges (GolemNodeEvaluator) and charges GolemNodeEvaluator.CLIMB_COST for each - a way round of up to about eight blocks is preferred;
  * - when the golem has reached the foot of such a wall (the next path node is two blocks higher), it stops there instead of jumping and starts the climb
  *   (GolemClimbs); while it climbs, the navigation rests, afterwards the path goes on.

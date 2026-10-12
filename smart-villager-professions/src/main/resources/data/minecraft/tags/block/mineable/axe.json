@@ -1,0 +1,9 @@
+{
+  "values": [
+    "smartvillager_professions:writing_station",
+    "smartvillager_professions:enhancement_station",
+    "smartvillager_professions:trappings_station",
+    "smartvillager_professions:map_station",
+    "smartvillager_professions:weapon_rack"
+  ]
+}

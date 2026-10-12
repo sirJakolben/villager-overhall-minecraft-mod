@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "vo_trade_rework:block/brown_sandstone_top",
-    "side": "vo_trade_rework:block/cut_brown_sandstone"
-  }
-}

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "up": "smartvillager_professions:block/ornated_redstone_top",
+    "down": "smartvillager_professions:block/ornated_redstone_bottom",
+    "north": "smartvillager_professions:block/ornated_redstone_side",
+    "east": "smartvillager_professions:block/ornated_redstone_side",
+    "south": "smartvillager_professions:block/ornated_redstone_side",
+    "west": "smartvillager_professions:block/ornated_redstone_side",
+    "particle": "smartvillager_professions:block/ornated_redstone_side"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "smartvillager_professions:ornated_lapis" } ],
+      "conditions": [ { "condition": "minecraft:survives_explosion" } ]
+    }
+  ]
+}

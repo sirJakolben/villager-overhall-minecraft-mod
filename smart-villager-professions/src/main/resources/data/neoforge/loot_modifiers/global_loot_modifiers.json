@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "entries": [
+    "smartvillager_professions:overworld_1_structures",
+    "smartvillager_professions:overworld_1_villages",
+    "smartvillager_professions:overworld_1_witch",
+    "smartvillager_professions:overworld_2_structures",
+    "smartvillager_professions:overworld_3_structures",
+    "smartvillager_professions:cave_1_structures",
+    "smartvillager_professions:cave_2_structures",
+    "smartvillager_professions:cave_3_structures",
+    "smartvillager_professions:underwater_1_structures",
+    "smartvillager_professions:underwater_1_fishing",
+    "smartvillager_professions:underwater_2_structures",
+    "smartvillager_professions:underwater_3_elder_guardian",
+    "smartvillager_professions:nether_1_structures",
+    "smartvillager_professions:nether_1_bartering",
+    "smartvillager_professions:nether_2_structures",
+    "smartvillager_professions:nether_3_structures",
+    "smartvillager_professions:nether_3_ancient_debris",
+    "smartvillager_professions:biome_fish"
+  ]
+}

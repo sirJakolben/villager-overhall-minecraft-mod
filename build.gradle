@@ -1,5 +1,5 @@
-// Two mods in one build (split 2026-09-28): core/ is Villager Overhaul, trade-rework/ is the
-// Trade Rework extension that depends on it. Each subproject has its own build.gradle.
+// Mods in one build: smart-villager-progress/ is Smart Villager Progress, smart-villager-professions/ the Professions
+// extension that depends on it. Each subproject has its own build.gradle.
 
 tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN

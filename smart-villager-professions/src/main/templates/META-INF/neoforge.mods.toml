@@ -1,0 +1,36 @@
+# CC0-1.0: public domain - anyone may use, change and share everything, for any purpose, no attribution needed.
+license="${mod_license}"
+
+[[mods]]
+modId="${ext_mod_id}"
+version="${ext_mod_version}"
+displayName="${ext_mod_name}"
+credits="Seabrass chain and bars textures and the iron frame of reinforced glass: Abyssal Decor by starrysock (CC0, used with permission)"
+description='''
+Extension for Smart Villager Progress: reworked professions with their own trades, quests, master and passive stations.
+'''
+
+[[mixins]]
+config="${ext_mod_id}.mixins.json"
+
+[[dependencies.${ext_mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${ext_mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+# The extension plugs into the core's systems (stations, passives, trade engine) - it loads after it.
+[[dependencies.${ext_mod_id}]]
+    modId="${core_mod_id}"
+    type="required"
+    versionRange="[${core_mod_version},)"
+    ordering="AFTER"
+    side="BOTH"

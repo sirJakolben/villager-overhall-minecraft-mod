@@ -1,4 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": { "all": "vo_trade_rework:block/iron_framed_redstone" }
-}

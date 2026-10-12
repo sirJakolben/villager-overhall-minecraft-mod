@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:armorer",
+  "section": "smartvillager_professions:masteries",
+  "unlock_rank": 1,
+  "base_input": { "item": "minecraft:iron_ingot", "count": 1 },
+  "max_input": { "item": "minecraft:iron_ingot", "count": 1 },
+  "second_input": { "item": "minecraft:glass", "count": 1 },
+  "base_output": { "item": "smartvillager_professions:reinforced_glass", "count": 1 },
+  "max_output": { "item": "smartvillager_professions:reinforced_glass", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

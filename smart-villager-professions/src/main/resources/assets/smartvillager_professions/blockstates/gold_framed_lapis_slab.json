@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "type=bottom": { "model": "smartvillager_professions:block/gold_framed_lapis_slab" },
+    "type=top": { "model": "smartvillager_professions:block/gold_framed_lapis_slab_top" },
+    "type=double": { "model": "smartvillager_professions:block/gold_framed_lapis_slab_double" }
+  }
+}

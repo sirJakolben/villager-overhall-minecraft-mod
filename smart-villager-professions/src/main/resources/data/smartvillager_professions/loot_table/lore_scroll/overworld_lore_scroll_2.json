@@ -1,0 +1,8 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [ { "type": "minecraft:item", "name": "smartvillager_professions:overworld_lore_scroll_2" } ]
+    }
+  ]
+}

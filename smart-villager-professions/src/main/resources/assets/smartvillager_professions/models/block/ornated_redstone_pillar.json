@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "smartvillager_professions:block/ornated_redstone_pillar_top",
+    "side": "smartvillager_professions:block/ornated_redstone_pillar_side"
+  }
+}

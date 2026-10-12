@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=east": { "model": "smartvillager_professions:block/writing_station" },
+    "facing=south": { "model": "smartvillager_professions:block/writing_station", "y": 90 },
+    "facing=west": { "model": "smartvillager_professions:block/writing_station", "y": 180 },
+    "facing=north": { "model": "smartvillager_professions:block/writing_station", "y": 270 }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "smartvillager_professions:iron_framed_redstone",
+  "result": {
+    "id": "smartvillager_professions:ornated_redstone_pillar"
+  }
+}

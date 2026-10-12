@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "smartvillager_professions:block/brown_sandstone"
+  }
+}

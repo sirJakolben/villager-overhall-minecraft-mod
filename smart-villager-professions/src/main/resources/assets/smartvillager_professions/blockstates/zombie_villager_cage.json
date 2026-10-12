@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "half=lower,occupied=false": { "model": "smartvillager_professions:block/zombie_villager_cage_lower" },
+    "half=lower,occupied=true": { "model": "smartvillager_professions:block/zombie_villager_cage_lower" },
+    "half=upper,occupied=false": { "model": "smartvillager_professions:block/zombie_villager_cage_upper" },
+    "half=upper,occupied=true": { "model": "smartvillager_professions:block/zombie_villager_cage_upper" }
+  }
+}

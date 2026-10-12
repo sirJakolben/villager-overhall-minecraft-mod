@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 [Threading.Thread]::CurrentThread.CurrentCulture = [Globalization.CultureInfo]::InvariantCulture
 $bb = 'C:\Users\(02) CodingProjekte\Mods\Improved Villagers\assets\Block References\iron_golem\iron_golem.bbmodel'
-$outDir = 'C:\Users\(02) CodingProjekte\Mods\Improved Villagers\smart-golem\src\main\java\com\smartgolem\client'
+$outDir = 'C:\Users\(02) CodingProjekte\Mods\Improved Villagers\smart-golem\src\bake\java\com\smartgolem\client'
 New-Item -ItemType Directory -Force $outDir | Out-Null
 $o = Get-Content -Raw $bb | ConvertFrom-Json
 
@@ -157,5 +157,5 @@ $($ab.ToString().TrimEnd())
     }
 }
 "@
-[IO.File]::WriteAllText((Join-Path $outDir 'ClimbGolemAnimations.java'), $animCode, (New-Object Text.UTF8Encoding($false)))
+# The animation is baked by ./gradlew :smart-golem:bakeClimb (Blockbench's exact curves) - the generated ClimbGolemAnimations are no longer used.
 Get-ChildItem $outDir | Select Name, Length

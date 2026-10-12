@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "smartvillager_professions:block/iron_framed_redstone",
+    "top": "smartvillager_professions:block/iron_framed_redstone",
+    "side": "smartvillager_professions:block/iron_framed_redstone"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:iron_block",
+  "base": "minecraft:chainmail_boots",
+  "result": {
+    "id": "minecraft:iron_boots"
+  },
+  "template": "smartvillager_professions:upgrade_smithing_template"
+}

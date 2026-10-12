@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "vo_trade_rework:block/ornated_redstone_pillar_top",
-    "side": "vo_trade_rework:block/ornated_redstone_pillar_side"
-  }
-}

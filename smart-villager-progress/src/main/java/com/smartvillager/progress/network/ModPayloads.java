@@ -1,0 +1,24 @@
+package com.smartvillager.progress.network;
+
+import com.smartvillager.progress.SmartVillagerProgressMod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+
+@EventBusSubscriber(modid = SmartVillagerProgressMod.MODID)
+public final class ModPayloads {
+
+    private ModPayloads() {
+    }
+
+    @SubscribeEvent
+    static void onRegisterPayloads(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToServer(SelectOfferPayload.TYPE, SelectOfferPayload.STREAM_CODEC, SelectOfferPayload::handle);
+        registrar.playToClient(VillagerOffersPayload.TYPE, VillagerOffersPayload.STREAM_CODEC, VillagerOffersPayload::handle);
+        registrar.playToServer(SectionActionPayload.TYPE, SectionActionPayload.STREAM_CODEC, SectionActionPayload::handle);
+        registrar.playToServer(InvestUpgradePointPayload.TYPE, InvestUpgradePointPayload.STREAM_CODEC, InvestUpgradePointPayload::handle);
+        registrar.playToServer(CloneOfferItemPayload.TYPE, CloneOfferItemPayload.STREAM_CODEC, CloneOfferItemPayload::handle);
+    }
+}

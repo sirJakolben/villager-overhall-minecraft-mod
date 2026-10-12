@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "smartvillager_professions:brown_sandstone",
+  "result": {
+    "id": "smartvillager_professions:brown_sandstone_wall"
+  }
+}
