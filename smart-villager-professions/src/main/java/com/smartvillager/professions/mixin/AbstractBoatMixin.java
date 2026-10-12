@@ -16,6 +16,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -131,9 +132,16 @@ public abstract class AbstractBoatMixin implements PlayerRideableJumping, BoatSe
             Cannon.tickSoot(boat, state);
         }
         if (state.stern() != smartvillager_professions$boxStern || state.stern() && boat.getYRot() != smartvillager_professions$boxYaw) {
+            AABB box = BoatHitbox.of(boat, boat.getDimensions(boat.getPose()).makeBoundingBox(boat.position()));
+            if (smartvillager_professions$boxStern && state.stern() && boat.level().getBlockCollisions(boat, box).iterator().hasNext()) {
+                // the long stern would swing into a wall: the boat does not turn there (a plain boat's square box cannot clip like this)
+                boat.setYRot(smartvillager_professions$boxYaw);
+                this.deltaRotation = 0.0F;
+                box = BoatHitbox.of(boat, boat.getDimensions(boat.getPose()).makeBoundingBox(boat.position()));
+            }
             smartvillager_professions$boxStern = state.stern();
             smartvillager_professions$boxYaw = boat.getYRot();
-            boat.setBoundingBox(BoatHitbox.of(boat, boat.getDimensions(boat.getPose()).makeBoundingBox(boat.position())));
+            boat.setBoundingBox(box);
         }
         if ((state.sail() || state.stern()) && boat.level() instanceof ServerLevel level) {
             DecorPerch.tick(boat, state, level);

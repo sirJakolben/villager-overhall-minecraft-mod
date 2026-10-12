@@ -7,7 +7,12 @@ import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.boat.BoatParts;
 import com.smartvillager.professions.boat.BoatState;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.model.object.chest.ChestModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.object.banner.BannerFlagModel;
 import net.minecraft.client.renderer.Sheets;
@@ -17,6 +22,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BannerItem;
@@ -75,18 +81,14 @@ public final class BoatUpgradeRenderer {
 
     private final BannerFlagModel flagModel;
     private final SpriteGetter sprites;
-    private final ChestModel chestSingle;
-    private final ChestModel chestLeft;
-    private final ChestModel chestRight;
+    private final ModelPart chest;
     private final Identifier woodTexture;
 
     /** boatTexture is the renderer's own (textures/entity/boat/oak.png): the stern is made of that wood. Chests use Vanilla's normal chest. */
     public BoatUpgradeRenderer(EntityModelSet modelSet, SpriteGetter sprites, Identifier boatTexture) {
         this.flagModel = new BannerFlagModel(modelSet.bakeLayer(ModelLayers.STANDING_BANNER_FLAG));
         this.sprites = sprites;
-        this.chestSingle = new ChestModel(modelSet.bakeLayer(ModelLayers.CHEST));
-        this.chestLeft = new ChestModel(modelSet.bakeLayer(ModelLayers.DOUBLE_CHEST_LEFT));
-        this.chestRight = new ChestModel(modelSet.bakeLayer(ModelLayers.DOUBLE_CHEST_RIGHT));
+        this.chest = smallChest();
         this.woodTexture = boatTexture;
     }
 
@@ -101,16 +103,10 @@ public final class BoatUpgradeRenderer {
             submitQuads(CANNON_QUADS, poseStack, collector, light);
             poseStack.popPose();
         }
-        // two chests next to each other are one double chest
+        // a double chest model will come with its own Blockbench model; until then two chests stand next to each other
         for (int slot = 0; slot < state.slots().size(); slot++) {
-            if (!state.part(slot).equals(BoatParts.CHEST.id())) {
-                continue;
-            }
-            if (state.part(slot + 1).equals(BoatParts.CHEST.id())) {
-                submitChest(poseStack, collector, light, (slotOffset(offsets, slot) + slotOffset(offsets, slot + 1)) / 2.0 + CHEST_FORWARD, true);
-                slot++;
-            } else {
-                submitChest(poseStack, collector, light, slotOffset(offsets, slot) + CHEST_FORWARD, false);
+            if (state.part(slot).equals(BoatParts.CHEST.id())) {
+                submitChest(poseStack, collector, light, slotOffset(offsets, slot) + CHEST_FORWARD);
             }
         }
         if (state.sail()) {
@@ -131,27 +127,29 @@ public final class BoatUpgradeRenderer {
     }
 
     /**
-     * Vanilla's chest model, closed, standing on the floor of the boat at this position along it. A single chest has its lock towards the stern, like the
-     * chest of a Vanilla chest boat; a double chest (the two halves side by side along the boat) has it to the side, because it is too wide to lie across.
-     * The chest model is in block space with Y up and its lock at +Z; the boat's space has Y down and the bow at +X - the half turn about Z (scale -1, -1, 1) puts the
-     * chest upright, the turn about Y points the lock.
+     * The chest of Vanilla's chest boat (12 x 8 x 12 with a 4 px lid, 2 px smaller than a chest block), closed, standing on the boat's floor at this position along
+     * it, lock towards the bow like in a chest boat - with the normal chest texture for now (Obsidian: Fehlende Texturen). Its parts are in block space with Y up and the
+     * lock at +Z; the boat's space has Y down and the bow at +X - the half turn about Z (scale -1, -1, 1) puts the chest upright, the quarter turn about Y points the lock.
      */
-    private void submitChest(PoseStack poseStack, SubmitNodeCollector collector, int light, double forward, boolean doubled) {
+    private void submitChest(PoseStack poseStack, SubmitNodeCollector collector, int light, double forward) {
         poseStack.pushPose();
         poseStack.translate((float) forward, FLOOR, 0.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(doubled ? 0.0F : -90.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
-        if (doubled) {
-            // the right half is the western block, the left half the eastern one, 31 px together: the middle is 16 px in
-            poseStack.translate(-1.0F, 0.0F, -0.5F);
-            collector.submitModel(chestRight, 0.0F, poseStack, light, OverlayTexture.NO_OVERLAY, -1, Sheets.CHEST_REGULAR.select(ChestType.RIGHT), this.sprites, 0, null);
-            poseStack.translate(1.0F, 0.0F, 0.0F);
-            collector.submitModel(chestLeft, 0.0F, poseStack, light, OverlayTexture.NO_OVERLAY, -1, Sheets.CHEST_REGULAR.select(ChestType.LEFT), this.sprites, 0, null);
-        } else {
-            poseStack.translate(-0.5F, 0.0F, -0.5F);
-            collector.submitModel(chestSingle, 0.0F, poseStack, light, OverlayTexture.NO_OVERLAY, -1, Sheets.CHEST_REGULAR.select(ChestType.SINGLE), this.sprites, 0, null);
-        }
+        poseStack.translate(-0.5F, 0.0F, -0.5F);
+        SpriteId chestSprite = Sheets.CHEST_REGULAR.select(ChestType.SINGLE);
+        collector.submitModelPart(chest, poseStack, chestSprite.renderType(RenderTypes::entityCutout), light, OverlayTexture.NO_OVERLAY, this.sprites.get(chestSprite));
         poseStack.popPose();
+    }
+
+    /** The chest boat's chest on the layout of the normal chest texture (bottom at 0/19, lid and lock at 0/0), centred in its block, bottom 8 high, lid 4. */
+    private static ModelPart smallChest() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        root.addOrReplaceChild("bottom", CubeListBuilder.create().texOffs(0, 19).addBox(2.0F, 0.0F, 2.0F, 12.0F, 8.0F, 12.0F), PartPose.ZERO);
+        root.addOrReplaceChild("lid", CubeListBuilder.create().texOffs(0, 0).addBox(2.0F, 0.0F, 0.0F, 12.0F, 4.0F, 12.0F), PartPose.offset(0.0F, 8.0F, 2.0F));
+        root.addOrReplaceChild("lock", CubeListBuilder.create().texOffs(0, 0).addBox(7.0F, -3.0F, 12.0F, 2.0F, 4.0F, 1.0F), PartPose.offset(0.0F, 8.0F, 2.0F));
+        return LayerDefinition.create(mesh, 64, 64).bakeRoot();
     }
 
     private static double slotOffset(double[] offsets, int slot) {

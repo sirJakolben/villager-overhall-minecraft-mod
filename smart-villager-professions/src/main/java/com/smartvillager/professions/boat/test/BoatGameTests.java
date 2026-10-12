@@ -65,7 +65,7 @@ import java.util.function.Consumer;
 public final class BoatGameTests {
 
     private static final DeferredRegister<Consumer<GameTestHelper>> FUNCTIONS = DeferredRegister.create(Registries.TEST_FUNCTION, SmartVillagerProfessionsMod.MODID);
-    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch", "boat_pet_perch", "boat_shoulder_parrot", "boat_stern_hitbox", "boat_chest_and_banner_clicks");
+    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch", "boat_pet_perch", "boat_shoulder_parrot", "boat_stern_hitbox", "boat_chest_and_banner_clicks", "boat_stern_turn_blocked");
 
     static {
         FUNCTIONS.register("boat_build_in_and_drop", () -> BoatGameTests::buildInAndDrop);
@@ -77,6 +77,7 @@ public final class BoatGameTests {
         FUNCTIONS.register("boat_pet_perch", () -> BoatGameTests::petPerch);
         FUNCTIONS.register("boat_shoulder_parrot", () -> BoatGameTests::shoulderParrot);
         FUNCTIONS.register("boat_stern_hitbox", () -> BoatGameTests::sternHitbox);
+        FUNCTIONS.register("boat_stern_turn_blocked", () -> BoatGameTests::sternTurnBlocked);
         FUNCTIONS.register("boat_chest_and_banner_clicks", () -> BoatGameTests::chestAndBannerClicks);
     }
 
@@ -331,6 +332,32 @@ public final class BoatGameTests {
         helper.succeedWhen(() -> {
             helper.assertTrue(thrownOff[0], "the dog got on the stern (vehicle: " + wolf.getVehicle() + ", at " + wolf.position() + ")");
             helper.assertTrue(wolf.getVehicle() == null, "the damage threw the dog off");
+        });
+    }
+
+    /** A boat with a stern does not turn into a wall (its stern would clip into it); in the open it turns. */
+    private static void sternTurnBlocked(GameTestHelper helper) {
+        floor(helper, 16, 16, Blocks.STONE);
+        AbstractBoat walled = boat(helper, 7, 1, 4);
+        AbstractBoat free = boat(helper, 7, 1, 11);
+        for (AbstractBoat boat : List.of(walled, free)) {
+            BoatUpgrades.setState(boat, BoatUpgrades.state(boat).withDeco(new BoatState.Deco(BoatParts.STERN.id(), 1, new ItemStack(FishermanItems.BOAT_STERN.get()))));
+            boat.setYRot(0.0F);
+        }
+        // facing south the stern points north; turned east it would point west - a wall to the west of the first boat is in its way after the turn
+        helper.setBlock(5, 1, 4, Blocks.STONE);
+        helper.setBlock(5, 2, 4, Blocks.STONE);
+        int[] tick = {0};
+        helper.onEachTick(() -> {
+            if (++tick[0] == 5) {
+                walled.setYRot(-90.0F);
+                free.setYRot(-90.0F);
+            }
+        });
+        helper.succeedWhen(() -> {
+            helper.assertTrue(tick[0] > 12, "time passes");
+            helper.assertTrue(Math.abs(walled.getYRot()) < 1.0E-3, "the boat next to the wall did not turn: yaw " + walled.getYRot());
+            helper.assertTrue(Math.abs(free.getYRot() + 90.0F) < 1.0E-3, "the boat in the open turned: yaw " + free.getYRot());
         });
     }
 

@@ -5,7 +5,8 @@ import net.minecraft.world.phys.AABB;
 
 /**
  * A stern makes the boat's hitbox 50 % longer, towards the stern only (Obsidian Fisherman.md, 2026-10-12). An entity's box cannot turn with the boat, so this is the
- * box around the lengthened rectangle as the boat is turned right now - it has to be refreshed whenever the boat turns (mixin/AbstractBoatMixin does, each tick).
+ * box around the lengthened rectangle as the boat is turned right now - it has to be refreshed whenever the boat turns (mixin/AbstractBoatMixin does, each tick),
+ * and a boat that would swing its stern into a wall by turning does not turn there.
  */
 public final class BoatHitbox {
 
