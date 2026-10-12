@@ -1,7 +1,7 @@
 {
   "profession": "minecraft:fisherman",
   "section": "smartvillager_professions:masteries",
-  "unlock_rank": 3,
+  "unlock_rank": 4,
   "base_input": {
     "item": "minecraft:emerald",
     "count": 12

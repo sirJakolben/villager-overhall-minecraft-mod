@@ -37,7 +37,9 @@ public final class FishermanItems {
     public static final DeferredItem<Item> BOAT_CHEST = ITEMS.registerSimpleItem("boat_chest");
     public static final DeferredItem<Item> BOAT_CANNON = ITEMS.registerSimpleItem("boat_cannon");
     /** Carries its banner (BoatUpgrades.MAST), so it never stacks. */
-    public static final DeferredItem<Item> BOAT_MAST = ITEMS.registerItem("boat_mast", Item::new, properties -> properties.stacksTo(1));
+    public static final DeferredItem<Item> BOAT_SAIL = ITEMS.registerItem("boat_sail", Item::new, properties -> properties.stacksTo(1));
+    /** The stern deck: tame cats and dogs sit on it. */
+    public static final DeferredItem<Item> BOAT_STERN = ITEMS.registerSimpleItem("boat_stern");
 
     private FishermanItems() {
     }
@@ -45,7 +47,7 @@ public final class FishermanItems {
     @SubscribeEvent
     static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            List.of(EMERALD_FISH, DUNE_FISH, SUNSET_FISH, ABYSS_FISH, NEEDLE_FISH, FROST_FISH, CANOPY_FISH, SPORE_FISH, BOAT_CHEST, BOAT_CANNON).forEach(event::accept);
+            List.of(EMERALD_FISH, DUNE_FISH, SUNSET_FISH, ABYSS_FISH, NEEDLE_FISH, FROST_FISH, CANOPY_FISH, SPORE_FISH, BOAT_CHEST, BOAT_CANNON, BOAT_STERN).forEach(event::accept);
         }
     }
 }

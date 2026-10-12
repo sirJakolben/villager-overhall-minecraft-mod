@@ -26,7 +26,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.animal.parrot.Parrot;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
@@ -61,7 +63,7 @@ import java.util.function.Consumer;
 public final class BoatGameTests {
 
     private static final DeferredRegister<Consumer<GameTestHelper>> FUNCTIONS = DeferredRegister.create(Registries.TEST_FUNCTION, SmartVillagerProfessionsMod.MODID);
-    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch");
+    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch", "boat_pet_perch");
 
     static {
         FUNCTIONS.register("boat_build_in_and_drop", () -> BoatGameTests::buildInAndDrop);
@@ -70,6 +72,7 @@ public final class BoatGameTests {
         FUNCTIONS.register("cannon_needs_ball", () -> BoatGameTests::needsBall);
         FUNCTIONS.register("cannon_ball_keeps_blocks", () -> BoatGameTests::ballKeepsBlocks);
         FUNCTIONS.register("boat_parrot_perch", () -> BoatGameTests::parrotPerch);
+        FUNCTIONS.register("boat_pet_perch", () -> BoatGameTests::petPerch);
     }
 
     private BoatGameTests() {
@@ -101,9 +104,9 @@ public final class BoatGameTests {
         return boat;
     }
 
-    private static ItemStack mastItem(ItemStack banner) {
-        ItemStack mast = new ItemStack(FishermanItems.BOAT_MAST.get());
-        mast.set(BoatUpgrades.MAST.get(), new BoatUpgrades.Mast(banner));
+    private static ItemStack sailItem(ItemStack banner) {
+        ItemStack mast = new ItemStack(FishermanItems.BOAT_SAIL.get());
+        mast.set(BoatUpgrades.SAIL.get(), new BoatUpgrades.Sail(banner));
         return mast;
     }
 
@@ -151,11 +154,15 @@ public final class BoatGameTests {
         helper.assertTrue(BoatUpgrades.state(boat).part(0).equals(BoatParts.CHEST.id()), "the second chest takes the next free slot: " + BoatUpgrades.state(boat));
         click(helper, player, boat, new ItemStack(FishermanItems.BOAT_CANNON.get()), 0.2);
         helper.assertTrue(BoatUpgrades.state(boat).part(0).equals(BoatParts.CHEST.id()), "a cannon does not fit into a taken front slot");
-        click(helper, player, boat, mastItem(new ItemStack(Items.RED_BANNER)), 0.2);
-        helper.assertTrue(BoatUpgrades.state(boat).mastSlot() == 0 && BoatUpgrades.state(boat).banner().is(Items.RED_BANNER), "the mast went to the clicked slot with its banner");
-        click(helper, player, boat, mastItem(new ItemStack(Items.WHITE_BANNER)), -0.6);
+        click(helper, player, boat, sailItem(new ItemStack(Items.RED_BANNER)), 0.2);
+        helper.assertTrue(BoatUpgrades.state(boat).sailSlot() == 0 && BoatUpgrades.state(boat).banner().is(Items.RED_BANNER), "the mast went to the clicked slot with its banner");
+        click(helper, player, boat, sailItem(new ItemStack(Items.WHITE_BANNER)), -0.6);
         helper.assertTrue(BoatUpgrades.state(boat).banner().is(Items.RED_BANNER), "one mast per boat");
         helper.assertTrue(BoatUpgrades.state(boat).chests() == 2, "two chests built in");
+        click(helper, player, boat, new ItemStack(FishermanItems.BOAT_STERN.get()), 0.2);
+        helper.assertTrue(BoatUpgrades.state(boat).stern() && BoatUpgrades.state(boat).deco(BoatParts.STERN).get().slot() == 1, "the stern always goes to the rear slot, next to the sail: " + BoatUpgrades.state(boat));
+        click(helper, player, boat, new ItemStack(FishermanItems.BOAT_STERN.get()), -0.6);
+        helper.assertTrue(BoatUpgrades.state(boat).decos().size() == 2, "one of each decoration");
 
         boat.setData(com.smartvillager.professions.boat.BoatInventory.CONTENTS, ItemContainerContents.fromItems(List.of(new ItemStack(Items.DIAMOND, 3))));
         boat.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 5.0F);
@@ -165,9 +172,10 @@ public final class BoatGameTests {
             helper.assertTrue(drops.stream().filter(drop -> drop.getItem().is(Items.SPRUCE_BOAT)).count() == 1, "the boat itself dropped");
             helper.assertTrue(drops.stream().filter(drop -> drop.getItem().is(FishermanItems.BOAT_CHEST.get())).count() == 2, "both chests dropped");
             helper.assertTrue(drops.stream().anyMatch(drop -> drop.getItem().is(Items.DIAMOND) && drop.getItem().getCount() == 3), "the chests' contents dropped");
+            helper.assertTrue(drops.stream().filter(drop -> drop.getItem().is(FishermanItems.BOAT_STERN.get())).count() == 1, "the stern dropped");
             helper.assertTrue(drops.stream().anyMatch(drop -> {
-                BoatUpgrades.Mast mast = drop.getItem().get(BoatUpgrades.MAST.get());
-                return drop.getItem().is(FishermanItems.BOAT_MAST.get()) && mast != null && mast.banner().is(Items.RED_BANNER);
+                BoatUpgrades.Sail mast = drop.getItem().get(BoatUpgrades.SAIL.get());
+                return drop.getItem().is(FishermanItems.BOAT_SAIL.get()) && mast != null && mast.banner().is(Items.RED_BANNER);
             }), "the mast dropped with its banner");
         });
     }
@@ -176,20 +184,20 @@ public final class BoatGameTests {
     private static void tradePayments(GameTestHelper helper) {
         var registries = helper.getLevel().registryAccess();
         var exchanges = registries.lookupOrThrow(ModDataPackRegistries.EXCHANGE);
-        for (String name : List.of("fisherman_boat_chest", "fisherman_boat_mast", "fisherman_boat_cannon", "fisherman_cannonball")) {
+        for (String name : List.of("fisherman_boat_chest", "fisherman_boat_sail", "fisherman_boat_stern", "fisherman_boat_cannon", "fisherman_cannonball")) {
             helper.assertTrue(exchanges.getValue(id(name)) != null, "the entry " + name + " loaded");
         }
-        ItemExchange mastOffer = exchanges.getValue(id("fisherman_boat_mast"));
+        ItemExchange mastOffer = exchanges.getValue(id("fisherman_boat_sail"));
         ItemCost banner = RequiredEnchantmentCost.of(mastOffer.secondInput().get(), registries);
         helper.assertTrue(banner.test(new ItemStack(Items.RED_BANNER)) && banner.test(new ItemStack(Items.WHITE_BANNER)), "any banner pays for a mast");
         helper.assertTrue(!banner.test(new ItemStack(Items.OAK_PLANKS)), "planks do not");
 
-        ItemStack shown = new ItemStack(FishermanItems.BOAT_MAST.get());
+        ItemStack shown = new ItemStack(FishermanItems.BOAT_SAIL.get());
         MerchantOffer offer = new MerchantOffer(new ItemCost(Items.EMERALD), Optional.of(banner), shown, 0, 1, 0, 0.0F);
         ItemStack paid = new ItemStack(Items.RED_BANNER);
         ItemStack result = BoatUpgrades.transform(offer, new ItemStack(Items.EMERALD, 4), paid, shown);
-        BoatUpgrades.Mast mast = result.get(BoatUpgrades.MAST.get());
-        helper.assertTrue(result.is(FishermanItems.BOAT_MAST.get()) && mast != null && mast.banner().is(Items.RED_BANNER), "the mast carries the paid banner: " + result);
+        BoatUpgrades.Sail mast = result.get(BoatUpgrades.SAIL.get());
+        helper.assertTrue(result.is(FishermanItems.BOAT_SAIL.get()) && mast != null && mast.banner().is(Items.RED_BANNER), "the mast carries the paid banner: " + result);
         ItemStack plain = new ItemStack(FishermanItems.BOAT_CANNON.get());
         helper.assertTrue(BoatUpgrades.transform(offer, new ItemStack(Items.EMERALD), new ItemStack(Items.IRON_BLOCK), plain) == plain, "other offers pass through untouched");
         helper.succeed();
@@ -206,7 +214,7 @@ public final class BoatGameTests {
         BoatUpgrades.setState(chest, BoatUpgrades.state(chest).withPart(1, BoatParts.CHEST.id()));
         BoatUpgrades.setState(full, withCannon(BoatUpgrades.state(full)).withPart(1, BoatParts.CHEST.id()));
         BoatUpgrades.setState(cannon, withCannon(BoatUpgrades.state(cannon)));
-        BoatUpgrades.setState(mast, BoatUpgrades.state(mast).withDeco(Optional.of(new BoatState.Deco(BoatParts.MAST.id(), 1, mastItem(ItemStack.EMPTY)))));
+        BoatUpgrades.setState(mast, BoatUpgrades.state(mast).withDeco(new BoatState.Deco(BoatParts.SAIL.id(), 1, sailItem(ItemStack.EMPTY))));
 
         Sheep[] sheep = new Sheep[9];
         int[][] at = {{3, 3}, {3, 3}, {8, 3}, {8, 3}, {13, 3}, {3, 9}, {3, 9}, {8, 9}, {8, 9}};
@@ -223,6 +231,13 @@ public final class BoatGameTests {
         helper.assertTrue(sheep[7].startRiding(mast) && sheep[8].startRiding(mast), "a mast takes no seat");
         Parrot parrot = helper.spawn(EntityType.PARROT, 8, 1, 9);
         helper.assertTrue(parrot.startRiding(mast), "a parrot may perch on a mast boat that has all seats taken");
+        AbstractBoat stern = boat(helper, 13, 1, 9);
+        BoatUpgrades.setState(stern, BoatUpgrades.state(stern).withDeco(new BoatState.Deco(BoatParts.STERN.id(), 1, new ItemStack(FishermanItems.BOAT_STERN.get()))));
+        Sheep sternSheepA = helper.spawn(EntityType.SHEEP, 13, 1, 9);
+        Sheep sternSheepB = helper.spawn(EntityType.SHEEP, 13, 1, 9);
+        helper.assertTrue(sternSheepA.startRiding(stern) && sternSheepB.startRiding(stern), "a stern takes no seat");
+        helper.assertTrue(helper.spawn(EntityType.CAT, 13, 1, 9).startRiding(stern) && helper.spawn(EntityType.WOLF, 13, 1, 9).startRiding(stern), "a cat and a dog sit on the deck");
+        helper.assertTrue(!helper.spawn(EntityType.CAT, 13, 1, 9).startRiding(stern), "a third one has no place on the deck");
         helper.succeed();
     }
 
@@ -273,11 +288,37 @@ public final class BoatGameTests {
         });
     }
 
+    /** A tame dog of the player walks to the stern deck while the player sits in the boat, and is thrown off when the boat takes damage. */
+    private static void petPerch(GameTestHelper helper) {
+        floor(helper, 14, 14, Blocks.STONE);
+        AbstractBoat boat = boat(helper, 7, 1, 7);
+        BoatUpgrades.setState(boat, BoatUpgrades.state(boat).withDeco(new BoatState.Deco(BoatParts.STERN.id(), 1, new ItemStack(FishermanItems.BOAT_STERN.get()))));
+        @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setPos(boat.getX(), boat.getY(), boat.getZ());
+        helper.assertTrue(player.startRiding(boat), "the player boards");
+        Wolf wolf = helper.spawn(EntityType.WOLF, 10, 1, 10);
+        wolf.tame(player);
+        wolf.setInSittingPose(false);
+        wolf.setOrderedToSit(false);
+        boolean[] thrownOff = {false};
+        helper.onEachTick(() -> {
+            if (!thrownOff[0] && wolf.getVehicle() == boat) {
+                helper.assertTrue(boat.getPassengers().size() == 2, "player and dog aboard");
+                boat.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 0.1F);
+                thrownOff[0] = true;
+            }
+        });
+        helper.succeedWhen(() -> {
+            helper.assertTrue(thrownOff[0], "the dog got on the stern (vehicle: " + wolf.getVehicle() + ", at " + wolf.position() + ")");
+            helper.assertTrue(wolf.getVehicle() == null, "the damage threw the dog off");
+        });
+    }
+
     /** A tame parrot of the player flies to the crow's nest while the player sits in a boat with a mast, and is thrown out when the boat takes damage. */
     private static void parrotPerch(GameTestHelper helper) {
         floor(helper, 14, 14, Blocks.STONE);
         AbstractBoat boat = boat(helper, 7, 1, 7);
-        BoatUpgrades.setState(boat, BoatUpgrades.state(boat).withDeco(Optional.of(new BoatState.Deco(BoatParts.MAST.id(), 1, mastItem(new ItemStack(Items.WHITE_BANNER))))));
+        BoatUpgrades.setState(boat, BoatUpgrades.state(boat).withDeco(new BoatState.Deco(BoatParts.SAIL.id(), 1, sailItem(new ItemStack(Items.WHITE_BANNER)))));
         @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
         player.setPos(boat.getX(), boat.getY(), boat.getZ());
         helper.assertTrue(player.startRiding(boat), "the player boards");

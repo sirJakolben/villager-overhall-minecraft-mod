@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** The known boat part kinds - ours (chest, cannon, mast) and whatever other mods register. */
+/** The known boat part kinds - ours (chest, cannon; sail, stern as decoration) and whatever other mods register. */
 public final class BoatParts {
 
     private static final Map<Identifier, BoatPartType> TYPES = new ConcurrentHashMap<>();
@@ -21,7 +21,10 @@ public final class BoatParts {
     public static final BoatPartType CHEST = register(new BoatPartType(id("chest"), BoatPartType.Kind.SLOT, FishermanItems.BOAT_CHEST));
     /** Only ever in the frontmost slot (BoatSlots.canInstall). */
     public static final BoatPartType CANNON = register(new BoatPartType(id("cannon"), BoatPartType.Kind.SLOT, FishermanItems.BOAT_CANNON));
-    public static final BoatPartType MAST = register(new BoatPartType(id("mast"), BoatPartType.Kind.DECO, FishermanItems.BOAT_MAST));
+    /** Decoration at any slot: the mast with its banner sail (a parrot perches in its crow's nest). */
+    public static final BoatPartType SAIL = register(new BoatPartType(id("sail"), BoatPartType.Kind.DECO, FishermanItems.BOAT_SAIL));
+    /** Decoration at the rear slot only: the stern deck (tame cats and dogs sit on it). */
+    public static final BoatPartType STERN = register(new BoatPartType(id("stern"), BoatPartType.Kind.DECO, FishermanItems.BOAT_STERN));
 
     private BoatParts() {
     }

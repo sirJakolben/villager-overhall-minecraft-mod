@@ -2,7 +2,9 @@ package com.smartvillager.professions.boat;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.animal.parrot.Parrot;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.vehicle.boat.AbstractChestBoat;
 
@@ -66,9 +68,15 @@ public final class BoatSlots {
         return slot >= 0 && slot < offsets.length ? offsets[slot] : 0.0;
     }
 
-    /** Parrots on the mast are decoration, not passengers: they take no slot. */
-    public static boolean isPerson(Entity passenger) {
-        return !(passenger instanceof Parrot);
+    /** Whether this animal is the kind that perches on the boat's decoration: a parrot on a sail, a cat or dog (wolf) on a stern. */
+    public static boolean canPerch(AbstractBoat boat, Entity animal) {
+        BoatState state = BoatUpgrades.state(boat);
+        return animal instanceof Parrot && state.sail() || (animal instanceof Cat || animal instanceof Wolf) && state.stern();
+    }
+
+    /** Perched animals are decoration, not passengers: they take no slot. */
+    public static boolean isPerson(AbstractBoat boat, Entity passenger) {
+        return !canPerch(boat, passenger);
     }
 
     public static List<Integer> freeSlots(AbstractBoat boat, BoatState state) {
@@ -81,10 +89,10 @@ public final class BoatSlots {
         return free;
     }
 
-    /** What the three capacity checks of AbstractBoat should compare the passenger count with: the free slots, plus the parrots aboard (they are counted among the passengers). */
+    /** What the three capacity checks of AbstractBoat should compare the passenger count with: the free slots, plus the perched animals aboard (they are counted among the passengers). */
     public static int capacity(AbstractBoat boat, int vanillaMax) {
-        int parrots = (int) boat.getPassengers().stream().filter(passenger -> !isPerson(passenger)).count();
-        return Math.max(0, vanillaMax - BoatUpgrades.state(boat).filledSlots()) + parrots;
+        int perched = (int) boat.getPassengers().stream().filter(passenger -> canPerch(boat, passenger)).count();
+        return Math.max(0, vanillaMax - BoatUpgrades.state(boat).filledSlots()) + perched;
     }
 
     /** Where this passenger sits along the boat in blocks, or NaN while the boat has no part in a slot (then it is Vanilla's own seating). */
@@ -93,7 +101,7 @@ public final class BoatSlots {
         if (state.filledSlots() == 0) {
             return Double.NaN;
         }
-        List<Entity> people = boat.getPassengers().stream().filter(BoatSlots::isPerson).toList();
+        List<Entity> people = boat.getPassengers().stream().filter(other -> isPerson(boat, other)).toList();
         List<Integer> free = freeSlots(boat, state);
         if (free.isEmpty()) {
             return 0.0;
@@ -128,7 +136,7 @@ public final class BoatSlots {
             return false;
         }
         if (type.kind() == BoatPartType.Kind.DECO) {
-            return state.deco().isEmpty();
+            return state.deco(type).isEmpty() && (type != BoatParts.STERN || slot == seats(boat) - 1);
         }
         if (boat instanceof AbstractChestBoat || !state.isFree(slot)) {
             return false;
@@ -140,7 +148,7 @@ public final class BoatSlots {
     public static void trimPassengers(AbstractBoat boat) {
         BoatState state = BoatUpgrades.state(boat);
         int free = Math.max(0, seats(boat) - state.filledSlots());
-        List<Entity> people = boat.getPassengers().stream().filter(BoatSlots::isPerson).toList();
+        List<Entity> people = boat.getPassengers().stream().filter(passenger -> isPerson(boat, passenger)).toList();
         for (int i = free; i < people.size(); i++) {
             people.get(i).stopRiding();
         }

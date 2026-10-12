@@ -8,13 +8,12 @@ import com.smartvillager.professions.boat.BoatSlots;
 import com.smartvillager.professions.boat.BoatState;
 import com.smartvillager.professions.boat.BoatUpgrades;
 import com.smartvillager.professions.boat.Cannon;
-import com.smartvillager.professions.boat.ParrotPerch;
+import com.smartvillager.professions.boat.DecorPerch;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.PlayerRideableJumping;
-import net.minecraft.world.entity.animal.parrot.Parrot;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.phys.Vec3;
 import org.objectweb.asm.Opcodes;
@@ -30,8 +29,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * BoatState, so client prediction and server agree - and a boat without parts takes none of these branches:
  * - Seats: the three capacity checks (taking a passenger, the boat picking up mobs, animals turning) compare with the FREE slots instead of Vanilla's seat
  *   count, and a passenger sits at the position of a free slot (a filled slot is a seat less, wherever it is).
- * - A parrot may perch in the crow's nest of a mast; it is a decoration passenger and takes no seat (BoatSlots.isPerson, ParrotPerch).
- * - With a cannon: 30 % less speed and turn rate, and Space charges it - the boat becomes a PlayerRideableJumping, so Vanilla's own horse jump bar, charge
+ * - Animals may perch on the decorations: a parrot in the crow's nest of a sail, a cat or dog on a stern deck. They are decoration passengers and take no seat
+ *   (BoatSlots.canPerch, DecorPerch).
+ * - With a cannon: 40 % less top speed (a stern: 40 % less turn rate), and Space charges the cannon - the boat becomes a PlayerRideableJumping, so Vanilla's own horse jump bar, charge
  *   and release packet do the rest.
  */
 @Mixin(AbstractBoat.class)
@@ -67,24 +67,23 @@ public abstract class AbstractBoatMixin implements PlayerRideableJumping, BoatSe
         return BoatSlots.capacity(boat, original.call(boat));
     }
 
-    /** A parrot is let onto a boat with a mast (one of them), whatever the free seats. */
+    /** An animal that has a perch on this boat is let on whatever the free seats - as long as its perch is free. */
     @ModifyReturnValue(method = "canAddPassenger", at = @At("RETURN"))
-    private boolean smartvillager_professions$parrotMayPerch(boolean allowed, Entity passenger) {
-        if (passenger instanceof Parrot) {
-            AbstractBoat boat = smartvillager_professions$self();
-            return smartvillager_professions$state().mast() && boat.getPassengers().stream().noneMatch(other -> other instanceof Parrot)
-                    && !boat.isEyeInFluid(FluidTags.WATER);
+    private boolean smartvillager_professions$animalMayPerch(boolean allowed, Entity passenger) {
+        AbstractBoat boat = smartvillager_professions$self();
+        if (BoatSlots.canPerch(boat, passenger)) {
+            return DecorPerch.hasFreePerch(boat, passenger) && !boat.isEyeInFluid(FluidTags.WATER);
         }
         return allowed;
     }
 
-    /** Seats at the position of a free slot, the parrot in the crow's nest; a boat without parts keeps Vanilla's seating. */
+    /** Seats at the position of a free slot, perched animals on their decoration; a boat without parts keeps Vanilla's seating. */
     @Inject(method = "getPassengerAttachmentPoint", at = @At("HEAD"), cancellable = true)
     private void smartvillager_professions$seat(Entity passenger, EntityDimensions dimensions, float scale, CallbackInfoReturnable<Vec3> cir) {
         AbstractBoat boat = smartvillager_professions$self();
         BoatState state = smartvillager_professions$state();
-        if (passenger instanceof Parrot && state.mast()) {
-            cir.setReturnValue(ParrotPerch.attachment(boat, state));
+        if (BoatSlots.canPerch(boat, passenger)) {
+            cir.setReturnValue(DecorPerch.attachment(boat, state, passenger));
             return;
         }
         double offset = BoatSlots.seatOffset(boat, passenger);
@@ -101,12 +100,14 @@ public abstract class AbstractBoatMixin implements PlayerRideableJumping, BoatSe
         return original.call(movement, x, y, z);
     }
 
-    /** Both A/D steps change deltaRotation by one; for a cannon boat only by its share. */
+    /** Both A/D steps change deltaRotation by one; with a stern (-40 %) only by its share - the top speed is not touched. */
     @WrapOperation(method = "controlBoat", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/vehicle/boat/AbstractBoat;deltaRotation:F", opcode = Opcodes.PUTFIELD))
     private void smartvillager_professions$slowerTurn(AbstractBoat boat, float value, Operation<Void> original) {
-        if (smartvillager_professions$state().cannon()) {
+        BoatState state = smartvillager_professions$state();
+        if (state.stern()) {
+            float factor = BoatUpgrades.STERN_TURN_FACTOR;
             float old = this.deltaRotation;
-            original.call(boat, old + (value - old) * Cannon.TURN_FACTOR);
+            original.call(boat, old + (value - old) * factor);
         } else {
             original.call(boat, value);
         }
@@ -119,8 +120,8 @@ public abstract class AbstractBoatMixin implements PlayerRideableJumping, BoatSe
         if (state.cannon()) {
             Cannon.tickSoot(boat, state);
         }
-        if (state.mast() && boat.level() instanceof ServerLevel level) {
-            ParrotPerch.tick(boat, state, level);
+        if ((state.sail() || state.stern()) && boat.level() instanceof ServerLevel level) {
+            DecorPerch.tick(boat, state, level);
         }
     }
 

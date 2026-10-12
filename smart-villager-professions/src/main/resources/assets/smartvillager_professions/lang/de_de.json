@@ -203,12 +203,14 @@
   "entity.smartvillager_professions.villager_bobber": "Angelschwimmer",
   "item.smartvillager_professions.cannonball": "Kanonenkugel",
   "item.smartvillager_professions.boat_cannon": "Schiffskanone",
-  "item.smartvillager_professions.boat_mast": "Schiffsmast",
   "entity.smartvillager_professions.cannonball": "Kanonenkugel",
   "item.smartvillager_professions.boat_chest": "Bootskiste",
-  "item.smartvillager_professions.boat_mast.bare": "Kein Banner",
-  "item.smartvillager_professions.boat_mast.banner": "Segel: %s",
   "container.smartvillager_professions.boat_chest": "Bootskiste",
   "message.smartvillager_professions.boat_part_not_possible": "Das passt dort nicht hin",
-  "tag.item.minecraft.banners": "Beliebiges Banner"
+  "tag.item.minecraft.banners": "Beliebiges Banner",
+  "item.smartvillager_professions.boat_sail": "Bootssegel",
+  "item.smartvillager_professions.boat_sail.bare": "Kein Banner",
+  "item.smartvillager_professions.boat_sail.banner": "Banner: %s",
+  "item.smartvillager_professions.boat_stern": "Bootsheck",
+  "tag.item.minecraft.planks": "Beliebige Bretter"
 }

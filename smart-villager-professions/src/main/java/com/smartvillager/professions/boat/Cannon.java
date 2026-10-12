@@ -20,9 +20,8 @@ import net.minecraft.world.phys.Vec3;
  */
 public final class Cannon {
 
-    /** Speed and turn rate of a boat with a cannon: 30 % less. */
-    public static final float SPEED_FACTOR = 0.7F;
-    public static final float TURN_FACTOR = 0.7F;
+    /** Top speed of a boat with a cannon: 40 % less (the turn rate is not touched). */
+    public static final float SPEED_FACTOR = 0.6F;
     /** The jump bar charges at this share of the horse's speed (half as fast). */
     public static final float CHARGE_SPEED = 0.5F;
     /** A TNT explosion is 4.0; the cannonball's is 60 % of it, and never destroys blocks. */

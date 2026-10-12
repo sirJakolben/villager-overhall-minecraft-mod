@@ -3,7 +3,7 @@ package com.smartvillager.professions.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.smartvillager.professions.boat.BoatDrops;
-import com.smartvillager.professions.boat.ParrotPerch;
+import com.smartvillager.professions.boat.DecorPerch;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Two spots of Vanilla's vehicle handling, for boats only (Obsidian Fisherman.md, 2026-10-12): a destroyed boat drops its item and then everything built
- * into it (BoatDrops) - the one drop inside VehicleEntity.destroy gets that added; and a boat that takes damage throws the parrot out of its crow's nest.
+ * into it (BoatDrops) - the one drop inside VehicleEntity.destroy gets that added; and a boat that takes damage throws the animals out of its crow's nest and off its stern.
  * Every other vehicle and every plain boat is untouched.
  */
 @Mixin(VehicleEntity.class)
@@ -38,7 +38,7 @@ public abstract class VehicleEntityDropMixin {
     @Inject(method = "hurtServer", at = @At("TAIL"))
     private void smartvillager_professions$parrotFlees(ServerLevel level, DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof AbstractBoat boat && cir.getReturnValueZ()) {
-            ParrotPerch.eject(boat);
+            DecorPerch.eject(boat);
         }
     }
 }

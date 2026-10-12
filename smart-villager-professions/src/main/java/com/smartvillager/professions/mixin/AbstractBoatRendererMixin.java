@@ -39,7 +39,7 @@ public abstract class AbstractBoatRendererMixin {
     private void smartvillager_professions$extractUpgrades(AbstractBoat entity, BoatRenderState state, float partialTicks, CallbackInfo ci) {
         BoatState upgrades = BoatUpgrades.state(entity);
         ((BoatRenderStateExt) state).smartvillager_professions$setUpgrades(upgrades);
-        if (upgrades.filledSlots() > 0 || upgrades.mast()) {
+        if (upgrades.filledSlots() > 0 || !upgrades.decos().isEmpty()) {
             ((BoatRenderStateExt) state).smartvillager_professions$setOffsets(BoatSlots.offsets(entity));
         }
     }

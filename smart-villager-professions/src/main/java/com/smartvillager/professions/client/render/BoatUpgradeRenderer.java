@@ -2,7 +2,6 @@ package com.smartvillager.professions.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.boat.BoatParts;
 import com.smartvillager.professions.boat.BoatState;
@@ -24,6 +23,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -41,32 +41,32 @@ import java.util.List;
  */
 public final class BoatUpgradeRenderer {
 
-    private static final Identifier MAST_TEXTURE = texture("mast");
+    private static final Identifier SAIL_TEXTURE = texture("sail");
     private static final Identifier CANNON_TEXTURE = texture("cannon");
-    private static final int MAST_TEXTURE_ID = 1;
+    private static final Identifier RAILINGS_TEXTURE = texture("railings");
+    /** Texture ids of the model (BoatUpgradeModel): 0 is the boat's own wood. */
+    private static final int WOOD_TEXTURE_ID = 0;
+    private static final int SAIL_TEXTURE_ID = 1;
     private static final int CANNON_TEXTURE_ID = 2;
+    private static final int RAILINGS_TEXTURE_ID = 3;
 
     /** Vanilla's boat renders at 0.375 blocks (6 pixels) above the entity origin: user Y = 6 - boat Y. */
     private static final float HULL_OFFSET = 6.0F;
 
     private static final List<Quad> CANNON_QUADS = new ArrayList<>();
-    private static final List<Quad> MAST_QUADS = new ArrayList<>();
+    private static final List<Quad> SAIL_QUADS = new ArrayList<>();
+    private static final List<Quad> STERN_QUADS = new ArrayList<>();
 
     static {
         bake(BoatUpgradeModel.CANNON, CANNON_QUADS);
-        bake(BoatUpgradeModel.MAST, MAST_QUADS);
+        bake(BoatUpgradeModel.SAIL, SAIL_QUADS);
+        bake(BoatUpgradeModel.STERN, STERN_QUADS);
     }
 
-    /** The mast's flag cube in the model (BoatUpgradeModel is generated without it): group origin, group Y rotation, cube pivot, cube Z rotation, and where Vanilla's flag cube sits relative to it. */
-    private static final float[] FLAG_GROUP_ORIGIN = {14.0F, 61.0F, 0.0F};
-    private static final float FLAG_GROUP_ROTATION_Y = 90.0F;
-    private static final float[] FLAG_CUBE_PIVOT = {34.0F, 35.0F, 0.0F};
-    private static final float FLAG_CUBE_ROTATION_Z = -90.0F;
-    private static final float[] FLAG_CUBE_SHIFT = {38.0F, -9.0F, 0.0F};
-
-    /** Where the cannon and the mast sit in the model, along the boat in blocks: the front slot and the rear slot of a Vanilla boat. A boat with other slot positions shifts them. */
+    /** Where the cannon, the sail and the stern sit in the model, along the boat in blocks: the front slot (cannon) and the rear slot (sail, stern) of a Vanilla boat. A boat with other slot positions shifts them. */
     private static final double CANNON_MODEL_OFFSET = 0.2;
-    private static final double MAST_MODEL_OFFSET = -0.6;
+    private static final double SAIL_MODEL_OFFSET = -0.6;
+    private static final double STERN_MODEL_OFFSET = -0.6;
     /** Vanilla's chest boat draws its chest centred 0.5 blocks behind the middle (chest_bottom: 12 px wide at X = -8 px of the model). */
     private static final double CHEST_MODEL_OFFSET = -0.5;
 
@@ -76,8 +76,9 @@ public final class BoatUpgradeRenderer {
     private final ModelPart chestLid;
     private final ModelPart chestLock;
     private final Identifier chestTexture;
+    private final Identifier woodTexture;
 
-    /** boatTexture is the renderer's own (textures/entity/boat/oak.png); the chest uses the matching wood in textures/entity/chest_boat/. */
+    /** boatTexture is the renderer's own (textures/entity/boat/oak.png): the stern is made of that wood, and the chest uses the matching one in textures/entity/chest_boat/. */
     public BoatUpgradeRenderer(EntityModelSet modelSet, SpriteGetter sprites, Identifier boatTexture) {
         this.flagModel = new BannerFlagModel(modelSet.bakeLayer(ModelLayers.STANDING_BANNER_FLAG));
         this.sprites = sprites;
@@ -86,17 +87,18 @@ public final class BoatUpgradeRenderer {
         this.chestLid = chest.getChild("chest_lid");
         this.chestLock = chest.getChild("chest_lock");
         this.chestTexture = boatTexture.withPath(path -> path.replace("/boat/", "/chest_boat/"));
+        this.woodTexture = boatTexture;
     }
 
     /** Called inside the boat's pose; does nothing for a plain boat. */
     public void submit(BoatState state, double[] offsets, PoseStack poseStack, SubmitNodeCollector collector, int light, float ageInTicks) {
-        if (state.filledSlots() == 0 && !state.mast()) {
+        if (state.filledSlots() == 0 && state.decos().isEmpty()) {
             return;
         }
         if (state.cannon()) {
             poseStack.pushPose();
             alongBoat(poseStack, slotOffset(offsets, 0) - CANNON_MODEL_OFFSET);
-            submitQuads(CANNON_QUADS, CANNON_TEXTURE, CANNON_TEXTURE_ID, poseStack, collector, light);
+            submitQuads(CANNON_QUADS, poseStack, collector, light);
             poseStack.popPose();
         }
         for (int slot = 0; slot < state.slots().size(); slot++) {
@@ -110,13 +112,19 @@ public final class BoatUpgradeRenderer {
                 poseStack.popPose();
             }
         }
-        if (state.mast()) {
+        if (state.sail()) {
             poseStack.pushPose();
-            alongBoat(poseStack, slotOffset(offsets, state.mastSlot()) - MAST_MODEL_OFFSET);
-            submitQuads(MAST_QUADS, MAST_TEXTURE, MAST_TEXTURE_ID, poseStack, collector, light);
+            alongBoat(poseStack, slotOffset(offsets, state.sailSlot()) - SAIL_MODEL_OFFSET);
+            submitQuads(SAIL_QUADS, poseStack, collector, light);
             if (state.hasBanner()) {
-                submitSail(state.banner(), poseStack, collector, light, ageInTicks);
+                submitFlag(state.banner(), poseStack, collector, light, ageInTicks);
             }
+            poseStack.popPose();
+        }
+        if (state.stern()) {
+            poseStack.pushPose();
+            alongBoat(poseStack, slotOffset(offsets, offsets.length - 1) - STERN_MODEL_OFFSET);
+            submitQuads(STERN_QUADS, poseStack, collector, light);
             poseStack.popPose();
         }
     }
@@ -130,20 +138,33 @@ public final class BoatUpgradeRenderer {
         poseStack.translate((float) blocks, 0.0F, 0.0F);
     }
 
-    private void submitQuads(List<Quad> all, Identifier texture, int textureId, PoseStack poseStack, SubmitNodeCollector collector, int light) {
-        List<Quad> quads = all.stream().filter(quad -> quad.texture == textureId).toList();
-        if (quads.isEmpty()) {
-            return;
-        }
-        collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(texture), (pose, buffer) -> {
-            for (Quad quad : quads) {
-                quad.emit(pose, buffer, light);
-            }
-        });
+    private Identifier textureOf(int id) {
+        return switch (id) {
+            case SAIL_TEXTURE_ID -> SAIL_TEXTURE;
+            case CANNON_TEXTURE_ID -> CANNON_TEXTURE;
+            case RAILINGS_TEXTURE_ID -> RAILINGS_TEXTURE;
+            default -> woodTexture;
+        };
     }
 
-    /** Vanilla's flag model placed on the model's sail cube, then Vanilla's own base and pattern layers. */
-    private void submitSail(ItemStack banner, PoseStack poseStack, SubmitNodeCollector collector, int light, float ageInTicks) {
+    /** One draw call per texture the part uses. */
+    private void submitQuads(List<Quad> all, PoseStack poseStack, SubmitNodeCollector collector, int light) {
+        for (int id = WOOD_TEXTURE_ID; id <= RAILINGS_TEXTURE_ID; id++) {
+            int textureId = id;
+            List<Quad> quads = all.stream().filter(quad -> quad.texture == textureId).toList();
+            if (!quads.isEmpty()) {
+                collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(textureOf(textureId)), (pose, buffer) -> {
+                    for (Quad quad : quads) {
+                        quad.emit(pose, buffer, light);
+                    }
+                });
+            }
+        }
+    }
+
+    /** Vanilla's flag model placed on the model's flag cube (BoatUpgradeModel.FLAG), then Vanilla's own base and pattern layers. */
+    private void submitFlag(ItemStack banner, PoseStack poseStack, SubmitNodeCollector collector, int light, float ageInTicks) {
+        BoatUpgradeModel.Flag flag = BoatUpgradeModel.FLAG;
         DyeColor baseColor = banner.getItem() instanceof BannerItem item ? item.getColor() : DyeColor.WHITE;
         BannerPatternLayers patterns = banner.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
         float phase = (ageInTicks % 100.0F) / 100.0F;
@@ -151,19 +172,22 @@ public final class BoatUpgradeRenderer {
         poseStack.pushPose();
         poseStack.translate(0.0F, HULL_OFFSET / 16.0F, 0.0F);
         poseStack.scale(-1.0F / 16.0F, -1.0F / 16.0F, 1.0F / 16.0F);
-        poseStack.translate(FLAG_GROUP_ORIGIN[0], FLAG_GROUP_ORIGIN[1], FLAG_GROUP_ORIGIN[2]);
-        poseStack.mulPose(Axis.YP.rotationDegrees(FLAG_GROUP_ROTATION_Y));
-        poseStack.translate(-FLAG_GROUP_ORIGIN[0], -FLAG_GROUP_ORIGIN[1], -FLAG_GROUP_ORIGIN[2]);
-        poseStack.translate(FLAG_CUBE_PIVOT[0], FLAG_CUBE_PIVOT[1], FLAG_CUBE_PIVOT[2]);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(FLAG_CUBE_ROTATION_Z));
-        poseStack.translate(-FLAG_CUBE_PIVOT[0], -FLAG_CUBE_PIVOT[1], -FLAG_CUBE_PIVOT[2]);
+        pivot(poseStack, flag.groupOrigin(), flag.groupRotation());
+        pivot(poseStack, flag.cubeOrigin(), flag.cubeRotation());
         // Vanilla's flag (its own model space: Y down, X flipped) onto the cube, then back to the block units its model parts expect.
-        poseStack.translate(FLAG_CUBE_SHIFT[0], FLAG_CUBE_SHIFT[1], FLAG_CUBE_SHIFT[2]);
+        poseStack.translate(flag.shift()[0], flag.shift()[1], flag.shift()[2]);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.scale(16.0F, 16.0F, 16.0F);
         collector.submitModel(this.flagModel, phase, poseStack, light, OverlayTexture.NO_OVERLAY, -1, Sheets.BANNER_BASE, this.sprites, 0, null);
         BannerRenderer.submitPatterns(this.sprites, poseStack, collector, light, OverlayTexture.NO_OVERLAY, this.flagModel, phase, true, baseColor, patterns, null);
         poseStack.popPose();
+    }
+
+    /** Rotation (degrees, Blockbench order) about a pivot, in the model's own pixels. */
+    private static void pivot(PoseStack poseStack, float[] origin, float[] rotation) {
+        poseStack.translate(origin[0], origin[1], origin[2]);
+        poseStack.mulPose(new Quaternionf().rotationZYX((float) Math.toRadians(rotation[2]), (float) Math.toRadians(rotation[1]), (float) Math.toRadians(rotation[0])));
+        poseStack.translate(-origin[0], -origin[1], -origin[2]);
     }
 
     private static Identifier texture(String name) {

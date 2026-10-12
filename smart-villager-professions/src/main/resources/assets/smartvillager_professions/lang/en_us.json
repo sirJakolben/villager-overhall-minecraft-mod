@@ -169,12 +169,14 @@
   "entity.smartvillager_professions.villager_bobber": "Fishing Bobber",
   "item.smartvillager_professions.cannonball": "Cannonball",
   "item.smartvillager_professions.boat_cannon": "Boat Cannon",
-  "item.smartvillager_professions.boat_mast": "Boat Mast",
   "entity.smartvillager_professions.cannonball": "Cannonball",
   "item.smartvillager_professions.boat_chest": "Boat Chest",
-  "item.smartvillager_professions.boat_mast.bare": "No banner",
-  "item.smartvillager_professions.boat_mast.banner": "Sail: %s",
   "container.smartvillager_professions.boat_chest": "Boat Chest",
   "message.smartvillager_professions.boat_part_not_possible": "That does not fit there",
-  "tag.item.minecraft.banners": "Any banner"
+  "tag.item.minecraft.banners": "Any banner",
+  "item.smartvillager_professions.boat_sail": "Boat Sail",
+  "item.smartvillager_professions.boat_sail.bare": "No banner",
+  "item.smartvillager_professions.boat_sail.banner": "Banner: %s",
+  "item.smartvillager_professions.boat_stern": "Boat Stern",
+  "tag.item.minecraft.planks": "Any planks"
 }

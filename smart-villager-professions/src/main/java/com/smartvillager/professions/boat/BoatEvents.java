@@ -27,9 +27,9 @@ import java.util.Optional;
 
 /**
  * What the player does with a boat's parts (Obsidian Fisherman.md, 2026-10-12). Shift + right click with a part in the hand builds it into the slot nearest
- * the spot that was clicked (a cannon only into the front slot, the mast into any slot, as its decoration); Shift + right click with nothing to build opens the
- * chests. Without Shift: shears take the mast's banner off, a banner in the hand puts one on a bare mast. Only these uses are taken over; everything
- * else on a boat (boarding, a Vanilla chest boat's own chest) stays Vanilla. Plus the tooltip of a mast and the creative tab entries.
+ * the spot that was clicked (a cannon only into the front slot; the sail into any slot and the stern into the rear slot, as decorations - one of each kind); Shift + right click with nothing to build opens the
+ * chests. Without Shift: shears take the sail's banner off, a banner in the hand puts one on a bare mast. Only these uses are taken over; everything
+ * else on a boat (boarding, a Vanilla chest boat's own chest) stays Vanilla. Plus the tooltip of a sail and the creative tab entries.
  */
 @EventBusSubscriber(modid = SmartVillagerProfessionsMod.MODID)
 public final class BoatEvents {
@@ -54,7 +54,7 @@ public final class BoatEvents {
         Vec3 local = event.getLocalPos();
         double forward = BoatSlots.forwardOf(boat, local.x, local.z);
         int slot = switch (type.kind()) {
-            case DECO -> BoatSlots.nearest(boat, forward, s -> true);
+            case DECO -> type == BoatParts.STERN ? BoatSlots.seats(boat) - 1 : BoatSlots.nearest(boat, forward, s -> true);
             case SLOT -> type == BoatParts.CANNON ? 0 : BoatSlots.nearest(boat, forward, state::isFree);
         };
         if (!BoatSlots.canInstall(boat, state, type, slot)) {
@@ -66,7 +66,7 @@ public final class BoatEvents {
         }
         if (!boat.level().isClientSide()) {
             if (type.kind() == BoatPartType.Kind.DECO) {
-                BoatUpgrades.setState(boat, state.withDeco(Optional.of(new BoatState.Deco(type.id(), slot, held.copyWithCount(1)))));
+                BoatUpgrades.setState(boat, state.withDeco(new BoatState.Deco(type.id(), slot, held.copyWithCount(1))));
             } else {
                 BoatUpgrades.setState(boat, state.withPart(slot, type.id()));
                 BoatSlots.trimPassengers(boat);
@@ -96,7 +96,7 @@ public final class BoatEvents {
             }
             return;
         }
-        if (!state.mast()) {
+        if (!state.sail()) {
             return;
         }
 
@@ -134,20 +134,21 @@ public final class BoatEvents {
     @SubscribeEvent
     static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if (stack.is(FishermanItems.BOAT_MAST.get())) {
-            BoatUpgrades.Mast mast = stack.get(BoatUpgrades.MAST.get());
-            event.getToolTip().add(mast == null || mast.banner().isEmpty()
-                    ? Component.translatable("item.smartvillager_professions.boat_mast.bare").withStyle(ChatFormatting.GRAY)
-                    : Component.translatable("item.smartvillager_professions.boat_mast.banner", mast.banner().getHoverName()).withStyle(ChatFormatting.GRAY));
+        if (stack.is(FishermanItems.BOAT_SAIL.get())) {
+            BoatUpgrades.Sail sail = stack.get(BoatUpgrades.SAIL.get());
+            event.getToolTip().add(sail == null || sail.banner().isEmpty()
+                    ? Component.translatable("item.smartvillager_professions.boat_sail.bare").withStyle(ChatFormatting.GRAY)
+                    : Component.translatable("item.smartvillager_professions.boat_sail.banner", sail.banner().getHoverName()).withStyle(ChatFormatting.GRAY));
         }
     }
 
     @SubscribeEvent
     static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            ItemStack mast = new ItemStack(FishermanItems.BOAT_MAST.get());
-            mast.set(BoatUpgrades.MAST.get(), new BoatUpgrades.Mast(new ItemStack(Items.WHITE_BANNER)));
-            event.accept(mast);
+            ItemStack sail = new ItemStack(FishermanItems.BOAT_SAIL.get());
+            sail.set(BoatUpgrades.SAIL.get(), new BoatUpgrades.Sail(new ItemStack(Items.WHITE_BANNER)));
+            event.accept(sail);
+            event.accept(FishermanItems.BOAT_STERN.get());
         }
         if (event.getTabKey() == CreativeModeTabs.COMBAT) {
             event.accept(FishermanItems.CANNONBALL.get());

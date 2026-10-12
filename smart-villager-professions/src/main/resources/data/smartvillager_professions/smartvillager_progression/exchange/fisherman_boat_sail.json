@@ -16,11 +16,11 @@
     "tag": "minecraft:banners"
   },
   "base_output": {
-    "item": "smartvillager_professions:boat_mast",
+    "item": "smartvillager_professions:boat_sail",
     "count": 1
   },
   "max_output": {
-    "item": "smartvillager_professions:boat_mast",
+    "item": "smartvillager_professions:boat_sail",
     "count": 1
   },
   "base_max_uses": 2,
