@@ -15,12 +15,12 @@ Wie an diesem Projekt gearbeitet wird. Überblick: [README.md](README.md); Featu
 ## Vier Mods in einer Rangleiter
 
 Ein Gradle-Projekt. Die Villager-Mods bauen aufeinander auf wie eine Leiter (ganz unten Vanilla); Abhängigkeit nur nach unten, keine Stufe importiert etwas aus einer höheren:
-- **Smart Villager** `smart-villager/` (`smartvillager`): unterste Stufe, braucht nichts – Komfort und Welt für Vanilla-Villager: Claim und Anlocken per Smaragd, Handelsblock, Zombie-Villager (doppelt so viele, Heilen mit goldenem Essen), Brauständer mit Brennstoff. Progression und Professions docken über `api/SmartVillagerApi` an (stay-put-Gründe, Claim-Handler).
-- **Smart Villager Progression** `smart-villager-progression/` (`smartvillager_progression`): alles, was für jeden Villager gleich gilt – Leveln durch Arbeit, Sektionen, Handelsfenster, Restock, Glück, Arbeitsplätze. Ohne eigene Einträge laufen Berufe (auch fremder Mods) mit ihren Vanilla-Trades. Hängt von Smart Villager ab.
-- **Smart Villager Professions** `smart-villager-professions/` (`smartvillager_professions`): die designten Berufe samt Items, Blöcken, Stationen, Quests/Masteries/Passive. Hängt sich über `api/ExtensionHooks` in Progression ein; Progression importiert nie etwas daraus (fehlt ihm Berufswissen: neutraler Haken in `api/`).
+- **Smart Villager** `smart-villager/` (`smartvillager`): unterste Stufe, braucht nichts – Komfort und Welt für Vanilla-Villager: Claim und Anlocken per Smaragd, Handelsblock, Zombie-Villager (doppelt so viele, Heilen mit goldenem Essen), Brauständer mit Brennstoff. Progress und Professions docken über `api/SmartVillagerApi` an (stay-put-Gründe, Claim-Handler).
+- **Smart Villager Progress** `smart-villager-progress/` (`smartvillager_progress`): alles, was für jeden Villager gleich gilt – Leveln durch Arbeit, Sektionen, Handelsfenster, Restock, Glück, Arbeitsplätze. Ohne eigene Einträge laufen Berufe (auch fremder Mods) mit ihren Vanilla-Trades. Hängt von Smart Villager ab.
+- **Smart Villager Professions** `smart-villager-professions/` (`smartvillager_professions`): die designten Berufe samt Items, Blöcken, Stationen, Quests/Masteries/Passive. Hängt sich über `api/ExtensionHooks` in Progress ein; Progress importiert nie etwas daraus (fehlt ihm Berufswissen: neutraler Haken in `api/`).
 - **Smart Iron Golem** `smart-golem/` (`smartgolem`): Eisengolem-KI, hängt von nichts ab.
-- Einordnen: braucht es nichts vom Rest und ist Komfort/Welt für Vanilla-Villager → Smart Villager; gilt es für jeden Villager und braucht Zustand/Sektionen → Progression; gehört es zu einem designten Beruf → Professions; betrifft es den Golem → smart-golem.
-- Registry-IDs: `smartvillager`, `smartvillager_progression`, `smartvillager_professions`; Einträge von Professions liegen in Registries von Progression (`data/smartvillager_professions/smartvillager_progression/exchange/`). Die Umbenennung von 2026-10-11 hat alle IDs geändert: alte Weltstände sind nicht kompatibel.
+- Einordnen: braucht es nichts vom Rest und ist Komfort/Welt für Vanilla-Villager → Smart Villager; gilt es für jeden Villager und braucht Zustand/Sektionen → Progress; gehört es zu einem designten Beruf → Professions; betrifft es den Golem → smart-golem.
+- Registry-IDs: `smartvillager`, `smartvillager_progress`, `smartvillager_professions`; Einträge von Professions liegen in Registries von Progress (`data/smartvillager_professions/smartvillager_progress/exchange/`). Die Umbenennung von 2026-10-11 hat alle IDs geändert: alte Weltstände sind nicht kompatibel.
 
 ## Vanilla-Erhalt: so spät und so eng wie möglich
 
@@ -54,7 +54,7 @@ Erzählend wie am Whiteboard: vom Auslöser dem Ablauf folgend bis zum sichtbare
 
 **Repo** (wenige, gebündelte Dateien):
 - `README.md`: Master-Übersicht, ganz knapp – Bausteine, wo was liegt, Befehle, Grundentscheidungen/Fallen. Keine Feature-Details.
-- `docs/progression.md`, `docs/professions.md`, `docs/smart-golem.md`, `docs/smart-villager.md`: je Baustein Tabellen des Vorhandenen (Feature | Was | Wo im Code, nach Themen/Berufen sortiert) und **Geplant** (Offenes, Ideen, Risiken; in `trade-rework.md` unter jedem Beruf, nicht gesammelt). Hier – und nur hier – steht, wo etwas im Code liegt. Neues Feature → Zeile in „Vorhanden“ (und aus „Geplant“ streichen); Aufgeschobenes → sofort in „Geplant“.
+- `docs/progress.md`, `docs/professions.md`, `docs/smart-golem.md`, `docs/smart-villager.md`: je Baustein Tabellen des Vorhandenen (Feature | Was | Wo im Code, nach Themen/Berufen sortiert) und **Geplant** (Offenes, Ideen, Risiken; in `trade-rework.md` unter jedem Beruf, nicht gesammelt). Hier – und nur hier – steht, wo etwas im Code liegt. Neues Feature → Zeile in „Vorhanden“ (und aus „Geplant“ streichen); Aufgeschobenes → sofort in „Geplant“.
 - `CLAUDE.md`: diese Datei, in jeder Session geladen.
 - `assets/`: rohe Grafiken, nicht in `src`.
 

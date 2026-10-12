@@ -14,7 +14,7 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
 /**
  * The extension's own datapack registries. Trades and quests stay in the core's registries
- * (data/ModDataPackRegistries) - the extension only ships files for them, under data/smartvillager_professions/smartvillager_progression/.
+ * (data/ModDataPackRegistries) - the extension only ships files for them, under data/smartvillager_professions/smartvillager_progress/.
  */
 @EventBusSubscriber(modid = SmartVillagerProfessionsMod.MODID)
 public final class ProfessionsRegistries {

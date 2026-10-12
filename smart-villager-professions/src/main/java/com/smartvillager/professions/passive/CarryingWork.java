@@ -1,6 +1,6 @@
 package com.smartvillager.professions.passive;
 
-import com.smartvillager.progression.state.VillagerState;
+import com.smartvillager.progress.state.VillagerState;
 import com.smartvillager.professions.basket.BasketStationBlock;
 import com.smartvillager.professions.basket.BasketStationBlockEntity;
 import net.minecraft.core.BlockPos;

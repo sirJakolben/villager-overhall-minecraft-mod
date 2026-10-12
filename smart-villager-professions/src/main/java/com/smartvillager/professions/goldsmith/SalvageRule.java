@@ -8,7 +8,7 @@ import net.minecraft.world.item.Item;
 import java.util.Map;
 
 /**
- * One datapack file in data/smartvillager_progression/smartvillager_progression/salvage/ (Goldsmith passive, 2026-09-27): which
+ * One datapack file in data/smartvillager_progress/smartvillager_progress/salvage/ (Goldsmith passive, 2026-09-27): which
  * gear the salvage station takes and what it gives back. items maps each piece to its full yield of result
  * - the recipe amount (iron chestplate 8 ingots), or twice it in nuggets for chainmail. The station pays out
  * a share of that by passive rank and condition (SalvageStationBlockEntity.payout).

@@ -1,0 +1,13 @@
+{
+  "gui.smartvillager_progress.happiness.afraid": "Afraid: 0%% (normally %s%%)",
+  "gui.smartvillager_progress.happiness.hero": "Hero of the Village: 100%% (normally %s%%)",
+  "gui.smartvillager_progress.happiness": "Happiness: %s%%",
+  "gui.smartvillager_progress.meter.restock": "%s Restock: %s%%",
+  "gui.smartvillager_progress.meter.restock.none": "%s Restock: –",
+  "gui.smartvillager_progress.meter.progress": "%s: %s%%",
+  "section.smartvillager_progress.quests": "Quests",
+  "section.smartvillager_progress.trades": "Trades",
+  "gui.smartvillager_progress.upgrade.cost": "Next upgrade costs %s point(s) (available: %s)",
+  "gui.smartvillager_progress.upgrade.maxed": "Fully upgraded",
+  "item.smartvillager_progress.missing_trade": "Not designed yet"
+}

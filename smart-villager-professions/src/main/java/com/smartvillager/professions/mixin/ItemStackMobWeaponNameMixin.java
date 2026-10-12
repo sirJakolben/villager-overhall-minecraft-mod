@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 /**
  * A mob weapon's name, built when it is shown (Veteran.md, 2026-09-26): the mob's name plus the item's
- * own name, "Zombie Iron Sword" / "Zombie-Eisenschwert" (lang key item.smartvillager_progression.mob_weapon). Built
+ * own name, "Zombie Iron Sword" / "Zombie-Eisenschwert" (lang key item.smartvillager_progress.mob_weapon). Built
  * from the current item, so a smithing upgrade renames it on its own ("Zombie Diamond Sword"). Only the
  * item name changes - an anvil rename (custom name) still wins, as in Vanilla. Every other stack is
  * untouched.
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ItemStackMobWeaponNameMixin {
 
     @ModifyReturnValue(method = "getItemName", at = @At("RETURN"))
-    private Component smartvillager_progression$mobWeaponName(Component original) {
+    private Component smartvillager_progress$mobWeaponName(Component original) {
         ItemStack self = (ItemStack) (Object) this;
         return MobWeapons.mobOf(self)
                 .<Component>map(mob -> Component.translatable("item.smartvillager_professions.mob_weapon", mob.getDescription(), original))

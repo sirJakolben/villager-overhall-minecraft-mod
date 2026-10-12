@@ -31,7 +31,7 @@ import java.util.Optional;
  * - A workplace of another profession: a jobless villager - or one that never traded or earned XP -
  *   takes that profession, like Vanilla's own job switching. A villager with a settled job refuses.
  *
- * Works on Vanilla alone: its job site memory and point-of-interest ticket. Mods that give villagers more workplaces (Progression's stations)
+ * Works on Vanilla alone: its job site memory and point-of-interest ticket. Mods that give villagers more workplaces (Progress's stations)
  * add their bookkeeping through api/ClaimHandler.
  */
 public final class ManualClaims {

@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.smartvillager.progress.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "VillagerAccessor",
+    "VillagerTradingMixin",
+    "VillagerGossipMixin",
+    "VillagerGoalPackagesMixin",
+    "ItemCostMixin",
+    "VillagerWorkSoundMixin"
+  ],
+  "client": [],
+  "server": []
+}

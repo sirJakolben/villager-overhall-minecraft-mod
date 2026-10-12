@@ -1,6 +1,6 @@
 package com.smartvillager.professions.passive;
 
-import com.smartvillager.progression.state.VillagerState;
+import com.smartvillager.progress.state.VillagerState;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.villager.Villager;

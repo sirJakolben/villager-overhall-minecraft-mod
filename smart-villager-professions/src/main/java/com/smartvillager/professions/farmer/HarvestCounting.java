@@ -1,7 +1,7 @@
 package com.smartvillager.professions.farmer;
 
-import com.smartvillager.progression.state.VillagerState;
-import com.smartvillager.progression.state.VillagerStateAccess;
+import com.smartvillager.progress.state.VillagerState;
+import com.smartvillager.progress.state.VillagerStateAccess;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.passive.HarvestWork;
 import com.smartvillager.professions.passive.PassiveCounters;

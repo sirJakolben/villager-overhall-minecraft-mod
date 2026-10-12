@@ -1,7 +1,7 @@
 package com.smartvillager.professions.passive;
 
-import com.smartvillager.progression.state.VillagerState;
-import com.smartvillager.progression.state.VillagerStateAccess;
+import com.smartvillager.progress.state.VillagerState;
+import com.smartvillager.progress.state.VillagerStateAccess;
 import com.smartvillager.professions.fisherman.BiomeFish;
 import com.smartvillager.professions.fisherman.VillagerBobber;
 import net.minecraft.core.BlockPos;

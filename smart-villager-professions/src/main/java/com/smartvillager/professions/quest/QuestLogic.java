@@ -1,16 +1,16 @@
 package com.smartvillager.professions.quest;
 
-import com.smartvillager.progression.api.SectionDefinition;
-import com.smartvillager.progression.api.SectionLogic;
-import com.smartvillager.progression.api.SectionOffer;
-import com.smartvillager.progression.data.ItemAmount;
-import com.smartvillager.progression.data.ItemExchange;
-import com.smartvillager.progression.section.SectionEntries;
-import com.smartvillager.progression.state.VillagerState;
-import com.smartvillager.progression.state.VillagerStateAccess;
-import com.smartvillager.progression.trade.ExchangeScaling;
-import com.smartvillager.progression.trade.ResolvedExchange;
-import com.smartvillager.progression.work.DayClock;
+import com.smartvillager.progress.api.SectionDefinition;
+import com.smartvillager.progress.api.SectionLogic;
+import com.smartvillager.progress.api.SectionOffer;
+import com.smartvillager.progress.data.ItemAmount;
+import com.smartvillager.progress.data.ItemExchange;
+import com.smartvillager.progress.section.SectionEntries;
+import com.smartvillager.progress.state.VillagerState;
+import com.smartvillager.progress.state.VillagerStateAccess;
+import com.smartvillager.progress.trade.ExchangeScaling;
+import com.smartvillager.progress.trade.ResolvedExchange;
+import com.smartvillager.progress.work.DayClock;
 import it.unimi.dsi.fastutil.HashCommon;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;

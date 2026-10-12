@@ -1,9 +1,9 @@
 package com.smartvillager.professions;
 
-import com.smartvillager.progression.api.ExtensionHooks;
-import com.smartvillager.progression.api.SectionDefinition;
-import com.smartvillager.progression.api.StationDefinition;
-import com.smartvillager.progression.section.CoreSections;
+import com.smartvillager.progress.api.ExtensionHooks;
+import com.smartvillager.progress.api.SectionDefinition;
+import com.smartvillager.progress.api.StationDefinition;
+import com.smartvillager.progress.section.CoreSections;
 import com.smartvillager.professions.boat.BoatUpgrades;
 import com.smartvillager.professions.cartographer.CartographerBlocks;
 import com.smartvillager.professions.farmer.FarmerBlocks;
@@ -44,7 +44,7 @@ import java.util.function.Supplier;
 /**
  * What Professions plugs into the core (api/ExtensionHooks): its stations, its three sections and the
  * remaining hooks (mob weapons, XP-priced bottles, explorer maps). Together with the entries in
- * data/smartvillager_professions/smartvillager_progression/exchange/ this is what makes a profession "ours" - one with its own
+ * data/smartvillager_professions/smartvillager_progress/exchange/ this is what makes a profession "ours" - one with its own
  * entries or stations no longer runs on its Vanilla trades.
  *
  * - Quests: rotating easy/hard slots and a permanent quest (quest/QuestLogic), at the Vanilla job site like the basic trades (2026-10-11 - without it a villager had quests with no workplace), no meter shown.

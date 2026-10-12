@@ -1,6 +1,6 @@
 package com.smartvillager.professions.client.ui;
 
-import com.smartvillager.progression.client.ui.SectionClientLogic;
+import com.smartvillager.progress.client.ui.SectionClientLogic;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.ProfessionsSections;
 import com.smartvillager.professions.client.render.MoltenBubbleParticle;

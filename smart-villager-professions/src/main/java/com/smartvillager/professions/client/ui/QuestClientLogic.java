@@ -1,7 +1,7 @@
 package com.smartvillager.professions.client.ui;
 
-import com.smartvillager.progression.client.ui.SectionClientLogic;
-import com.smartvillager.progression.state.VillagerStateAccess;
+import com.smartvillager.progress.client.ui.SectionClientLogic;
+import com.smartvillager.progress.state.VillagerStateAccess;
 import com.smartvillager.professions.quest.QuestLogic;
 import com.smartvillager.professions.quest.QuestSlots;
 import com.smartvillager.professions.quest.QuestState;

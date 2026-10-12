@@ -22,7 +22,7 @@ public abstract class EnchantmentMenuMixin {
             method = "getEnchantmentList",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Ljava/lang/Object;)Z")
     )
-    private boolean smartvillager_progression$cutLikeABook(ItemStack stack, Object item, Operation<Boolean> original) {
+    private boolean smartvillager_progress$cutLikeABook(ItemStack stack, Object item, Operation<Boolean> original) {
         return original.call(stack, item) || stack.getItem() instanceof SpecialBookItem;
     }
 }

@@ -10,7 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import java.util.Optional;
 
 /**
- * One datapack file in data/smartvillager_progression/smartvillager_progression/mob_weapon/: a hostile mob whose held weapon
+ * One datapack file in data/smartvillager_progress/smartvillager_progress/mob_weapon/: a hostile mob whose held weapon
  * becomes a mob weapon (Veteran.md, 2026-09-26). effect (optional) is what the mob itself gives you on
  * a hit, with its Vanilla duration in ticks - the weapon passes it on at MobWeapons.EFFECT_CHANCE with
  * MobWeapons.EFFECT_DURATION_FACTOR of that duration. cooldown_reduction (optional, e.g. 0.2 = 20 % shorter

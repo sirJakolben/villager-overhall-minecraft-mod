@@ -19,7 +19,7 @@ public abstract class ThrownExperienceBottleMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ExperienceOrb;awardWithDirection(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;I)V"),
             index = 3
     )
-    private int smartvillager_progression$fixedBottleXp(int vanillaXp) {
+    private int smartvillager_progress$fixedBottleXp(int vanillaXp) {
         return ExperienceBottles.XP_POINTS;
     }
 }

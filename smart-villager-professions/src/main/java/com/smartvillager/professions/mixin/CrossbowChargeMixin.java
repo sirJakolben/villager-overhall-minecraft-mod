@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class CrossbowChargeMixin {
 
     @ModifyReturnValue(method = "getChargeDuration", at = @At("RETURN"))
-    private static int smartvillager_progression$fasterMobCrossbow(int duration, ItemStack crossbow, LivingEntity user) {
+    private static int smartvillager_progress$fasterMobCrossbow(int duration, ItemStack crossbow, LivingEntity user) {
         float reduction = MobWeapons.mobOf(crossbow).flatMap(MobWeapons::definition)
                 .map(MobWeaponDefinition::chargeReduction).orElse(0.0F);
         return reduction > 0.0F && reduction < 1.0F ? Math.max(1, Math.round(duration * (1.0F - reduction))) : duration;

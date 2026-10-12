@@ -20,13 +20,13 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * A lore scroll (Obsidian Librarian.md, "Lore-Scrolls"): one item per origin and tier, found in structure
- * chests and some mob/block drops (data/smartvillager_progression/loot_modifiers, via NeoForge's global loot
+ * chests and some mob/block drops (data/smartvillager_progress/loot_modifiers, via NeoForge's global loot
  * modifiers - no code) and handed in for Librarian quests.
  *
  * Right-click opens a book window with a lore fragment (client/ui/LoreScrollScreens). Which fragment is
  * fixed per scroll: the first read picks one of FRAGMENTS_PER_SCROLL at random on the server and stores
  * it in LORE_FRAGMENT, so the same scroll always shows the same text. The scroll is not used up.
- * Fragment texts are translation keys lore.smartvillager_progression.<origin>_<tier>.<n> in the lang files.
+ * Fragment texts are translation keys lore.smartvillager_progress.<origin>_<tier>.<n> in the lang files.
  */
 public class LoreScrollItem extends Item {
 

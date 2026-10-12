@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class SmithingUpgradeDurabilityMixin {
 
     @Inject(method = "assemble", at = @At("RETURN"))
-    private void smartvillager_progression$relativeDurability(SmithingRecipeInput input, CallbackInfoReturnable<ItemStack> cir) {
+    private void smartvillager_progress$relativeDurability(SmithingRecipeInput input, CallbackInfoReturnable<ItemStack> cir) {
         if (UpgradeTemplates.isOurs(input.template())) {
             UpgradeTemplates.rescaleDurability(input.base(), cir.getReturnValue());
         }

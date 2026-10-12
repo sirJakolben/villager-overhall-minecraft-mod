@@ -1,6 +1,6 @@
 package com.smartvillager.professions.client.ui;
 
-import com.smartvillager.progression.client.ui.VillagerGuiTextures;
+import com.smartvillager.progress.client.ui.VillagerGuiTextures;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;

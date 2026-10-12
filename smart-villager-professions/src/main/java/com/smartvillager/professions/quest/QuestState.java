@@ -3,7 +3,7 @@ package com.smartvillager.professions.quest;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.smartvillager.progression.trade.VillagerOffers;
+import com.smartvillager.progress.trade.VillagerOffers;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

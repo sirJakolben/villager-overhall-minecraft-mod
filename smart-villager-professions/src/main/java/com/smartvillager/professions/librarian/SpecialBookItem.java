@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 /**
  * Weapon / ranged / tool / armor book (Obsidian Librarian.md, "Master Trades"): enchanted at the enchanting table
  * like a plain book, but the table only rolls enchantments from the book's enchantment tag
- * (data/smartvillager_progression/tags/enchantment/*_book.json - editable without code). The result is a Vanilla
+ * (data/smartvillager_progress/tags/enchantment/*_book.json - editable without code). The result is a Vanilla
  * enchanted book (decided 2026-09-26), so anvil, grindstone and the enchantment station treat it as usual.
  *
  * Both hooks are NeoForge item extensions the enchanting table calls itself - no mixin: isPrimaryItemFor

@@ -1,7 +1,7 @@
 package com.smartvillager.professions.librarian;
 
-import com.smartvillager.progression.progression.ProgressionService;
-import com.smartvillager.progression.state.VillagerStateAccess;
+import com.smartvillager.progress.progression.ProgressionService;
+import com.smartvillager.progress.state.VillagerStateAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

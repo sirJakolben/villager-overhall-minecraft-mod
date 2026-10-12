@@ -17,5 +17,5 @@ import java.util.function.Supplier;
 public interface ChunkGeneratorAccessor {
 
     @Accessor("featuresPerStep")
-    Supplier<List<FeatureSorter.StepFeatureData>> smartvillager_progression$featuresPerStep();
+    Supplier<List<FeatureSorter.StepFeatureData>> smartvillager_progress$featuresPerStep();
 }

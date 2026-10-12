@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Opens Vanilla's book window (the one a written book uses) for a lore fragment: a single page with
- * the fragment text, lore.smartvillager_progression.<origin>_<tier>.<fragment> in the lang files.
+ * the fragment text, lore.smartvillager_progress.<origin>_<tier>.<fragment> in the lang files.
  */
 public final class LoreScrollScreens {
 

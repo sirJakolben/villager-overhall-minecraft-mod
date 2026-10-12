@@ -1,13 +1,13 @@
 # Smart Villager (`smart-villager/`, `smartvillager`)
 
-Unterste Stufe der Leiter (Vanilla → Smart Villager → Progression → Professions): kleine Spieler-Werkzeuge und Welt-Änderungen für Vanilla-Villager, die **nichts anderes** brauchen. Progression und Professions bauen darauf auf und docken über `api/SmartVillagerApi` an; Smart Villager importiert nie etwas daraus. Zahlen: Obsidian `02_Tweak-Werte`.
+Unterste Stufe der Leiter (Vanilla → Smart Villager → Progress → Professions): kleine Spieler-Werkzeuge und Welt-Änderungen für Vanilla-Villager, die **nichts anderes** brauchen. Progress und Professions bauen darauf auf und docken über `api/SmartVillagerApi` an; Smart Villager importiert nie etwas daraus. Zahlen: Obsidian `02_Tweak-Werte`.
 Pfade: Java `smart-villager/src/main/java/com/smartvillager/base/`, Daten `smart-villager/src/main/resources/`.
 
 ## Vorhanden
 
 | Feature | Was | Wo |
 |---|---|---|
-| Claim per Smaragd | Smaragd-Rechtsklick wählt den Villager, Klick auf einen Arbeitsblock weist ihn zu; ein vorheriger Besitzer wird verdrängt und behält Level, Punkte, Beruf. Läuft auf Vanillas Job-Site; Progression meldet sich als `ClaimHandler` für seine Stationen an | `claim/EmeraldClaimTool`, `ManualClaims`, `api/ClaimHandler` |
+| Claim per Smaragd | Smaragd-Rechtsklick wählt den Villager, Klick auf einen Arbeitsblock weist ihn zu; ein vorheriger Besitzer wird verdrängt und behält Level, Punkte, Beruf. Läuft auf Vanillas Job-Site; Progress meldet sich als `ClaimHandler` für seine Stationen an | `claim/EmeraldClaimTool`, `ManualClaims`, `api/ClaimHandler` |
 | Anlocken mit Smaragd | Villager folgt dem Smaragd in der Hand wie die Kuh dem Weizen (Reichweite 10) | `lure/EmeraldLure`, `mixin/VillagerLureMixin` |
 | Handelsblock | ruft den Villager per Redstone; Rechtsklick = kurzer Besuch; beim Setzen zum Spieler gedreht; max. 48 Blöcke vom Arbeitsplatz; Panik, Raid und Schlaf haben Vorrang; kein Teleport. Position als eigenes Attachment am Villager, übersteht Zombie-Umwandlung; kaputter oder zu weit entfernter Block wird vergessen | `trading/TradingBlock`, `TradingBlocks`, `TradingBlockCall`, `GoToTradingBlock`, `TradingBlockLinks`, `TradingBlockUpkeep`, Rezept `data/smartvillager/recipe/trading_block.json` |
 | Pause der Vanilla-Wege | Arbeits- und Glockenwege pausieren beim Anruf oder wenn eine Mod „bleib stehen“ meldet (`registerStayPut`, `registerStayPutWhileWorking`) | `trading/PausedWhileAway`, `mixin/VillagerGoalPackagesMixin`, `api/SmartVillagerApi` |

@@ -1,7 +1,7 @@
 package com.smartvillager.professions.trade;
 
 import com.mojang.serialization.Codec;
-import com.smartvillager.progression.api.ResultOverride.Output;
+import com.smartvillager.progress.api.ResultOverride.Output;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.explore.FeatureLocator;
 import com.smartvillager.professions.explore.OreVeinLocator;

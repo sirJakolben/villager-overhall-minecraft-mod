@@ -1,7 +1,7 @@
 # Smart Villager Professions – Extension (`smart-villager-professions/`, `smartvillager_professions`)
 
-Die designten Berufe mit eigenen Trades, Items, Blöcken und Stationen; braucht Progression ([progression.md](progression.md)) und hängt sich über `api/ExtensionHooks` ein. Zahlen und Trade-Tabellen: Obsidian `<Beruf>.md`. Texturen: Obsidian `03_Fehlende Texturen und Modelle`.
-Pfade: Java `smart-villager-professions/src/main/java/com/smartvillager/professions/`, Daten `smart-villager-professions/src/main/resources/`. Einstieg: `SmartVillagerProfessionsMod`, `ProfessionsSections` (Stationen, Sektionen, Haken), `ProfessionsRegistries` (`crushing`, `salvage`, `mob_weapon`, `biome_fish`, `map_pool`). Einträge: `data/smartvillager_professions/smartvillager_progression/exchange/<beruf>_*.json`. Texte: `assets/smartvillager_professions/lang/de_de.json`, `en_us.json`.
+Die designten Berufe mit eigenen Trades, Items, Blöcken und Stationen; braucht Progress ([progress.md](progress.md)) und hängt sich über `api/ExtensionHooks` ein. Zahlen und Trade-Tabellen: Obsidian `<Beruf>.md`. Texturen: Obsidian `03_Fehlende Texturen und Modelle`.
+Pfade: Java `smart-villager-professions/src/main/java/com/smartvillager/professions/`, Daten `smart-villager-professions/src/main/resources/`. Einstieg: `SmartVillagerProfessionsMod`, `ProfessionsSections` (Stationen, Sektionen, Haken), `ProfessionsRegistries` (`crushing`, `salvage`, `mob_weapon`, `biome_fish`, `map_pool`). Einträge: `data/smartvillager_professions/smartvillager_progress/exchange/<beruf>_*.json`. Texte: `assets/smartvillager_professions/lang/de_de.json`, `en_us.json`.
 Aufbau: je Bereich/Beruf eine Tabelle der vorhandenen Features (Feature | Was | Wo im Code), darunter **Geplant**.
 
 ## Gemeinsame Systeme
@@ -18,7 +18,7 @@ Aufbau: je Bereich/Beruf eine Tabelle der vorhandenen Features (Feature | Was | 
 | Stations-Partikel | Blockmodell-`particle` = Vanilla-Workstation des Berufs (lectern_sides, stonecutter_bottom, smithing_table_front, grindstone_side, cartography_table_side3, blast_furnace_front, composter_side, barrel_side) | `models/block/*.json` |
 
 **Geplant**
-- Kern-API-Ausbau, der die Extension betrifft (Components statt `enchantment`/`mob`, `TradeRequirement` statt XP-Hook): [progression.md](progression.md)
+- Kern-API-Ausbau, der die Extension betrifft (Components statt `enchantment`/`mob`, `TradeRequirement` statt XP-Hook): [progress.md](progress.md)
 - Alle Features sind im Spiel noch ungetestet – Tests: Obsidian `04_Testliste`
 
 ## Librarian
@@ -80,10 +80,11 @@ Aufbau: je Bereich/Beruf eine Tabelle der vorhandenen Features (Feature | Was | 
 |---|---|---|
 | Kartenstation (Master) | vier Masteries: Abenteuer-, Herausforderungs-, Höhlen-, Netherkarte | `cartographer/CartographerBlocks`, `CartographerItems`, `models/item/adventure_map.json`, `challenge_map.json` |
 | Abenteuerstation (Passive) | 3 + 3; zeichnet Abenteuerkarten zu Strukturen | siehe Kartenzeichnen |
+| Quests | Pool wie beim Librarian (ohne Schilder und Laternen) plus Tonscherben und Kompasse; Dauer-Quest Papier | `exchange/cartographer_easy_*`, `cartographer_hard_*`, `cartographer_permanent_paper.json` |
 | Höhlen- / Netherkarte | leere Karte, Rechtsklick in einer Ebene → gefüllte Karte, an die Ebene gebunden; 32 Strahlen, Schattierung, Pixel bleiben gespeichert; Nether in vier Ebenen; Rauszoomen mit Papier | `cavemap/CaveMapKind`, `CaveLayer`, `CaveMapDrawer`, `CaveMapMemory`, `EmptyCaveMapItem`, `CaveMapItem`, `CaveMapItems`, `mapping/test/MapGameTests` |
 
 **Geplant**
-- Basic Trades Rang 0–3 (Idee: Fernrohr), Quests (Idee: Tonscherben), Modelle/Texturen, eigenes Symbol für gefüllte Karten
+- Basic Trades Rang 0–3 (Idee: Fernrohr), Modelle/Texturen, eigenes Symbol für gefüllte Karten
 - Höhlen-/Netherkarte im Spiel prüfen (Reichweite, Ebenen, Optik)
 
 ## Goldsmith (Armorer)
@@ -116,12 +117,18 @@ Aufbau: je Bereich/Beruf eine Tabelle der vorhandenen Features (Feature | Was | 
 |---|---|---|
 | Fischkorbstation (Passive) | er fischt wirklich: freie Sicht, fester Fischplatz, Angel + Schwimmer, Fang = Einheit; 10 Fänge/Tag (Rang 0) bis 30 (Rang 6); am Korb ein Fisch je Einheit | `fisherman/FishermanBlocks`, `VillagerBobber`, `FishermanEntities`, `passive/FishingWork`, `client/render/VillagerBobberRenderer` |
 | Biom-Fische | acht Fische je Biomgruppe (Datapack `biome_fish`); Spieler fängt sie mit 8 % | `fisherman/BiomeFish`, `FishermanItems`, `BiomeFishModifier`, `biome_fish/*.json`, `tags/worldgen/biome/fish_*.json`, `loot_modifiers/biome_fish.json` |
-| Werftstation | Master-Station ohne Einträge | `fisherman/FishermanBlocks` |
+| Werftstation | Master-Station; Masteries: Kanonen-Umbau (Rang 1), Mast-Umbau (Rang 2), Kanonenkugeln (Rang 3) | `fisherman/FishermanBlocks`, `exchange/fisherman_cannon_boat`, `_boat_mast`, `_cannonball` |
+| Boots-Teile | Die Werftstation verkauft Teile als Items (Bootskiste, Bootssegel, Bootsheck, Schiffskanone, Kanonenkugel). Shift + Rechtsklick auf ein Boot baut ein Teil in den angeklickten Slot (Slot = Sitzplatz); Kanone nur vorn; Segel und Heck sind Dekos an einem Slot (Heck nur hinten), von jeder Art eine, kombinierbar. Zerstört: alles droppt (Teile, Mast mit Banner, Kisteninhalt). Slot-Anzahl/Lage kommt vom Boot (Mod-Boote über `BoatSlots.registerLayout`), Teil-Arten anmeldbar (`BoatParts.register`) | `boat/BoatState`, `BoatSlots`, `BoatParts`, `BoatPartType`, `BoatEvents`, `BoatDrops`, `BoatUpgrades`, `mixin/VehicleEntityDropMixin`; Daten `exchange/fisherman_boat_*`, `fisherman_cannonball` |
+| Bootskiste | normale Kiste im Boot (Doppelkiste-Modell bei zwei nebeneinander); 27 Plätze je Kiste, zwei Kisten = Doppelkiste (54); Shift + Rechtsklick mit leerer Hand öffnet; Vanilla-Chest-Boats laufen wie bisher, ihre Rezepte sind abgeschaltet | `boat/BoatInventory`, `data/minecraft/recipe/*_chest_boat.json` (Bedingung false) |
+| Kanone am Boot | belegt den vordersten Slot (ein Sitz weniger), 40 % weniger Höchstgeschwindigkeit, Space-Balken (halbe Ladegeschwindigkeit) wie Pferdesprung, Schuss in Bootsrichtung 10° über dem Horizont (nur bei über 50 % Leiste), braucht Kanonenkugel (sonst dumpfes Geräusch), Mündungsfeuer, 2 s Ruß, Explosion 60 % TNT ohne Blockschaden | `boat/Cannon`, `CannonballEntity`, `mixin/AbstractBoatMixin`, `LocalPlayerCannonChargeMixin` |
+| Bootssegel | Der Mast trägt das bezahlte Banner als Segel (Muster sichtbar); Shift + Rechtsklick mit der Schere nimmt es ab, Shift + Rechtsklick mit einem Banner setzt ein neues auf den kahlen Mast | `boat/BoatEvents`, `BoatUpgrades.transform`, `client/render/BoatUpgradeRenderer`, `BoatUpgradeModel` (generiert: `tools/bbmodel_to_boat_model.js`), `mixin/AbstractBoatRendererMixin`, `BoatRenderStateMixin` |
+| Bootsheck | Deck hinten (Geländer, Holzart des Boots), 40 % weniger Drehgeschwindigkeit bei gleicher Höchstgeschwindigkeit, Hitbox 50 % länger nach hinten (`boat/BoatHitbox`, `mixin/EntityBoatHitboxMixin`); ein zahmes Haustier (Katze/Hund) des sitzenden Spielers sitzt oben | `boat/BoatEvents`, `DecorPerch`, `BoatUpgradeRenderer` |
+| Tiere auf den Dekos | Sitzt ein Spieler im Boot, fliegt sein freier Papagei auf den Ausguck des Segels (ein Papagei auf der Schulter wird beim Einsteigen direkt dorthin gesetzt, `mixin/ServerPlayerShoulderAccessor`), zahme Katzen/Hunde laufen aufs Heck-Deck und sitzen (kein Sitzplatz; 12 Blöcke Umkreis); Schaden am Boot oder Zerstören wirft sie raus (Aussteigen nicht) | `boat/DecorPerch`, `BoatSlots.canPerch` |
 
 **Geplant**
 - Basic Trades Rang 2–3 + 5–6, Quests (Ankauf Lore-Schriftrollen aus dem Meer), permanenter Trade Smaragdfisch, Balancing, Grafiken
 - Eigenschaften der Biom-Fische
-- Werftstation-Masteries (Boote am 2026-10-07 entfernt, Konzept folgt)
+- Boote: Platzhalter-Items (Kanone, Mast, Kiste), Papagei-Flug und alle Positionen im Spiel prüfen; weitere Deko neben dem Mast; Schiffs-Layouts anderer Mods (nur über die Schnittstelle)
 
 ## Noch nicht designt (Ideen in Obsidian)
 - **Butcher:** Nutztier-Zucht (Passive: züchtet selbst, Futter in der Station, beschleunigt Babys); Master: Biom-Fisch-Gerichte; Umbenennung geplant

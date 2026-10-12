@@ -2,8 +2,8 @@ package com.smartvillager.professions.quest;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.smartvillager.progression.api.ExchangeExtensionType;
-import com.smartvillager.progression.data.ItemExchange;
+import com.smartvillager.progress.api.ExchangeExtensionType;
+import com.smartvillager.progress.data.ItemExchange;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

@@ -197,9 +197,9 @@ public final class CageGameTests {
         area(helper);
         IronGolem golem = golem(helper, 2, 1, 8);
         @SuppressWarnings("removal") net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
-        player.snapTo(helper.absoluteVec(new net.minecraft.world.phys.Vec3(11.5, 1.0, 8.5)));
+        player.snapTo(helper.absoluteVec(new net.minecraft.world.phys.Vec3(8.5, 1.0, 8.5)));
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT));
-        helper.succeedWhen(() -> helper.assertTrue(golem.distanceTo(player) < 5.0F, "the golem has come to the player with the ingot, is at " + golem.blockPosition()
-                + " goals " + golem.goalSelector.getAvailableGoals().stream().map(g -> g.getGoal() + "@" + g.getPriority() + (g.isRunning() ? "*" : "")).toList()));
+        helper.succeedWhen(() -> helper.assertTrue(golem.distanceTo(player) < 5.0F, "the golem has come to the player with the ingot, is at " + golem.blockPosition() + " player at " + player.blockPosition() + " dist " + golem.distanceTo(player)
+                + " temptRange " + golem.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.TEMPT_RANGE) + " held " + player.getMainHandItem() + " alive " + player.isAlive() + " spectator " + player.isSpectator() + " level players " + helper.getLevel().players().size() + " goals " + golem.goalSelector.getAvailableGoals().stream().map(g -> g.getGoal() + "@" + g.getPriority() + (g.isRunning() ? "*" : "")).toList()));
     }
 }

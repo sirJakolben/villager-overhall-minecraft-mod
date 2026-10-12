@@ -11,6 +11,6 @@ plugins {
 rootProject.name = 'improved-villagers'
 
 include 'smart-villager'
-include 'smart-villager-progression'
+include 'smart-villager-progress'
 include 'smart-villager-professions'
 include 'smart-golem'

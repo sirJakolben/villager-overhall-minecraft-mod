@@ -58,7 +58,7 @@ public final class FeatureLocator {
     public static Optional<BlockPos> findNearest(ServerLevel level, List<ResourceKey<PlacedFeature>> keys, BlockPos origin, int radiusChunks,
                                                  Optional<Block> verifyBlock) {
         ChunkGenerator generator = level.getChunkSource().getGenerator();
-        List<FeatureSorter.StepFeatureData> steps = ((ChunkGeneratorAccessor) generator).smartvillager_progression$featuresPerStep().get();
+        List<FeatureSorter.StepFeatureData> steps = ((ChunkGeneratorAccessor) generator).smartvillager_progress$featuresPerStep().get();
         List<Placed> placed = new ArrayList<>();
         for (ResourceKey<PlacedFeature> key : keys) {
             level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE).get(key)

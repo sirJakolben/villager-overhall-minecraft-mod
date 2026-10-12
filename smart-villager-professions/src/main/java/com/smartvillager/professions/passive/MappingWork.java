@@ -1,6 +1,6 @@
 package com.smartvillager.professions.passive;
 
-import com.smartvillager.progression.state.VillagerState;
+import com.smartvillager.progress.state.VillagerState;
 import com.smartvillager.professions.mapping.MapPool;
 import com.smartvillager.professions.mapping.MapStationBlock;
 import com.smartvillager.professions.mapping.MapStationBlockEntity;

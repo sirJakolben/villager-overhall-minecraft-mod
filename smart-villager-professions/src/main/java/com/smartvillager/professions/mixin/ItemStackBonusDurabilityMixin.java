@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ItemStackBonusDurabilityMixin {
 
     @ModifyReturnValue(method = "processDurabilityChange(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;)I", at = @At("RETURN"))
-    private int smartvillager_progression$paddingFirst(int damage) {
+    private int smartvillager_progress$paddingFirst(int damage) {
         return BonusDurability.absorb((ItemStack) (Object) this, damage);
     }
 }

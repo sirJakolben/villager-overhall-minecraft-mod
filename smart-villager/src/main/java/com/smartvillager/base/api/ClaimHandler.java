@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 /**
  * How a mod that gives villagers more than Vanilla's one job site takes part in the emerald claim (claim/ManualClaims). The claim itself
- * always handles Vanilla's job site memory and point-of-interest ticket; a handler adds its own bookkeeping on top (Progression: the
+ * always handles Vanilla's job site memory and point-of-interest ticket; a handler adds its own bookkeeping on top (Progress: the
  * villager's stations). Register with SmartVillagerApi.registerClaimHandler.
  */
 public interface ClaimHandler {

@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * One datapack file of the crushing station's hand-made rules ("Zerkleinern" in Mason.md), in
- * data/smartvillager_progression/smartvillager_progression/crushing/: each pair turns 1 input into 1 output (all 1:1,
+ * data/smartvillager_progress/smartvillager_progress/crushing/: each pair turns 1 input into 1 output (all 1:1,
  * decided 2026-09-26). Everything that is a stonecutter variant needs no rule - CrushingRecipes derives
  * those from the stonecutter recipes. A rule here wins over a derived one for the same input.
  *

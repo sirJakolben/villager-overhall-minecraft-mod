@@ -1,10 +1,10 @@
 package com.smartvillager.professions.passive;
 
-import com.smartvillager.progression.state.VillagerState;
-import com.smartvillager.progression.state.VillagerStateAccess;
+import com.smartvillager.progress.state.VillagerState;
+import com.smartvillager.progress.state.VillagerStateAccess;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.ProfessionsSections;
-import com.smartvillager.progression.work.RestockService;
+import com.smartvillager.progress.work.RestockService;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;

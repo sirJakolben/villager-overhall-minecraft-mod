@@ -1,6 +1,6 @@
 package com.smartvillager.professions.passive;
 
-import com.smartvillager.progression.state.VillagerState;
+import com.smartvillager.progress.state.VillagerState;
 import com.smartvillager.professions.librarian.EnchantmentStationBlock;
 import com.smartvillager.professions.librarian.EnchantmentStationBlockEntity;
 import net.minecraft.core.BlockPos;

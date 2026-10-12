@@ -3,7 +3,7 @@ package com.smartvillager.professions.passive;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
-import com.smartvillager.progression.state.VillagerStateAccess;
+import com.smartvillager.progress.state.VillagerStateAccess;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;

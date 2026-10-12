@@ -1,9 +1,9 @@
 package com.smartvillager.professions.passive;
 
-import com.smartvillager.progression.state.VillagerState;
+import com.smartvillager.progress.state.VillagerState;
 import com.smartvillager.professions.mason.CrushingStationBlock;
 import com.smartvillager.professions.mason.CrushingStationBlockEntity;
-import com.smartvillager.progression.work.VillagerWorkScan;
+import com.smartvillager.progress.work.VillagerWorkScan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;

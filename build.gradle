@@ -1,4 +1,4 @@
-// Mods in one build: smart-villager-progression/ is Smart Villager Progression, smart-villager-professions/ the Professions
+// Mods in one build: smart-villager-progress/ is Smart Villager Progress, smart-villager-professions/ the Professions
 // extension that depends on it. Each subproject has its own build.gradle.
 
 tasks.named('wrapper', Wrapper).configure {

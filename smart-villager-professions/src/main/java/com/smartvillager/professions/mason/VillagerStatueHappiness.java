@@ -1,6 +1,6 @@
 package com.smartvillager.professions.mason;
 
-import com.smartvillager.progression.api.HappinessElement;
+import com.smartvillager.progress.api.HappinessElement;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;

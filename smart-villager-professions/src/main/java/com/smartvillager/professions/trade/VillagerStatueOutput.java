@@ -1,8 +1,8 @@
 package com.smartvillager.professions.trade;
 
 import com.mojang.serialization.MapCodec;
-import com.smartvillager.progression.api.ExchangeExtensionType;
-import com.smartvillager.progression.api.ResultOverride;
+import com.smartvillager.progress.api.ExchangeExtensionType;
+import com.smartvillager.progress.api.ResultOverride;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.mason.MasonItems;
 import net.minecraft.resources.Identifier;

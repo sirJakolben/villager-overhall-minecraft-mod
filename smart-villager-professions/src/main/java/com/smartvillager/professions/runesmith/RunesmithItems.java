@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * The Runesmith's items: its two stations and the upgrade template (Runesmith.md). One template for every
  * tier (2026-09-27, before: four): it is a plain item - what it does comes from Vanilla smithing_transform
- * recipes in data/smartvillager_progression/recipe/*_smithing.json, exactly like the netherite upgrade: template +
+ * recipes in data/smartvillager_progress/recipe/*_smithing.json, exactly like the netherite upgrade: template +
  * item + one BLOCK of the next tier's material gives the next tier, keeping enchantments, damage, name,
  * trims and the mob-weapon mark. Used up on the smithing table; only the Runesmith sells it.
  */

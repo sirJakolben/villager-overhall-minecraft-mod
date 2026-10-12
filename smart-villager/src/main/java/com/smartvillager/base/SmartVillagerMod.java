@@ -7,9 +7,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
 /**
- * Smart Villager - the bottom rung of the ladder (Vanilla, Smart Villager, Progression, Professions; see docs/smart-villager.md).
+ * Smart Villager - the bottom rung of the ladder (Vanilla, Smart Villager, Progress, Professions; see docs/smart-villager.md).
  * Small additions to Vanilla villagers that need nothing else: the emerald (lure, claim a workplace), the Trading Block, more zombie
- * villagers that any golden food cures, fuelled brewing stands. Progression and Professions plug into it through api/SmartVillagerApi.
+ * villagers that any golden food cures, fuelled brewing stands. Progress and Professions plug into it through api/SmartVillagerApi.
  */
 @Mod(SmartVillagerMod.MODID)
 public class SmartVillagerMod {
