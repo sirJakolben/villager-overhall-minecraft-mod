@@ -1,12 +1,9 @@
 package com.villageroverhaul.traderework.passive;
 
-import com.villageroverhaul.passive.PassiveWork;
-import com.villageroverhaul.core.state.StationSlot;
-import com.villageroverhaul.core.state.VillagerState;
-import com.villageroverhaul.freedom.VillagerWorkScan;
+import com.villageroverhaul.state.VillagerState;
 import com.villageroverhaul.traderework.runesmith.RepairStationBlock;
 import com.villageroverhaul.traderework.runesmith.RepairStationBlockEntity;
-import com.villageroverhaul.trade.RestockService;
+import com.villageroverhaul.work.VillagerWorkScan;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,14 +20,14 @@ import java.util.Optional;
  * Runesmith does one repair step - REPAIR_POINTS_PER_STEP durability on the first damaged item, free and
  * without XP - the meter drops to 0, the station pulses redstone and plays the toolsmith work sound. A
  * higher passive rank means more steps per day: the meter is sized so a full, happy work day fills it
- * STEPS_PER_DAY_BY_RANK times (RestockService.meterPoints via PassiveWork.stepsPerDay). Durability points,
+ * STEPS_PER_DAY_BY_RANK times (PassiveLogic.meterPoints). Durability points,
  * not percent: cheap gear is repaired fast, diamond gear takes days (Runesmith.md).
  *
  * While it fills the passive meter at the station, the station plays the grindstone sound (markWorked).
  *
  * Cost per work scan: one block entity lookup at a known position and a look at 3 slots - no block scan.
  */
-public final class RepairWork {
+public final class RepairWork implements PassiveWork {
 
     /** How close the villager must stand to the station's center to repair - same as the book upgrade (Tweak-Werte.md). */
     public static final double WORK_REACH = 2.0;
@@ -41,15 +38,13 @@ public final class RepairWork {
     /** Extra ticks the grindstone sound keeps going past the next expected work scan, so it doesn't stutter. */
     private static final int SOUND_GRACE_TICKS = 20;
 
-    private RepairWork() {
-    }
-
-    public static int stepsPerDay(int passiveRank) {
+    @Override
+    public int stepsPerDay(int passiveRank) {
         return STEPS_PER_DAY_BY_RANK[Math.clamp(passiveRank, 0, STEPS_PER_DAY_BY_RANK.length - 1)];
     }
 
     private static Optional<RepairStationBlockEntity> station(ServerLevel level, VillagerState state) {
-        Optional<GlobalPos> station = state.stations().passive();
+        Optional<GlobalPos> station = PassiveLogic.station(state);
         if (station.isEmpty() || station.get().dimension() != level.dimension() || !level.isLoaded(station.get().pos())) {
             return Optional.empty();
         }
@@ -57,24 +52,26 @@ public final class RepairWork {
     }
 
     /** Full passive meter and a damaged item in its station - time to walk there. */
-    public static boolean isPending(ServerLevel level, Villager villager, VillagerState state) {
-        return state.dailyProductivity().passive() >= RestockService.meterPoints(villager, StationSlot.PASSIVE, state)
+    @Override
+    public boolean isPending(ServerLevel level, Villager villager, VillagerState state) {
+        return PassiveLogic.isMeterFull(villager, state)
                 && station(level, state).map(repairer -> repairer.hasWork()).orElse(false);
     }
 
     /** workTime: the villager is in its WORK activity - it repairs only then. */
-    public static VillagerState apply(ServerLevel level, Villager villager, VillagerState state, boolean workTime) {
+    @Override
+    public VillagerState apply(ServerLevel level, Villager villager, VillagerState state, boolean workTime) {
         Optional<RepairStationBlockEntity> station = station(level, state);
         // Every scan, like the Librarian's station: the station learns its owner's rank (padding on the top rank).
-        station.ifPresent(repairer -> repairer.markOwner(state.ranks().passive()));
-        if (!workTime || !PassiveWork.worksAtPassiveStation(villager, state)) {
+        station.ifPresent(repairer -> repairer.markOwner(PassiveLogic.rank(state)));
+        if (!workTime || !PassiveLogic.worksAtStation(villager, state)) {
             return state;
         }
         if (station.isEmpty() || !station.get().getBlockPos().closerToCenterThan(villager.position(), WORK_REACH)) {
             return state;
         }
         BlockPos pos = station.get().getBlockPos();
-        boolean meterFull = state.dailyProductivity().passive() >= RestockService.meterPoints(villager, StationSlot.PASSIVE, state);
+        boolean meterFull = PassiveLogic.isMeterFull(villager, state);
         if (!meterFull) {
             // Filling the passive meter right here: the station plays the grindstone sound until the next scan.
             station.get().markWorked(level.getGameTime() + VillagerWorkScan.SCAN_PERIOD + SOUND_GRACE_TICKS);
@@ -85,10 +82,6 @@ public final class RepairWork {
         }
         RepairStationBlock.pulse(level, pos);
         level.playSound(null, pos, SoundEvents.VILLAGER_WORK_TOOLSMITH, SoundSource.NEUTRAL, 1.0F, 1.0F);
-        return new VillagerState(
-                state.level(), state.xp(), state.unspentUpgradePoints(), state.ranks(),
-                state.questSlotRotations(), state.tradeUsesRemaining(), state.dailyProductivity().with(StationSlot.PASSIVE, 0),
-                state.happiness(), state.lastProcessedDay(), state.questSlotRerollAvailableAtTick(), state.questLog(), state.stations()
-        );
+        return PassiveLogic.emptyMeter(state);
     }
 }

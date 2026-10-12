@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "vo_trade_rework:block/iron_framed_redstone",
+    "top": "vo_trade_rework:block/iron_framed_redstone",
+    "side": "vo_trade_rework:block/iron_framed_redstone"
+  }
+}

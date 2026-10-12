@@ -13,20 +13,23 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * The Librarian's two extra workstations as placeable blocks (2026-09-24). Their Blockbench models are
  * not full cubes, hence noOcclusion (neighbors keep their faces) and hitboxes built from the model's
  * elements (models/block/*.json, in 1/16 block). Both are Librarian job sites like the lectern (see
- * claim/ProfessionStations); owning one opens the Masteries / Passive group. The enchantment station is
- * also a 5-slot book container (EnchantmentStationBlock), the writing station a plain ModelShapedBlock.
+ * TradeReworkSections); owning one opens the Masteries / Passive section. The enchantment station is
+ * also a 5-slot book container (EnchantmentStationBlock), the writing station a plain ModelShapedBlock (turns to the player).
  */
 public final class LibrarianBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TradeReworkMod.MODID);
 
-    /** Base slab, inset body, two staggered boards (low right, high left) - the rotated ink pot has no hitbox. */
+    /**
+     * Base slab, inset body, two staggered boards (low one in front with the book shelf, high one behind) -
+     * for facing north; the model faces east, the blockstate turns it. The rotated ink pot has no hitbox.
+     */
     private static final VoxelShape WRITING_STATION_SHAPE = Shapes.or(
             Block.box(0, 0, 0, 16, 2, 16),
             Block.box(1, 2, 1, 15, 9, 15),
-            Block.box(6, 9, 0, 16, 11, 16),
-            Block.box(1, 9, 1, 8, 14, 15),
-            Block.box(0, 14, 0, 10, 16, 16)
+            Block.box(0, 9, 0, 16, 11, 10),
+            Block.box(1, 9, 8, 15, 14, 15),
+            Block.box(0, 14, 6, 16, 16, 16)
     );
 
     public static final DeferredBlock<ModelShapedBlock> WRITING_STATION = BLOCKS.registerBlock("writing_station",

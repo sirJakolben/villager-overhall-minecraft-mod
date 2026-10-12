@@ -1,9 +1,11 @@
+# CC0-1.0: public domain - anyone may use, change and share everything, for any purpose, no attribution needed.
 license="${mod_license}"
 
 [[mods]]
 modId="${ext_mod_id}"
 version="${ext_mod_version}"
 displayName="${ext_mod_name}"
+credits="Seabrass chain and bars textures and the iron frame of reinforced glass: Abyssal Decor by starrysock (CC0, used with permission)"
 description='''
 Extension for Villager Overhaul: reworked professions with their own trades, quests, master and passive stations.
 '''

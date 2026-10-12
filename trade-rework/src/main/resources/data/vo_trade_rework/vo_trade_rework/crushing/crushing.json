@@ -3,6 +3,7 @@
     { "input": "minecraft:cobblestone", "output": "minecraft:gravel" },
     { "input": "minecraft:sandstone", "output": "minecraft:sand" },
     { "input": "minecraft:red_sandstone", "output": "minecraft:red_sand" },
+    { "input": "vo_trade_rework:brown_sandstone", "output": "vo_trade_rework:brown_sand" },
     { "input": "minecraft:glass", "output": "minecraft:sand" },
     { "input": "minecraft:terracotta", "output": "minecraft:red_sand" }
   ]

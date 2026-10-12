@@ -3,7 +3,7 @@
 Zwilling der Librarian-Werte aus Obsidian (`Librarian.md` Wertetabellen + Librarian-Teil von `Tweak-Werte.md`), kompakt. Bei Abweichung gilt Obsidian.
 Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 1. Stand: 2026-09-26.
 
-## Basic Trades — `data/vo_trade_rework/villageroverhaul/trade/librarian_*.json`
+## Basic Trades — `data/vo_trade_rework/villageroverhaul/exchange/librarian_*.json`
 | Rang | Trade | Preis (Smaragde) | 2. Slot | Output | Stock |
 |---|---|---|---|---|---|
 | 0 | Laterne | 1 → 1 | – | 1 → 1 | 1 → 1 |
@@ -23,7 +23,7 @@ Base = Rang 0 der Gruppe, Max = Max-Rang, dazwischen linear. Fehlt ein Wert → 
 | 3 | Rüstungsbuch | 1 → 1 | 1 Buch | 1 → 1 | 1 → 1 |
 | 4 | Fernkampfbuch | 1 → 1 | 1 Buch | 1 → 1 | 1 → 1 |
 
-## Quests — `.../quest/librarian_*.json` (Abgabe → Smaragde)
+## Quests — `.../exchange/librarian_*.json` (Sektion `vo_trade_rework:quests`) (Abgabe → Smaragde)
 | Pool | Quest | Abgabe | Smaragde |
 |---|---|---|---|
 | Dauer | Papier | 1 → 1 | 1 → 1 |

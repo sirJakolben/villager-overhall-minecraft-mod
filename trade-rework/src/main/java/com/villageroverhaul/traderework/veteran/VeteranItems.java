@@ -15,7 +15,7 @@ public final class VeteranItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TradeReworkMod.MODID);
 
-    public static final DeferredItem<BlockItem> CHALLENGE_STATION = ITEMS.registerSimpleBlockItem(VeteranBlocks.CHALLENGE_STATION);
+    public static final DeferredItem<BlockItem> TRAPPINGS_STATION = ITEMS.registerSimpleBlockItem(VeteranBlocks.TRAPPINGS_STATION);
     public static final DeferredItem<BlockItem> WEAPON_RACK = ITEMS.registerSimpleBlockItem(VeteranBlocks.WEAPON_RACK);
 
     private VeteranItems() {
@@ -24,7 +24,7 @@ public final class VeteranItems {
     @SubscribeEvent
     static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            event.accept(CHALLENGE_STATION);
+            event.accept(TRAPPINGS_STATION);
         } else if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
             event.accept(WEAPON_RACK);
         }

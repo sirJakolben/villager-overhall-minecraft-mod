@@ -1,0 +1,28 @@
+# CC0-1.0: public domain - anyone may use, change and share everything, for any purpose, no attribution needed.
+license="${mod_license}"
+
+[[mods]]
+modId="${golem_mod_id}"
+version="${golem_mod_version}"
+displayName="${golem_mod_name}"
+authors="sirJakolben"
+description='''
+A smarter Iron Golem. At night it patrols the village along its paths, over the path blocks players lay; it climbs walls two blocks high (also out of holes) with an animation, follows a player who holds an iron ingot, and swims faster.
+'''
+
+[[mixins]]
+config="${golem_mod_id}.mixins.json"
+
+[[dependencies.${golem_mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${golem_mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"

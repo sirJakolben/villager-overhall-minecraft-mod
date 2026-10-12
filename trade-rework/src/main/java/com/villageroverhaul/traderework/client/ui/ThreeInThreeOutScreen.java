@@ -32,7 +32,18 @@ public class ThreeInThreeOutScreen extends AbstractContainerScreen<ThreeInThreeO
         int yo = (this.height - this.imageHeight) / 2;
         graphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND, xo, yo, 0.0F, 0.0F, this.imageWidth, ROW_HEIGHT, 256, 256);
         graphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND, xo, yo + ROW_HEIGHT, 0.0F, 126.0F, this.imageWidth, 96, 256, 256);
-        graphics.fill(xo + 61, yo + 17, xo + 115, yo + 35, BACKGROUND_GREY);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ARROW_SPRITE, xo + 76, yo + 18, 24, 16);
+        int inputEnd = menu.firstInputColumn() + menu.inputSlots();
+        int outputStart = menu.firstOutputColumn();
+        int outputEnd = outputStart + menu.outputSlots();
+        // Paint over every chest slot of the row that is no slot of this station: the gap between input and output (arrow) and the free columns at the edges.
+        for (int column = 0; column < 9; column++) {
+            if (column >= menu.firstInputColumn() && column < inputEnd || column >= outputStart && column < outputEnd) {
+                continue;
+            }
+            graphics.fill(xo + 7 + column * 18, yo + 17, xo + 25 + column * 18, yo + 35, BACKGROUND_GREY);
+        }
+        int gapStart = 7 + inputEnd * 18;
+        int arrowX = gapStart + ((outputStart - inputEnd) * 18 - 24) / 2;
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, ARROW_SPRITE, xo + arrowX, yo + 18, 24, 16);
     }
 }

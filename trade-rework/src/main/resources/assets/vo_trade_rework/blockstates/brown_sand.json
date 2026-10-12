@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": [
+      { "model": "vo_trade_rework:block/brown_sand" },
+      { "model": "vo_trade_rework:block/brown_sand", "y": 90 },
+      { "model": "vo_trade_rework:block/brown_sand", "y": 180 },
+      { "model": "vo_trade_rework:block/brown_sand", "y": 270 }
+    ]
+  }
+}

@@ -29,9 +29,19 @@ public final class TradeReworkMenus {
             () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.REPAIR_STATION_MENU.get(), id, inventory), FeatureFlags.VANILLA_SET)
     );
 
-    public static final DeferredHolder<MenuType<?>, MenuType<ThreeInThreeOutMenu>> SMELTING_STATION_MENU = MENU_TYPES.register(
-            "smelting_station",
-            () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.SMELTING_STATION_MENU.get(), id, inventory), FeatureFlags.VANILLA_SET)
+    public static final DeferredHolder<MenuType<?>, MenuType<ThreeInThreeOutMenu>> SALVAGE_STATION_MENU = MENU_TYPES.register(
+            "salvage_station",
+            () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.SALVAGE_STATION_MENU.get(), id, inventory), FeatureFlags.VANILLA_SET)
+    );
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ThreeInThreeOutMenu>> ADVENTURE_STATION_MENU = MENU_TYPES.register(
+            "adventure_station",
+            () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.ADVENTURE_STATION_MENU.get(), id, inventory, 3, 3), FeatureFlags.VANILLA_SET)
+    );
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ThreeInThreeOutMenu>> CHALLENGE_STATION_MENU = MENU_TYPES.register(
+            "challenge_station",
+            () -> new MenuType<>((id, inventory) -> new ThreeInThreeOutMenu(TradeReworkMenus.CHALLENGE_STATION_MENU.get(), id, inventory, 1, 4), FeatureFlags.VANILLA_SET)
     );
 
     private TradeReworkMenus() {

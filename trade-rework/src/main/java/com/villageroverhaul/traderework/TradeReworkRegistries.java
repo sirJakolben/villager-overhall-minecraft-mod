@@ -1,7 +1,9 @@
 package com.villageroverhaul.traderework;
 
+import com.villageroverhaul.traderework.mapping.MapPool;
 import com.villageroverhaul.traderework.mason.CrushingRule;
-import com.villageroverhaul.traderework.salvager.SalvageRule;
+import com.villageroverhaul.traderework.goldsmith.SalvageRule;
+import com.villageroverhaul.traderework.fisherman.BiomeFish;
 import com.villageroverhaul.traderework.veteran.MobWeaponDefinition;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -21,13 +23,21 @@ public final class TradeReworkRegistries {
     public static final ResourceKey<Registry<CrushingRule>> CRUSHING =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "crushing"));
 
-    /** Smelting station rules (salvager/SalvageRule), server-only. */
+    /** Salvage station rules (goldsmith/SalvageRule), server-only. */
     public static final ResourceKey<Registry<SalvageRule>> SALVAGE =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "salvage"));
 
     /** Mobs whose held weapon becomes a mob weapon, with its extras (veteran/MobWeaponDefinition) - synced: tooltips need the attack speed bonus. */
     public static final ResourceKey<Registry<MobWeaponDefinition>> MOB_WEAPON =
             ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "mob_weapon"));
+
+    /** The biome fish of each biome group (fisherman/BiomeFish), server-only - the client never needs them. */
+    public static final ResourceKey<Registry<BiomeFish>> BIOME_FISH =
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "biome_fish"));
+
+    /** Which structures a passive station's maps may point to (mapping/MapPool), server-only. */
+    public static final ResourceKey<Registry<MapPool>> MAP_POOL =
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(TradeReworkMod.MODID, "map_pool"));
 
     private TradeReworkRegistries() {
     }
@@ -36,6 +46,8 @@ public final class TradeReworkRegistries {
     static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(CRUSHING, CrushingRule.CODEC);
         event.dataPackRegistry(SALVAGE, SalvageRule.CODEC);
+        event.dataPackRegistry(BIOME_FISH, BiomeFish.CODEC);
+        event.dataPackRegistry(MAP_POOL, MapPool.CODEC);
         event.dataPackRegistry(MOB_WEAPON, MobWeaponDefinition.CODEC, MobWeaponDefinition.CODEC);
     }
 }

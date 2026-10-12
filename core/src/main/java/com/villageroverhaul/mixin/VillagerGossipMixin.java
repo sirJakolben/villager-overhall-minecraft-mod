@@ -1,6 +1,6 @@
 package com.villageroverhaul.mixin;
 
-import com.villageroverhaul.freedom.HappinessTracker;
+import com.villageroverhaul.happiness.HappinessTracker;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.villager.Villager;
 import org.spongepowered.asm.mixin.Mixin;

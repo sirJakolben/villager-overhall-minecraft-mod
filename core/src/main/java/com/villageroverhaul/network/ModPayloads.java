@@ -17,7 +17,7 @@ public final class ModPayloads {
         PayloadRegistrar registrar = event.registrar("1");
         registrar.playToServer(SelectOfferPayload.TYPE, SelectOfferPayload.STREAM_CODEC, SelectOfferPayload::handle);
         registrar.playToClient(VillagerOffersPayload.TYPE, VillagerOffersPayload.STREAM_CODEC, VillagerOffersPayload::handle);
-        registrar.playToServer(RerollQuestPayload.TYPE, RerollQuestPayload.STREAM_CODEC, RerollQuestPayload::handle);
+        registrar.playToServer(SectionActionPayload.TYPE, SectionActionPayload.STREAM_CODEC, SectionActionPayload::handle);
         registrar.playToServer(InvestUpgradePointPayload.TYPE, InvestUpgradePointPayload.STREAM_CODEC, InvestUpgradePointPayload::handle);
         registrar.playToServer(CloneOfferItemPayload.TYPE, CloneOfferItemPayload.STREAM_CODEC, CloneOfferItemPayload::handle);
     }

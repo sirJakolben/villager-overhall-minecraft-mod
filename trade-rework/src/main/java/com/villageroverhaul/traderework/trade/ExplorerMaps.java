@@ -1,13 +1,13 @@
 package com.villageroverhaul.traderework.trade;
 
-import com.villageroverhaul.api.ExtensionHooks.MapOutput;
 import com.mojang.serialization.Codec;
+import com.villageroverhaul.api.ResultOverride.Output;
 import com.villageroverhaul.traderework.TradeReworkMod;
-import com.villageroverhaul.data.ExplorerMap;
 import com.villageroverhaul.traderework.explore.FeatureLocator;
 import com.villageroverhaul.traderework.explore.OreVeinLocator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -31,8 +32,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Explorer-map trades (2026-09-27, Cartographer / Veteran / Mason / Salvager), plugged into the core's offer list
- * through api/ExtensionHooks.setExplorerMaps (TradeReworkMod). Structures are searched like
+ * Explorer-map trades (2026-09-27, Cartographer / Veteran / Mason / Goldsmith), built for the core's offer list
+ * through ExplorerMap (an api/ResultOverride). Structures are searched like
  * Vanilla's; geodes (explore/FeatureLocator) and ore veins (explore/OreVeinLocator) are predicted from the
  * world seed within SEED_SEARCH_RADIUS_CHUNKS, and their maps name the height in the tooltip. Vanilla searches the structure when it
  * generates the offer; our offer list is rebuilt on every state change, so the search runs once per
@@ -60,7 +61,7 @@ public final class ExplorerMaps {
                     .build()
     );
 
-    private static final int SEARCH_RADIUS_CHUNKS = 100;
+    public static final int SEARCH_RADIUS_CHUNKS = 100;
     /** Geodes and ore veins are common - a smaller radius keeps the seed search short. */
     private static final int SEED_SEARCH_RADIUS_CHUNKS = 32;
     private static final byte MAP_SCALE = 2;
@@ -74,28 +75,25 @@ public final class ExplorerMaps {
     private ExplorerMaps() {
     }
 
-    public static MapOutput outputFor(Villager villager, Identifier tradeId, ExplorerMap spec) {
+    public static Output outputFor(Villager villager, Identifier tradeId, ExplorerMap spec) {
         ItemStack cached = villager.getData(MAPS).get(tradeId);
         if (cached != null) {
-            return new MapOutput(cached.copy(), false);
+            return new Output(cached.copy(), false);
         }
         if (!(villager.level() instanceof ServerLevel level) || villager.getTradingPlayer() == null) {
-            return new MapOutput(placeholder(spec), false);
+            return new Output(placeholder(spec), false);
         }
         Long failedAt = NOT_FOUND.getOrDefault(villager.getUUID(), Map.of()).get(tradeId);
         if (failedAt != null && level.getGameTime() - failedAt < RETRY_TICKS) {
-            return new MapOutput(placeholder(spec), true);
+            return new Output(placeholder(spec), true);
         }
         Optional<BlockPos> found = findTarget(level, spec, villager.blockPosition());
         if (found.isEmpty()) {
             NOT_FOUND.computeIfAbsent(villager.getUUID(), uuid -> new ConcurrentHashMap<>()).put(tradeId, level.getGameTime());
-            return new MapOutput(placeholder(spec), true);
+            return new Output(placeholder(spec), true);
         }
         BlockPos target = found.get();
-        ItemStack map = MapItem.create(level, target.getX(), target.getZ(), MAP_SCALE, true, true);
-        MapItem.renderBiomePreviewMap(level, map);
-        MapItemSavedData.addTargetDecoration(map, target, "+", spec.decoration());
-        map.set(DataComponents.ITEM_NAME, Component.translatable(spec.name()));
+        ItemStack map = createMap(level, target, spec.decoration(), spec.name());
         if (spec.showsDepth()) {
             map.set(DataComponents.LORE, new ItemLore(List.of(
                     Component.translatable("filled_map.vo_trade_rework.depth", target.getY()).withStyle(ChatFormatting.GRAY))));
@@ -104,7 +102,16 @@ public final class ExplorerMaps {
         Map<Identifier, ItemStack> maps = new HashMap<>(villager.getData(MAPS));
         maps.put(tradeId, map);
         villager.setData(MAPS, Map.copyOf(maps));
-        return new MapOutput(map.copy(), false);
+        return new Output(map.copy(), false);
+    }
+
+    /** A filled map centered on the target, marked with the decoration and named with the translation key - also used by the passive stations' maps (mapping/MapTargets). */
+    public static ItemStack createMap(ServerLevel level, BlockPos target, Holder<MapDecorationType> decoration, String nameKey) {
+        ItemStack map = MapItem.create(level, target.getX(), target.getZ(), MAP_SCALE, true, true);
+        MapItem.renderBiomePreviewMap(level, map);
+        MapItemSavedData.addTargetDecoration(map, target, "+", decoration);
+        map.set(DataComponents.ITEM_NAME, Component.translatable(nameKey));
+        return map;
     }
 
     private static Optional<BlockPos> findTarget(ServerLevel level, ExplorerMap spec, BlockPos origin) {

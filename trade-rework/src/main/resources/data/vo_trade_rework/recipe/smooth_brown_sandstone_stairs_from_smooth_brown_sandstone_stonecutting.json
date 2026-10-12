@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "vo_trade_rework:smooth_brown_sandstone",
+  "result": {
+    "id": "vo_trade_rework:smooth_brown_sandstone_stairs"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "vo_trade_rework:plains_villager_statue",
+          "conditions": [
+            { "condition": "minecraft:block_state_property", "block": "vo_trade_rework:plains_villager_statue", "properties": { "half": "lower" } }
+          ]
+        }
+      ],
+      "conditions": [ { "condition": "minecraft:survives_explosion" } ]
+    }
+  ]
+}

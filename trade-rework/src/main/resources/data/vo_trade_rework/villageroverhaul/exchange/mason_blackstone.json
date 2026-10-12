@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:mason",
+  "section": "vo_trade_rework:masteries",
+  "unlock_rank": 1,
+  "base_input": { "item": "minecraft:coal", "count": 1 },
+  "max_input": { "item": "minecraft:coal", "count": 1 },
+  "second_input": { "item": "minecraft:cobbled_deepslate", "count": 1 },
+  "base_output": { "item": "minecraft:blackstone", "count": 1 },
+  "max_output": { "item": "minecraft:blackstone", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

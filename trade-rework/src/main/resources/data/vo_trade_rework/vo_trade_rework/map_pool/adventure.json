@@ -1,0 +1,16 @@
+{
+  "pool": "adventure",
+  "entries": [
+    { "structures": "#minecraft:village", "weight": 10 },
+    { "structures": "minecraft:pillager_outpost", "weight": 6 },
+    { "structures": "#minecraft:ruined_portal", "weight": 6 },
+    { "structures": "minecraft:desert_pyramid", "weight": 5 },
+    { "structures": "minecraft:jungle_pyramid", "weight": 5 },
+    { "structures": "#minecraft:shipwreck", "weight": 5 },
+    { "structures": "#minecraft:ocean_ruin", "weight": 5 },
+    { "structures": "minecraft:igloo", "weight": 4 },
+    { "structures": "minecraft:swamp_hut", "weight": 4 },
+    { "structures": "minecraft:buried_treasure", "weight": 3 },
+    { "structures": "minecraft:trail_ruins", "weight": 3 }
+  ]
+}

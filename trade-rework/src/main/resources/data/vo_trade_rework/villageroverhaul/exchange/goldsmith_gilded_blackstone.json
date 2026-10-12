@@ -1,0 +1,12 @@
+{
+  "profession": "minecraft:armorer",
+  "section": "vo_trade_rework:masteries",
+  "unlock_rank": 4,
+  "base_input": { "item": "minecraft:gold_ingot", "count": 1 },
+  "max_input": { "item": "minecraft:gold_ingot", "count": 1 },
+  "second_input": { "item": "minecraft:blackstone", "count": 1 },
+  "base_output": { "item": "minecraft:gilded_blackstone", "count": 1 },
+  "max_output": { "item": "minecraft:gilded_blackstone", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1
+}

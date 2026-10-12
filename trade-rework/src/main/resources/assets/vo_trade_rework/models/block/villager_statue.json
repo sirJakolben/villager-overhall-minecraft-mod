@@ -1,1 +1,3 @@
-{ "parent": "vo_trade_rework:block/placeholder_block" }
+{
+  "textures": { "particle": "minecraft:block/stone" }
+}

@@ -1,10 +1,10 @@
 package com.villageroverhaul;
 
 import com.mojang.logging.LogUtils;
-import com.villageroverhaul.client.ui.ModMenuTypes;
-import com.villageroverhaul.core.ModAttachments;
-import com.villageroverhaul.claim.ClaimBlocks;
-import com.villageroverhaul.trade.MissingTrade;
+import com.villageroverhaul.interaction.TradingBlocks;
+import com.villageroverhaul.menu.ModMenuTypes;
+import com.villageroverhaul.section.CoreSections;
+import com.villageroverhaul.state.ModAttachments;
 import com.villageroverhaul.trade.MissingTrade;
 import com.villageroverhaul.trade.RequiredEnchantmentCost;
 import net.neoforged.bus.api.IEventBus;
@@ -23,7 +23,9 @@ public class VillagerOverhaulMod {
         RequiredEnchantmentCost.DATA_COMPONENTS.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
         MissingTrade.ITEMS.register(modEventBus);
-        ClaimBlocks.BLOCKS.register(modEventBus);
-        ClaimBlocks.ITEMS.register(modEventBus);
+        TradingBlocks.BLOCKS.register(modEventBus);
+        TradingBlocks.ITEMS.register(modEventBus);
+
+        CoreSections.register();
     }
 }

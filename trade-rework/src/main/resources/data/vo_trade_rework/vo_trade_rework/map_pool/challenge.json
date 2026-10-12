@@ -1,0 +1,11 @@
+{
+  "pool": "challenge",
+  "entries": [
+    { "structures": "#minecraft:mineshaft", "weight": 8 },
+    { "structures": "minecraft:stronghold", "weight": 3 },
+    { "structures": "minecraft:trial_chambers", "weight": 3 },
+    { "structures": "minecraft:ancient_city", "weight": 2 },
+    { "structures": "minecraft:mansion", "weight": 2 },
+    { "structures": "minecraft:monument", "weight": 2 }
+  ]
+}

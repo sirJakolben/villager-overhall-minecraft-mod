@@ -1,6 +1,5 @@
 package com.villageroverhaul.traderework.explore;
 
-import com.villageroverhaul.data.ExplorerMap;
 import com.mojang.brigadier.context.CommandContext;
 import com.villageroverhaul.traderework.TradeReworkMod;
 import net.minecraft.commands.CommandSourceStack;
@@ -68,11 +67,11 @@ public final class LocateCommand {
                 expected = Set.of(Blocks.SPAWNER, Blocks.MOSSY_COBBLESTONE);
             }
             case "copper_vein" -> {
-                found = OreVeinLocator.findNearest(level, ExplorerMap.VeinType.COPPER, origin, RADIUS_CHUNKS);
+                found = OreVeinLocator.findNearest(level, VeinType.COPPER, origin, RADIUS_CHUNKS);
                 expected = Set.of(Blocks.COPPER_ORE, Blocks.RAW_COPPER_BLOCK);
             }
             default -> {
-                found = OreVeinLocator.findNearest(level, ExplorerMap.VeinType.IRON, origin, RADIUS_CHUNKS);
+                found = OreVeinLocator.findNearest(level, VeinType.IRON, origin, RADIUS_CHUNKS);
                 expected = Set.of(Blocks.DEEPSLATE_IRON_ORE, Blocks.RAW_IRON_BLOCK);
             }
         }

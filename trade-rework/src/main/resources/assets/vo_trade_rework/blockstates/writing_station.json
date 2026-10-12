@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "vo_trade_rework:block/writing_station" }
+    "facing=east": { "model": "vo_trade_rework:block/writing_station" },
+    "facing=south": { "model": "vo_trade_rework:block/writing_station", "y": 90 },
+    "facing=west": { "model": "vo_trade_rework:block/writing_station", "y": 180 },
+    "facing=north": { "model": "vo_trade_rework:block/writing_station", "y": 270 }
   }
 }

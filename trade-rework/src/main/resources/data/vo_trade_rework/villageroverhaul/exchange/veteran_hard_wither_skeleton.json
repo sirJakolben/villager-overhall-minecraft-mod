@@ -1,0 +1,13 @@
+{
+  "profession": "minecraft:weaponsmith",
+  "section": "vo_trade_rework:quests",
+  "base_input": { "item": "minecraft:stone_sword", "count": 1, "mob": "minecraft:wither_skeleton" },
+  "max_input": { "item": "minecraft:stone_sword", "count": 1, "mob": "minecraft:wither_skeleton" },
+  "base_output": { "item": "minecraft:emerald", "count": 1 },
+  "max_output": { "item": "minecraft:emerald", "count": 1 },
+  "base_max_uses": 1,
+  "max_max_uses": 1,
+  "extensions": {
+    "vo_trade_rework:quest": { "pool": "hard" }
+  }
+}
