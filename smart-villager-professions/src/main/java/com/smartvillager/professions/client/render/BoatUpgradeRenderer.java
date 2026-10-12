@@ -2,11 +2,12 @@ package com.smartvillager.professions.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
 import com.smartvillager.professions.boat.BoatParts;
 import com.smartvillager.professions.boat.BoatState;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.object.chest.ChestModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.object.banner.BannerFlagModel;
 import net.minecraft.client.renderer.Sheets;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -67,26 +69,24 @@ public final class BoatUpgradeRenderer {
     private static final double CANNON_MODEL_OFFSET = 0.2;
     private static final double SAIL_MODEL_OFFSET = -0.6;
     private static final double STERN_MODEL_OFFSET = -0.6;
-    /** Vanilla's chest boat draws its chest centred 0.5 blocks behind the middle (chest_bottom: 12 px wide at X = -8 px of the model). */
-    private static final double CHEST_MODEL_OFFSET = -0.5;
+    /** A chest stands this much towards the bow of its slot (2 px - it was drawn too far back). The floor of the boat is at 3 px (Vanilla boat space, Y down). */
+    private static final double CHEST_FORWARD = 2.0 / 16.0;
+    private static final float FLOOR = 3.0F / 16.0F;
 
     private final BannerFlagModel flagModel;
     private final SpriteGetter sprites;
-    private final ModelPart chestBottom;
-    private final ModelPart chestLid;
-    private final ModelPart chestLock;
-    private final Identifier chestTexture;
+    private final ChestModel chestSingle;
+    private final ChestModel chestLeft;
+    private final ChestModel chestRight;
     private final Identifier woodTexture;
 
-    /** boatTexture is the renderer's own (textures/entity/boat/oak.png): the stern is made of that wood, and the chest uses the matching one in textures/entity/chest_boat/. */
+    /** boatTexture is the renderer's own (textures/entity/boat/oak.png): the stern is made of that wood. Chests use Vanilla's normal chest. */
     public BoatUpgradeRenderer(EntityModelSet modelSet, SpriteGetter sprites, Identifier boatTexture) {
         this.flagModel = new BannerFlagModel(modelSet.bakeLayer(ModelLayers.STANDING_BANNER_FLAG));
         this.sprites = sprites;
-        ModelPart chest = modelSet.bakeLayer(ModelLayers.OAK_CHEST_BOAT);
-        this.chestBottom = chest.getChild("chest_bottom");
-        this.chestLid = chest.getChild("chest_lid");
-        this.chestLock = chest.getChild("chest_lock");
-        this.chestTexture = boatTexture.withPath(path -> path.replace("/boat/", "/chest_boat/"));
+        this.chestSingle = new ChestModel(modelSet.bakeLayer(ModelLayers.CHEST));
+        this.chestLeft = new ChestModel(modelSet.bakeLayer(ModelLayers.DOUBLE_CHEST_LEFT));
+        this.chestRight = new ChestModel(modelSet.bakeLayer(ModelLayers.DOUBLE_CHEST_RIGHT));
         this.woodTexture = boatTexture;
     }
 
@@ -101,15 +101,16 @@ public final class BoatUpgradeRenderer {
             submitQuads(CANNON_QUADS, poseStack, collector, light);
             poseStack.popPose();
         }
+        // two chests next to each other are one double chest
         for (int slot = 0; slot < state.slots().size(); slot++) {
-            if (state.part(slot).equals(BoatParts.CHEST.id())) {
-                poseStack.pushPose();
-                alongBoat(poseStack, slotOffset(offsets, slot) - CHEST_MODEL_OFFSET);
-                RenderType type = RenderTypes.entityCutout(chestTexture);
-                collector.submitModelPart(chestBottom, poseStack, type, light, OverlayTexture.NO_OVERLAY, null);
-                collector.submitModelPart(chestLid, poseStack, type, light, OverlayTexture.NO_OVERLAY, null);
-                collector.submitModelPart(chestLock, poseStack, type, light, OverlayTexture.NO_OVERLAY, null);
-                poseStack.popPose();
+            if (!state.part(slot).equals(BoatParts.CHEST.id())) {
+                continue;
+            }
+            if (state.part(slot + 1).equals(BoatParts.CHEST.id())) {
+                submitChest(poseStack, collector, light, (slotOffset(offsets, slot) + slotOffset(offsets, slot + 1)) / 2.0 + CHEST_FORWARD, true);
+                slot++;
+            } else {
+                submitChest(poseStack, collector, light, slotOffset(offsets, slot) + CHEST_FORWARD, false);
             }
         }
         if (state.sail()) {
@@ -127,6 +128,30 @@ public final class BoatUpgradeRenderer {
             submitQuads(STERN_QUADS, poseStack, collector, light);
             poseStack.popPose();
         }
+    }
+
+    /**
+     * Vanilla's chest model, closed, standing on the floor of the boat at this position along it. A single chest has its lock towards the stern, like the
+     * chest of a Vanilla chest boat; a double chest (the two halves side by side along the boat) has it to the side, because it is too wide to lie across.
+     * The chest model is in block space with Y up and its lock at +Z; the boat's space has Y down and the bow at +X - the half turn about Z (scale -1, -1, 1) puts the
+     * chest upright, the turn about Y points the lock.
+     */
+    private void submitChest(PoseStack poseStack, SubmitNodeCollector collector, int light, double forward, boolean doubled) {
+        poseStack.pushPose();
+        poseStack.translate((float) forward, FLOOR, 0.0F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(doubled ? 0.0F : -90.0F));
+        poseStack.scale(-1.0F, -1.0F, 1.0F);
+        if (doubled) {
+            // the right half is the western block, the left half the eastern one, 31 px together: the middle is 16 px in
+            poseStack.translate(-1.0F, 0.0F, -0.5F);
+            collector.submitModel(chestRight, 0.0F, poseStack, light, OverlayTexture.NO_OVERLAY, -1, Sheets.CHEST_REGULAR.select(ChestType.RIGHT), this.sprites, 0, null);
+            poseStack.translate(1.0F, 0.0F, 0.0F);
+            collector.submitModel(chestLeft, 0.0F, poseStack, light, OverlayTexture.NO_OVERLAY, -1, Sheets.CHEST_REGULAR.select(ChestType.LEFT), this.sprites, 0, null);
+        } else {
+            poseStack.translate(-0.5F, 0.0F, -0.5F);
+            collector.submitModel(chestSingle, 0.0F, poseStack, light, OverlayTexture.NO_OVERLAY, -1, Sheets.CHEST_REGULAR.select(ChestType.SINGLE), this.sprites, 0, null);
+        }
+        poseStack.popPose();
     }
 
     private static double slotOffset(double[] offsets, int slot) {
