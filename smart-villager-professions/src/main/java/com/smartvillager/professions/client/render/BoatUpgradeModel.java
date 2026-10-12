@@ -33,13 +33,13 @@ final class BoatUpgradeModel {
     static final Cube[] SAIL = {
             new Cube(new float[]{-6.0F, 39.0F, -2.0F}, new float[]{34.0F, 41.0F, 0.0F}, new float[]{14.0F, 0.0F, -1.0F}, new float[]{0.0F, 0.0F, 0.0F},
                     new float[]{14.0F, 17.0F, 0.0F}, new float[]{0.0F, 90.0F, 0.0F},
-                    new Face[]{new Face(1, 0.03125F, 0.6875F, 0.34375F, 0.71875F, 0), new Face(1, 0.0F, 0.6875F, 0.03125F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.65625F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.375F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.03125F, 0.65625F, 0), new Face(1, 0.65625F, 0.65625F, 0.34375F, 0.6875F, 0)}),
+                    new Face[]{new Face(1, 0.03125F, 0.6875F, 0.34375F, 0.71875F, 0), new Face(1, 0.0F, 0.6875F, 0.03125F, 0.71875F, 0), new Face(1, 0.375F, 0.6875F, 0.6875F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.375F, 0.71875F, 0), new Face(1, 0.34375F, 0.6875F, 0.03125F, 0.65625F, 0), new Face(1, 0.65625F, 0.65625F, 0.34375F, 0.6875F, 0)}),
             new Cube(new float[]{13.0F, 3.0F, -1.0F}, new float[]{15.0F, 41.0F, 1.0F}, new float[]{14.0F, 19.0F, 0.0F}, new float[]{0.0F, 0.0F, 0.0F},
                     new float[]{14.0F, 17.0F, 0.0F}, new float[]{0.0F, 90.0F, 0.0F},
-                    new Face[]{new Face(1, 0.71875F, 0.0625F, 0.75F, 0.65625F, 0), new Face(1, 0.75F, 0.0625F, 0.78125F, 0.65625F, 0), new Face(1, 0.78125F, 0.0625F, 0.8125F, 0.65625F, 0), new Face(1, 0.6875F, 0.0625F, 0.71875F, 0.65625F, 0), new Face(1, 0.75F, 0.0F, 0.78125F, 0.03125F, 0), new Face(1, 0.71875F, 0.0F, 0.75F, 0.03125F, 0)}),
+                    new Face[]{new Face(1, 0.71875F, 0.03125F, 0.75F, 0.32813F, 0), new Face(1, 0.75F, 0.03125F, 0.78125F, 0.32813F, 0), new Face(1, 0.78125F, 0.03125F, 0.8125F, 0.32813F, 0), new Face(1, 0.6875F, 0.03125F, 0.71875F, 0.32813F, 0), new Face(1, 0.75F, 0.0F, 0.78125F, 0.01563F, 0), new Face(1, 0.71875F, 0.0F, 0.75F, 0.01563F, 0)}),
             new Cube(new float[]{10.5F, 41.0F, -4.0F}, new float[]{17.5F, 47.0F, 3.0F}, new float[]{13.5F, 45.0F, -1.0F}, new float[]{0.0F, 0.0F, 0.0F},
                     new float[]{14.0F, 17.0F, 0.0F}, new float[]{0.0F, 90.0F, 0.0F},
-                    new Face[]{new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), new Face(1, 0.8125F, 0.125F, 0.92188F, 0.3125F, 0), null, new Face(1, 0.8125F, 0.3125F, 0.92188F, 0.42188F, 0)})
+                    new Face[]{new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), new Face(1, 0.8125F, 0.0625F, 0.92188F, 0.15625F, 0), null, new Face(1, 0.8125F, 0.15625F, 0.92188F, 0.21094F, 0)})
     };
 
     static final Cube[] STERN = {
