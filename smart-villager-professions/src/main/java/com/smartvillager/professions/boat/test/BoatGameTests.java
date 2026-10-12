@@ -1,6 +1,7 @@
 package com.smartvillager.professions.boat.test;
 
 import com.smartvillager.professions.SmartVillagerProfessionsMod;
+import com.smartvillager.professions.boat.BoatInventory;
 import com.smartvillager.professions.boat.BoatParts;
 import com.smartvillager.professions.boat.BoatSlots;
 import com.smartvillager.professions.boat.BoatState;
@@ -32,6 +33,7 @@ import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -63,7 +65,7 @@ import java.util.function.Consumer;
 public final class BoatGameTests {
 
     private static final DeferredRegister<Consumer<GameTestHelper>> FUNCTIONS = DeferredRegister.create(Registries.TEST_FUNCTION, SmartVillagerProfessionsMod.MODID);
-    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch", "boat_pet_perch", "boat_shoulder_parrot", "boat_stern_hitbox");
+    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch", "boat_pet_perch", "boat_shoulder_parrot", "boat_stern_hitbox", "boat_chest_and_banner_clicks");
 
     static {
         FUNCTIONS.register("boat_build_in_and_drop", () -> BoatGameTests::buildInAndDrop);
@@ -75,6 +77,7 @@ public final class BoatGameTests {
         FUNCTIONS.register("boat_pet_perch", () -> BoatGameTests::petPerch);
         FUNCTIONS.register("boat_shoulder_parrot", () -> BoatGameTests::shoulderParrot);
         FUNCTIONS.register("boat_stern_hitbox", () -> BoatGameTests::sternHitbox);
+        FUNCTIONS.register("boat_chest_and_banner_clicks", () -> BoatGameTests::chestAndBannerClicks);
     }
 
     private BoatGameTests() {
@@ -329,6 +332,45 @@ public final class BoatGameTests {
             helper.assertTrue(thrownOff[0], "the dog got on the stern (vehicle: " + wolf.getVehicle() + ", at " + wolf.position() + ")");
             helper.assertTrue(wolf.getVehicle() == null, "the damage threw the dog off");
         });
+    }
+
+    private static void rightClick(ServerPlayer player, AbstractBoat boat, ItemStack held, boolean shift) {
+        player.setShiftKeyDown(shift);
+        player.setItemInHand(InteractionHand.MAIN_HAND, held);
+        NeoForge.EVENT_BUS.post(new PlayerInteractEvent.EntityInteract(player, InteractionHand.MAIN_HAND, boat));
+    }
+
+    /** Shift + shears take the sail's banner off, Shift + banner puts one on the bare mast, Shift + anything else opens the chests (27 per chest, kept); without Shift nothing of this happens. */
+    private static void chestAndBannerClicks(GameTestHelper helper) {
+        floor(helper, 12, 12, Blocks.STONE);
+        AbstractBoat boat = boat(helper, 6, 1, 6);
+        BoatUpgrades.setState(boat, BoatUpgrades.state(boat).withPart(0, BoatParts.CHEST.id()).withPart(1, BoatParts.CHEST.id())
+                .withDeco(new BoatState.Deco(BoatParts.SAIL.id(), 1, sailItem(new ItemStack(Items.RED_BANNER)))));
+        @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+
+        ItemStack shears = new ItemStack(Items.SHEARS);
+        rightClick(player, boat, shears, false);
+        helper.assertTrue(BoatUpgrades.state(boat).banner().is(Items.RED_BANNER), "shears without Shift leave the banner");
+        rightClick(player, boat, shears, true);
+        helper.assertTrue(!BoatUpgrades.state(boat).hasBanner() && BoatUpgrades.state(boat).sail(), "Shift + shears take the banner off, the mast stays");
+        helper.assertTrue(player.getInventory().countItem(Items.RED_BANNER) == 1 && shears.getDamageValue() == 1, "the banner comes back and the shears wear");
+
+        rightClick(player, boat, new ItemStack(Items.BLUE_BANNER), false);
+        helper.assertTrue(!BoatUpgrades.state(boat).hasBanner(), "a banner without Shift does nothing");
+        ItemStack blue = new ItemStack(Items.BLUE_BANNER, 2);
+        rightClick(player, boat, blue, true);
+        helper.assertTrue(BoatUpgrades.state(boat).banner().is(Items.BLUE_BANNER) && blue.getCount() == 1, "Shift + banner puts one on the bare mast");
+
+        rightClick(player, boat, new ItemStack(Items.GREEN_BANNER), true);
+        helper.assertTrue(BoatUpgrades.state(boat).banner().is(Items.BLUE_BANNER), "a mast with a banner keeps it");
+        helper.assertTrue(player.containerMenu instanceof ChestMenu menu && menu.getRowCount() == 6, "Shift + click then opens the double chest: " + player.containerMenu);
+        ((ChestMenu) player.containerMenu).getContainer().setItem(0, new ItemStack(Items.DIAMOND, 5));
+        player.closeContainer();
+        helper.assertTrue(BoatInventory.contents(boat).getStackInSlot(0).is(Items.DIAMOND), "the chest keeps what was put in");
+        rightClick(player, boat, ItemStack.EMPTY, true);
+        helper.assertTrue(player.containerMenu instanceof ChestMenu reopened && reopened.getContainer().getItem(0).getCount() == 5, "and shows it when opened again");
+        helper.succeed();
     }
 
     /** A stern makes the hitbox 50 % longer, towards the stern only (a boat facing south: the extra is on its north side). */

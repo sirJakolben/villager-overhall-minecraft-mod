@@ -27,9 +27,9 @@ import java.util.Optional;
 
 /**
  * What the player does with a boat's parts (Obsidian Fisherman.md, 2026-10-12). Shift + right click with a part in the hand builds it into the slot nearest
- * the spot that was clicked (a cannon only into the front slot; the sail into any slot and the stern into the rear slot, as decorations - one of each kind); Shift + right click with nothing to build opens the
- * chests. Without Shift: shears take the sail's banner off, a banner in the hand puts one on a bare mast. Only these uses are taken over; everything
- * else on a boat (boarding, a Vanilla chest boat's own chest) stays Vanilla. Plus the tooltip of a sail and the creative tab entries.
+ * the spot that was clicked (a cannon only into the front slot; the sail into any slot and the stern into the rear slot, as decorations - one of each kind); Shift + right click with shears takes the sail's banner off,
+ * with a banner it puts one on a bare mast, with anything else it opens the chests. Only Shift clicks are taken over; everything else on a boat (boarding, a
+ * Vanilla chest boat's own chest) stays Vanilla. Plus the tooltip of a sail and the creative tab entries.
  */
 @EventBusSubscriber(modid = SmartVillagerProfessionsMod.MODID)
 public final class BoatEvents {
@@ -87,20 +87,11 @@ public final class BoatEvents {
         ItemStack held = player.getItemInHand(hand);
         BoatState state = BoatUpgrades.state(boat);
 
-        if (player.isSecondaryUseActive()) {
-            if (state.chests() > 0 && !(boat instanceof AbstractChestBoat)) {
-                if (player instanceof ServerPlayer serverPlayer) {
-                    BoatInventory.open(serverPlayer, boat);
-                }
-                swallow(event);
-            }
+        // Everything here needs Shift - a plain right click stays Vanilla (boarding), even with shears or a banner in the hand
+        if (!player.isSecondaryUseActive()) {
             return;
         }
-        if (!state.sail()) {
-            return;
-        }
-
-        if (held.is(Items.SHEARS) && state.hasBanner()) {
+        if (state.sail() && held.is(Items.SHEARS) && state.hasBanner()) {
             if (!boat.level().isClientSide()) {
                 ItemStack banner = state.banner().copy();
                 BoatUpgrades.setState(boat, state.withBanner(ItemStack.EMPTY));
@@ -111,11 +102,16 @@ public final class BoatEvents {
                 boat.level().playSound(null, boat.getX(), boat.getY(), boat.getZ(), SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
             swallow(event);
-        } else if (held.is(ItemTags.BANNERS) && !state.hasBanner()) {
+        } else if (state.sail() && held.is(ItemTags.BANNERS) && !state.hasBanner()) {
             if (!boat.level().isClientSide()) {
                 BoatUpgrades.setState(boat, state.withBanner(held.copyWithCount(1)));
                 held.consume(1, player);
                 boat.level().playSound(null, boat.getX(), boat.getY(), boat.getZ(), SoundEvents.WOOL_PLACE, SoundSource.PLAYERS, 1.0F, 1.0F);
+            }
+            swallow(event);
+        } else if (state.chests() > 0 && !(boat instanceof AbstractChestBoat)) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                BoatInventory.open(serverPlayer, boat);
             }
             swallow(event);
         }
