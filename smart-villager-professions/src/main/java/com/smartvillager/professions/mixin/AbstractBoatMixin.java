@@ -3,6 +3,7 @@ package com.smartvillager.professions.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.smartvillager.professions.boat.BoatHitbox;
 import com.smartvillager.professions.boat.BoatSeats;
 import com.smartvillager.professions.boat.BoatSlots;
 import com.smartvillager.professions.boat.BoatState;
@@ -19,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  *   count, and a passenger sits at the position of a free slot (a filled slot is a seat less, wherever it is).
  * - Animals may perch on the decorations: a parrot in the crow's nest of a sail, a cat or dog on a stern deck. They are decoration passengers and take no seat
  *   (BoatSlots.canPerch, DecorPerch).
+ * - A stern lengthens the hitbox by 50 % towards the stern (BoatHitbox): the box is refreshed here whenever the boat turns or gets its stern.
  * - With a cannon: 40 % less top speed (a stern: 40 % less turn rate), and Space charges the cannon - the boat becomes a PlayerRideableJumping, so Vanilla's own horse jump bar, charge
  *   and release packet do the rest.
  */
@@ -42,6 +45,13 @@ public abstract class AbstractBoatMixin implements PlayerRideableJumping, BoatSe
 
     @Shadow
     protected abstract int getMaxPassengers();
+
+    /** The stern and the yaw the box was last made for - the box is refreshed when either changes. */
+    @Unique
+    private boolean smartvillager_professions$boxStern;
+
+    @Unique
+    private float smartvillager_professions$boxYaw;
 
     @Shadow
     protected abstract double rideHeight(EntityDimensions dimensions);
@@ -119,6 +129,11 @@ public abstract class AbstractBoatMixin implements PlayerRideableJumping, BoatSe
         BoatState state = smartvillager_professions$state();
         if (state.cannon()) {
             Cannon.tickSoot(boat, state);
+        }
+        if (state.stern() != smartvillager_professions$boxStern || state.stern() && boat.getYRot() != smartvillager_professions$boxYaw) {
+            smartvillager_professions$boxStern = state.stern();
+            smartvillager_professions$boxYaw = boat.getYRot();
+            boat.setBoundingBox(BoatHitbox.of(boat, boat.getDimensions(boat.getPose()).makeBoundingBox(boat.position())));
         }
         if ((state.sail() || state.stern()) && boat.level() instanceof ServerLevel level) {
             DecorPerch.tick(boat, state, level);

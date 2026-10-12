@@ -63,7 +63,7 @@ import java.util.function.Consumer;
 public final class BoatGameTests {
 
     private static final DeferredRegister<Consumer<GameTestHelper>> FUNCTIONS = DeferredRegister.create(Registries.TEST_FUNCTION, SmartVillagerProfessionsMod.MODID);
-    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch", "boat_pet_perch");
+    private static final List<String> NAMES = List.of("boat_build_in_and_drop", "boat_trade_payments", "boat_seats", "cannon_needs_ball", "cannon_ball_keeps_blocks", "boat_parrot_perch", "boat_pet_perch", "boat_shoulder_parrot", "boat_stern_hitbox");
 
     static {
         FUNCTIONS.register("boat_build_in_and_drop", () -> BoatGameTests::buildInAndDrop);
@@ -73,6 +73,8 @@ public final class BoatGameTests {
         FUNCTIONS.register("cannon_ball_keeps_blocks", () -> BoatGameTests::ballKeepsBlocks);
         FUNCTIONS.register("boat_parrot_perch", () -> BoatGameTests::parrotPerch);
         FUNCTIONS.register("boat_pet_perch", () -> BoatGameTests::petPerch);
+        FUNCTIONS.register("boat_shoulder_parrot", () -> BoatGameTests::shoulderParrot);
+        FUNCTIONS.register("boat_stern_hitbox", () -> BoatGameTests::sternHitbox);
     }
 
     private BoatGameTests() {
@@ -301,9 +303,11 @@ public final class BoatGameTests {
         wolf.setInSittingPose(false);
         wolf.setOrderedToSit(false);
         boolean[] thrownOff = {false};
+        int[] aboardTicks = {0};
         helper.onEachTick(() -> {
-            if (!thrownOff[0] && wolf.getVehicle() == boat) {
+            if (!thrownOff[0] && wolf.getVehicle() == boat && ++aboardTicks[0] > 5) {
                 helper.assertTrue(boat.getPassengers().size() == 2, "player and dog aboard");
+                helper.assertTrue(wolf.isInSittingPose(), "the dog sits on the deck");
                 boat.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 0.1F);
                 thrownOff[0] = true;
             }
@@ -311,6 +315,40 @@ public final class BoatGameTests {
         helper.succeedWhen(() -> {
             helper.assertTrue(thrownOff[0], "the dog got on the stern (vehicle: " + wolf.getVehicle() + ", at " + wolf.position() + ")");
             helper.assertTrue(wolf.getVehicle() == null, "the damage threw the dog off");
+        });
+    }
+
+    /** A stern makes the hitbox 50 % longer, towards the stern only (a boat facing south: the extra is on its north side). */
+    private static void sternHitbox(GameTestHelper helper) {
+        floor(helper, 14, 14, Blocks.STONE);
+        AbstractBoat plain = boat(helper, 4, 1, 7);
+        AbstractBoat stern = boat(helper, 10, 1, 7);
+        BoatUpgrades.setState(stern, BoatUpgrades.state(stern).withDeco(new BoatState.Deco(BoatParts.STERN.id(), 1, new ItemStack(FishermanItems.BOAT_STERN.get()))));
+        helper.succeedWhen(() -> {
+            AABB plainBox = plain.getBoundingBox();
+            AABB box = stern.getBoundingBox();
+            helper.assertTrue(Math.abs(plainBox.getZsize() - 1.375) < 1.0E-3, "a plain boat keeps its box: " + plainBox);
+            helper.assertTrue(Math.abs(box.getZsize() - 1.375 * 1.5) < 1.0E-3 && Math.abs(box.getXsize() - 1.375) < 1.0E-3, "the stern boat is 50 % longer, not wider: " + box);
+            helper.assertTrue(Math.abs(box.maxZ - (stern.getZ() + 1.375 / 2.0)) < 1.0E-3 && Math.abs(box.minZ - (stern.getZ() - 1.375)) < 1.0E-3, "all of the extra is at the stern (yaw " + stern.getYRot() + "): " + box + " at z " + stern.getZ());
+        });
+    }
+
+    /** A parrot on the player's shoulder is taken off it and put on the crow's nest when the player sits in a boat with a sail. */
+    private static void shoulderParrot(GameTestHelper helper) {
+        floor(helper, 14, 14, Blocks.STONE);
+        AbstractBoat boat = boat(helper, 7, 1, 7);
+        BoatUpgrades.setState(boat, BoatUpgrades.state(boat).withDeco(new BoatState.Deco(BoatParts.SAIL.id(), 1, sailItem(new ItemStack(Items.WHITE_BANNER)))));
+        @SuppressWarnings("removal") ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setPos(boat.getX(), boat.getY(), boat.getZ());
+        Parrot parrot = helper.spawn(EntityType.PARROT, 7, 1, 7);
+        parrot.tame(player);
+        player.setOnGround(true);
+        helper.assertTrue(parrot.setEntityOnShoulder(player), "the parrot sits on the shoulder");
+        helper.assertTrue(!player.getShoulderEntityLeft().isEmpty() || !player.getShoulderEntityRight().isEmpty(), "a shoulder is taken");
+        helper.assertTrue(player.startRiding(boat), "the player boards");
+        helper.succeedWhen(() -> {
+            helper.assertTrue(boat.getPassengers().stream().anyMatch(passenger -> passenger instanceof Parrot), "the parrot is on the nest");
+            helper.assertTrue(player.getShoulderEntityLeft().isEmpty() && player.getShoulderEntityRight().isEmpty(), "both shoulders are free again");
         });
     }
 

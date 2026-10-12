@@ -1,6 +1,13 @@
 package com.smartvillager.professions.boat;
 
+import com.smartvillager.professions.mixin.ServerPlayerShoulderAccessor;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
@@ -35,14 +42,14 @@ public final class DecorPerch {
     private static final int MAX_PETS = 2;
 
     // Positions come from the Blockbench model (assets/Fisherman/boat.bbmodel); they are relative to the slot the decoration belongs to, in blocks.
-    /** The crow's nest's top: 47 px above the hitbox bottom, 0.275 blocks behind the sail's slot. */
-    private static final double NEST_HEIGHT = 47.0 / 16.0;
+    /** Where a parrot sits: on the crow's nest, 5 px below its top edge (47 px above the hitbox bottom), 0.275 blocks behind the sail's slot. */
+    private static final double NEST_HEIGHT = 42.0 / 16.0;
     private static final double NEST_BEHIND_SLOT = 0.275;
     /** The stern deck: its surface 15 px above the hitbox bottom, its middle 21.5 px behind the middle of the boat when the rear slot is at -0.6 (a Vanilla boat). */
     private static final double DECK_HEIGHT = 15.0 / 16.0;
     private static final double DECK_MIDDLE = -21.5 / 16.0;
     private static final double DECK_MODEL_SLOT = -0.6;
-    /** The two animals sit this far to either side of the boat's centre line. */
+    /** Two animals on the deck sit this far to either side of the boat's centre line; a single one sits in the middle. */
     private static final double PET_SIDE = 0.3;
 
     private record Trip(int animalId, long since) {
@@ -74,7 +81,7 @@ public final class DecorPerch {
             forward = rearSlotOffset(boat) + (DECK_MIDDLE - DECK_MODEL_SLOT);
             height = DECK_HEIGHT;
             List<Entity> pets = boat.getPassengers().stream().filter(other -> !isParrot(other) && BoatSlots.canPerch(boat, other)).toList();
-            side = pets.indexOf(animal) % 2 == 0 ? PET_SIDE : -PET_SIDE;
+            side = pets.size() < 2 ? 0.0 : pets.indexOf(animal) % 2 == 0 ? PET_SIDE : -PET_SIDE;
         }
         // forward is along (-sin yaw, cos yaw), side across it
         return new Vec3(-Math.sin(yaw) * forward + Math.cos(yaw) * side, height, Math.cos(yaw) * forward + Math.sin(yaw) * side);
@@ -88,9 +95,18 @@ public final class DecorPerch {
             TRIPS.remove(boat);
             return;
         }
+        // cats and dogs on the deck sit (the sitting pose, not Vanilla's sit order)
+        for (Entity pet : perched) {
+            if (pet instanceof TamableAnimal tamable && !isParrot(pet) && !tamable.isInSittingPose()) {
+                tamable.setInSittingPose(true);
+            }
+        }
         if (level.getGameTime() < state.petLockUntil()) {
             TRIPS.remove(boat);
             return;
+        }
+        if (state.sail() && level.getGameTime() % SEARCH_INTERVAL == 0) {
+            takeParrotsOffShoulders(boat, state, level);
         }
         boolean wantParrot = state.sail() && perched.stream().filter(DecorPerch::isParrot).count() < MAX_PARROTS;
         boolean wantPet = state.stern() && perched.stream().filter(animal -> !isParrot(animal)).count() < MAX_PETS;
@@ -131,6 +147,48 @@ public final class DecorPerch {
         }
     }
 
+    /**
+     * With a sail aboard a parrot no longer sits on its owner's shoulder: it is taken off and put straight on the crow's nest (or, if that is taken, set
+     * free beside the player like Vanilla does when a parrot leaves the shoulder).
+     */
+    private static void takeParrotsOffShoulders(AbstractBoat boat, BoatState state, ServerLevel level) {
+        for (Entity passenger : boat.getPassengers()) {
+            if (!(passenger instanceof ServerPlayer player)) {
+                continue;
+            }
+            ServerPlayerShoulderAccessor shoulders = (ServerPlayerShoulderAccessor) player;
+            if (isParrotTag(player.getShoulderEntityLeft())) {
+                releaseParrot(boat, state, level, player, player.getShoulderEntityLeft());
+                shoulders.smartvillager_professions$setShoulderEntityLeft(new CompoundTag());
+            }
+            if (isParrotTag(player.getShoulderEntityRight())) {
+                releaseParrot(boat, state, level, player, player.getShoulderEntityRight());
+                shoulders.smartvillager_professions$setShoulderEntityRight(new CompoundTag());
+            }
+        }
+    }
+
+    private static boolean isParrotTag(CompoundTag tag) {
+        return !tag.isEmpty() && tag.read("id", EntityType.CODEC).filter(type -> type == EntityType.PARROT).isPresent();
+    }
+
+    private static void releaseParrot(AbstractBoat boat, BoatState state, ServerLevel level, ServerPlayer player, CompoundTag tag) {
+        EntityType.create(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), tag), level, EntitySpawnReason.LOAD).ifPresent(entity -> {
+            if (entity instanceof TamableAnimal parrot) {
+                parrot.setOwner(player);
+                if (hasFreePerch(boat, parrot)) {
+                    Vec3 nest = boat.position().add(attachment(boat, state, parrot));
+                    parrot.setPos(nest.x, nest.y, nest.z);
+                    level.addWithUUID(parrot);
+                    parrot.startRiding(boat, true, true);
+                } else {
+                    parrot.setPos(player.getX(), player.getY() + 0.7, player.getZ());
+                    level.addWithUUID(parrot);
+                }
+            }
+        });
+    }
+
     /** Whether the boat has a free perch for this kind of animal (one parrot, two cats or dogs). */
     public static boolean hasFreePerch(AbstractBoat boat, Entity animal) {
         long same = boat.getPassengers().stream().filter(other -> isParrot(other) == isParrot(animal) && BoatSlots.canPerch(boat, other)).count();
@@ -160,6 +218,9 @@ public final class DecorPerch {
 
     private static void dismount(Entity animal) {
         animal.stopRiding();
+        if (animal instanceof TamableAnimal tamable && !isParrot(animal)) {
+            tamable.setInSittingPose(false);
+        }
         animal.setDeltaMovement(animal.getDeltaMovement().add(0.0, 0.3, 0.0));
     }
 }

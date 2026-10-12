@@ -14,7 +14,9 @@
     "CageIronGolemMixin",
     "CageMobMixin",
     "AbstractBoatMixin",
-    "VehicleEntityDropMixin"
+    "VehicleEntityDropMixin",
+    "ServerPlayerShoulderAccessor",
+    "EntityBoatHitboxMixin"
   ],
   "client": [
     "LocalPlayerCannonChargeMixin",
