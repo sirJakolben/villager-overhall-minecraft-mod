@@ -34,10 +34,10 @@ public final class Cannon {
     /** Where the cannon sits in the model (the front slot of a Vanilla boat), in blocks along the boat: another boat shifts the cannon with its front slot. */
     public static final double MODEL_SLOT_OFFSET = 0.2;
     /** Launch speed in blocks per tick: the least a released bar gives, and what a full bar adds. */
-    public static final float MIN_SPEED = 0.4F;
-    public static final float CHARGE_SPEED_GAIN = 0.85F;
+    public static final float MIN_SPEED = 0.5F;
+    public static final float CHARGE_SPEED_GAIN = 2.0F;
     /** The bar must be filled over this many percent when released, or nothing is fired (and nothing is used up). */
-    public static final int MIN_CHARGE = 50;
+    public static final int MIN_CHARGE = 10;
     public static final double GRAVITY = 0.04;
     /** The ball leaves 5 degrees above the horizon (the model's barrel is tilted more, for the look). */
     private static final double PITCH = Math.toRadians(5.0);

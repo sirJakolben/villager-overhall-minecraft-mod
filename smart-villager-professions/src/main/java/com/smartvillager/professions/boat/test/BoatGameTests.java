@@ -253,8 +253,8 @@ public final class BoatGameTests {
         player.setPos(boat.getX(), boat.getY(), boat.getZ());
         helper.assertTrue(player.startRiding(boat), "the player boards");
         player.getInventory().add(new ItemStack(FishermanItems.CANNONBALL.get(), 1));
-        Cannon.fire(boat, 40);
-        helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty() && player.getInventory().countItem(FishermanItems.CANNONBALL.get()) == 1, "a bar under half fires nothing and uses nothing");
+        Cannon.fire(boat, 5);
+        helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty() && player.getInventory().countItem(FishermanItems.CANNONBALL.get()) == 1, "a bar under 10 % fires nothing and uses nothing");
         player.getInventory().clearContent();
         Cannon.fire(boat, 80);
         helper.assertTrue(helper.getLevel().getEntitiesOfClass(CannonballEntity.class, boat.getBoundingBox().inflate(6.0), ball -> ball.getOwner() == player).isEmpty(), "no ball without a cannonball");
