@@ -167,7 +167,7 @@ public final class FishingWork extends CarryingWork {
                 // The core walks him to within 1.7 blocks; the last steps onto the block are his own.
                 villager.getBrain().setMemory(MemoryModuleType.WALK_TARGET, new WalkTarget(spot, 0.4F, 0));
             }
-        } else if (sees) {
+        } else if (sees && !missedFrom(villager, villager.blockPosition())) {
             // Not fixed yet: a clear line to the water is enough - he turns to it and casts, never over his shoulder, never into a wall.
             return cast(level, villager, state, counters, target);
         }
@@ -216,6 +216,8 @@ public final class FishingWork extends CarryingWork {
 
     /** The first cast that lands in the water fixes the block he stood in as his fishing spot - he uses the same one every time after. */
     public static void onLanded(Villager villager, BlockPos castFrom) {
+        MISSED_FROM.remove(villager.getUUID());
+        LAST_MISS.remove(villager.getUUID());
         PassiveCounters counters = PassiveCounters.of(villager);
         if (!counters.fixedSpot()) {
             PassiveCounters.set(villager, counters.withFixedSpot(castFrom));
@@ -248,6 +250,27 @@ public final class FishingWork extends CarryingWork {
         }
         PassiveCounters.set(villager, counters.withCasting(false).withNextStep(now + CAST_PAUSE_TICKS));
         PassiveLogic.syncLoadMeter(villager);
+    }
+
+    /** Blocks (by villager UUID) a cast from which missed the water, and the last such block: the next spot is another one, the nearest to the miss. Not saved. */
+    private static final java.util.Map<java.util.UUID, java.util.Set<BlockPos>> MISSED_FROM = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final java.util.Map<java.util.UUID, BlockPos> LAST_MISS = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final int MAX_MISSED_SPOTS = 12;
+
+    private static boolean missedFrom(Villager villager, BlockPos pos) {
+        java.util.Set<BlockPos> missed = MISSED_FROM.get(villager.getUUID());
+        return missed != null && missed.contains(pos);
+    }
+
+    /** The bobber never reached the water: this block is not tried again until a cast lands, and the new spot is looked for next to it. */
+    public static void onMissed(Villager villager, BlockPos castFrom) {
+        java.util.Set<BlockPos> missed = MISSED_FROM.computeIfAbsent(villager.getUUID(), id -> java.util.concurrent.ConcurrentHashMap.newKeySet());
+        if (missed.size() >= MAX_MISSED_SPOTS) {
+            missed.clear();
+        }
+        missed.add(castFrom.immutable());
+        LAST_MISS.put(villager.getUUID(), castFrom.immutable());
+        onLost(villager);
     }
 
     /** The cast found no water to land in, or the bobber was lost: a short pause, then the next walk to the water. */
@@ -298,12 +321,13 @@ public final class FishingWork extends CarryingWork {
             }
         }
         waters.sort(Comparator.comparingDouble(pos -> pos.distSqr(center)));
-        BlockPos from = villager.blockPosition();
+        BlockPos lastMiss = LAST_MISS.get(villager.getUUID());
+        BlockPos from = lastMiss != null ? lastMiss : villager.blockPosition();
         for (BlockPos water : waters.stream().limit(MAX_WATERS_TRIED).toList()) {
             Vec3 target = surfaceOf(level, water);
             List<BlockPos> spots = new ArrayList<>();
             for (BlockPos pos : BlockPos.betweenClosed(water.offset(-SHORE_SEARCH, -2, -SHORE_SEARCH), water.offset(SHORE_SEARCH, 2, SHORE_SEARCH))) {
-                if (isStandable(level, pos)) {
+                if (isStandable(level, pos) && !missedFrom(villager, pos)) {
                     spots.add(pos.immutable());
                 }
             }

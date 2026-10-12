@@ -195,15 +195,15 @@ public final class BoatGameTests {
         }
         ItemExchange mastOffer = exchanges.getValue(id("fisherman_boat_sail"));
         ItemCost banner = RequiredEnchantmentCost.of(mastOffer.secondInput().get(), registries);
-        helper.assertTrue(banner.test(new ItemStack(Items.RED_BANNER)) && banner.test(new ItemStack(Items.WHITE_BANNER)), "any banner pays for a mast");
+        helper.assertTrue(banner.test(new ItemStack(Items.WHITE_BANNER)) && !banner.test(new ItemStack(Items.RED_BANNER)), "only a white banner pays for a sail");
         helper.assertTrue(!banner.test(new ItemStack(Items.OAK_PLANKS)), "planks do not");
 
         ItemStack shown = new ItemStack(FishermanItems.BOAT_SAIL.get());
         MerchantOffer offer = new MerchantOffer(new ItemCost(Items.EMERALD), Optional.of(banner), shown, 0, 1, 0, 0.0F);
-        ItemStack paid = new ItemStack(Items.RED_BANNER);
+        ItemStack paid = new ItemStack(Items.WHITE_BANNER);
         ItemStack result = BoatUpgrades.transform(offer, new ItemStack(Items.EMERALD, 4), paid, shown);
         BoatUpgrades.Sail mast = result.get(BoatUpgrades.SAIL.get());
-        helper.assertTrue(result.is(FishermanItems.BOAT_SAIL.get()) && mast != null && mast.banner().is(Items.RED_BANNER), "the mast carries the paid banner: " + result);
+        helper.assertTrue(result.is(FishermanItems.BOAT_SAIL.get()) && mast != null && mast.banner().is(Items.WHITE_BANNER), "the sail starts white: " + result);
         ItemStack plain = new ItemStack(FishermanItems.BOAT_CANNON.get());
         helper.assertTrue(BoatUpgrades.transform(offer, new ItemStack(Items.EMERALD), new ItemStack(Items.IRON_BLOCK), plain) == plain, "other offers pass through untouched");
         helper.succeed();
