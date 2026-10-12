@@ -238,8 +238,8 @@ public final class BoatGameTests {
         Sheep sternSheepA = helper.spawn(EntityType.SHEEP, 13, 1, 9);
         Sheep sternSheepB = helper.spawn(EntityType.SHEEP, 13, 1, 9);
         helper.assertTrue(sternSheepA.startRiding(stern) && sternSheepB.startRiding(stern), "a stern takes no seat");
-        helper.assertTrue(helper.spawn(EntityType.CAT, 13, 1, 9).startRiding(stern) && helper.spawn(EntityType.WOLF, 13, 1, 9).startRiding(stern), "a cat and a dog sit on the deck");
-        helper.assertTrue(!helper.spawn(EntityType.CAT, 13, 1, 9).startRiding(stern), "a third one has no place on the deck");
+        helper.assertTrue(helper.spawn(EntityType.CAT, 13, 1, 9).startRiding(stern), "a cat sits on the deck");
+        helper.assertTrue(!helper.spawn(EntityType.WOLF, 13, 1, 9).startRiding(stern), "the deck has a place for one pet only");
         helper.succeed();
     }
 
@@ -304,10 +304,19 @@ public final class BoatGameTests {
         wolf.setOrderedToSit(false);
         boolean[] thrownOff = {false};
         int[] aboardTicks = {0};
+        int[] stage = {0};
+        int[] waited = {0};
         helper.onEachTick(() -> {
-            if (!thrownOff[0] && wolf.getVehicle() == boat && ++aboardTicks[0] > 5) {
+            if (thrownOff[0]) {
+                return;
+            }
+            if (stage[0] == 0 && wolf.getVehicle() == boat && ++aboardTicks[0] > 5) {
                 helper.assertTrue(boat.getPassengers().size() == 2, "player and dog aboard");
                 helper.assertTrue(wolf.isInSittingPose(), "the dog sits on the deck");
+                player.stopRiding();
+                stage[0] = 1;
+            } else if (stage[0] == 1 && ++waited[0] > 20) {
+                helper.assertTrue(wolf.getVehicle() == boat, "the dog stays on the deck when the player gets out");
                 boat.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 0.1F);
                 thrownOff[0] = true;
             }

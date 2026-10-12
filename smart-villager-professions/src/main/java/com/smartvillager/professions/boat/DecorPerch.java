@@ -22,8 +22,8 @@ import java.util.WeakHashMap;
 
 /**
  * The animals on the boat's decoration (Obsidian Fisherman.md, 2026-10-12): while a player sits in the boat, the player's tame parrot (not sitting, near) flies
- * to the crow's nest of a sail, and tame cats and dogs walk to the stern deck of a stern (one parrot, two cats/dogs). They are decoration passengers: they
- * take no seat (BoatSlots.canPerch). They leave when the player gets out, when the boat takes damage, or when it is destroyed; after being thrown out they stay
+ * to the crow's nest of a sail, and a tame cat or dog walks to the stern deck of a stern (one parrot, one cat or dog). They are decoration passengers: they
+ * take no seat (BoatSlots.canPerch). They stay when the player gets out and leave only when the boat takes damage or is destroyed; after being thrown out they stay
  * away a few seconds. Server only; one search twice a second while a seated player has a free perch, one steered animal at a time - nothing runs for a boat
  * without a sail or a stern.
  */
@@ -39,7 +39,7 @@ public final class DecorPerch {
     /** After being thrown out, no new boarding for this long. */
     private static final int LOCK_TICKS = 100;
     private static final int MAX_PARROTS = 1;
-    private static final int MAX_PETS = 2;
+    private static final int MAX_PETS = 1;
 
     // Positions come from the Blockbench model (assets/Fisherman/boat.bbmodel); they are relative to the slot the decoration belongs to, in blocks.
     /** Where a parrot sits: on the crow's nest, 5 px below its top edge (47 px above the hitbox bottom), 0.275 blocks behind the sail's slot. */
@@ -49,8 +49,6 @@ public final class DecorPerch {
     private static final double DECK_HEIGHT = 15.0 / 16.0;
     private static final double DECK_MIDDLE = -21.5 / 16.0;
     private static final double DECK_MODEL_SLOT = -0.6;
-    /** Two animals on the deck sit this far to either side of the boat's centre line; a single one sits in the middle. */
-    private static final double PET_SIDE = 0.3;
 
     private record Trip(int animalId, long since) {
     }
@@ -68,11 +66,10 @@ public final class DecorPerch {
         return BoatSlots.offset(boat, BoatSlots.seats(boat) - 1);
     }
 
-    /** Where an animal rides, relative to the boat: the nest for a parrot, a place on the stern deck for a cat or dog (the first sits on one side, the second on the other). */
+    /** Where an animal rides, relative to the boat: the nest for a parrot, the middle of the stern deck for a cat or dog. */
     public static Vec3 attachment(AbstractBoat boat, BoatState state, Entity animal) {
         double yaw = Math.toRadians(boat.getYRot());
         double forward;
-        double side = 0.0;
         double height;
         if (isParrot(animal)) {
             forward = BoatSlots.offset(boat, state.sailSlot()) - NEST_BEHIND_SLOT;
@@ -80,28 +77,22 @@ public final class DecorPerch {
         } else {
             forward = rearSlotOffset(boat) + (DECK_MIDDLE - DECK_MODEL_SLOT);
             height = DECK_HEIGHT;
-            List<Entity> pets = boat.getPassengers().stream().filter(other -> !isParrot(other) && BoatSlots.canPerch(boat, other)).toList();
-            side = pets.size() < 2 ? 0.0 : pets.indexOf(animal) % 2 == 0 ? PET_SIDE : -PET_SIDE;
         }
-        // forward is along (-sin yaw, cos yaw), side across it
-        return new Vec3(-Math.sin(yaw) * forward + Math.cos(yaw) * side, height, Math.cos(yaw) * forward + Math.sin(yaw) * side);
+        // forward is along (-sin yaw, cos yaw)
+        return new Vec3(-Math.sin(yaw) * forward, height, Math.cos(yaw) * forward);
     }
 
     public static void tick(AbstractBoat boat, BoatState state, ServerLevel level) {
         List<Entity> perched = boat.getPassengers().stream().filter(passenger -> BoatSlots.canPerch(boat, passenger)).toList();
         boolean seated = boat.getPassengers().stream().anyMatch(passenger -> passenger instanceof Player);
-        if (!seated) {
-            perched.forEach(DecorPerch::dismount);
-            TRIPS.remove(boat);
-            return;
-        }
         // cats and dogs on the deck sit (the sitting pose, not Vanilla's sit order)
         for (Entity pet : perched) {
             if (pet instanceof TamableAnimal tamable && !isParrot(pet) && !tamable.isInSittingPose()) {
                 tamable.setInSittingPose(true);
             }
         }
-        if (level.getGameTime() < state.petLockUntil()) {
+        // new animals only come aboard while a player sits in the boat; the ones already aboard stay when the player gets out
+        if (!seated || level.getGameTime() < state.petLockUntil()) {
             TRIPS.remove(boat);
             return;
         }
@@ -189,7 +180,7 @@ public final class DecorPerch {
         });
     }
 
-    /** Whether the boat has a free perch for this kind of animal (one parrot, two cats or dogs). */
+    /** Whether the boat has a free perch for this kind of animal (one parrot, one cat or dog). */
     public static boolean hasFreePerch(AbstractBoat boat, Entity animal) {
         long same = boat.getPassengers().stream().filter(other -> isParrot(other) == isParrot(animal) && BoatSlots.canPerch(boat, other)).count();
         return same < (isParrot(animal) ? MAX_PARROTS : MAX_PETS);
@@ -203,7 +194,7 @@ public final class DecorPerch {
                 && owner != null && boat.hasPassenger(owner);
     }
 
-    /** Throws every perched animal out (the boat took damage, the player left) and keeps them from coming back at once. */
+    /** Throws every perched animal out (the boat took damage) and keeps them from coming back at once. */
     public static void eject(AbstractBoat boat) {
         if (!(boat.level() instanceof ServerLevel level)) {
             return;
