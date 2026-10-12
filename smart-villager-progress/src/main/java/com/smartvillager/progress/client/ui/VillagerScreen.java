@@ -599,20 +599,21 @@ public class VillagerScreen extends AbstractContainerScreen<VillagerMenu> {
 
     /**
      * The result, and - when a rank raised its yield (2026-09-28) - the Base count struck through beside the real
-     * one. There is no room right of the result icon (row edge, quest reroll button), so the Base count sits in
-     * the icon's top-right corner, above the real count in its usual place.
+     * one. There is no room right of the result icon (row edge, quest reroll button), so both counts stack in the
+     * icon's right edge: the real count in the top-right corner, the struck Base count in the usual count place below.
      */
     private void extractAndDecorateResult(GuiGraphicsExtractor graphics, ItemStack result, int baseCount, int x, int y) {
         graphics.fakeItem(result, x, y);
-        graphics.itemDecorations(this.font, result, x, y);
         if (baseCount == result.getCount() || baseCount <= 0) {
+            graphics.itemDecorations(this.font, result, x, y);
             return;
         }
         String base = String.valueOf(baseCount);
-        int textX = x + 19 - 2 - this.font.width(base);
-        int textY = y - 1;
-        graphics.text(this.font, base, textX, textY, 0xFFFFFFFF, true);
-        graphics.fill(textX - 1, textY + 3, textX + this.font.width(base), textY + 4, YIELD_STRIKETHROUGH_COLOR);
+        graphics.itemDecorations(this.font, result, x, y, base);
+        int baseTextX = x + 19 - 2 - this.font.width(base);
+        graphics.fill(baseTextX - 1, y + 12, baseTextX + this.font.width(base), y + 13, YIELD_STRIKETHROUGH_COLOR);
+        String count = String.valueOf(result.getCount());
+        graphics.text(this.font, count, x + 19 - 2 - this.font.width(count), y - 1, 0xFFFFFFFF, true);
     }
 
     /**

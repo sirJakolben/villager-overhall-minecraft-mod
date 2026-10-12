@@ -62,6 +62,9 @@ public class GoToTradingBlock extends Behavior<Villager> {
         if (block.isEmpty()) {
             return;
         }
+        if (body.isSleeping()) {
+            body.stopSleeping();
+        }
         BlockPos pos = block.get().pos();
         Brain<Villager> brain = body.getBrain();
         boolean alreadyThere = brain.getMemory(MemoryModuleType.WALK_TARGET)

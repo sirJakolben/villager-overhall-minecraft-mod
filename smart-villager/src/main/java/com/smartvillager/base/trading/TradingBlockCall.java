@@ -23,7 +23,8 @@ import java.util.stream.Stream;
  * - Right-click on the block (TradingBlock): a short visit - it walks there, waits VISIT_WAIT_TICKS
  *   once it arrived, then goes back to whatever it was doing. A visit it can't finish walking within
  *   MAX_WALK_TICKS is dropped. Visits are not saved - a reload simply ends them.
- * Panic, raids and sleep still come first - a call only takes over from work, strolling and meeting.
+ * Panic and raids still come first - a call takes over from work, strolling, meeting and sleep (a sleeper
+ * is woken by GoToTradingBlock, the rest package pauses while called).
  * Cheap enough to ask every tick: one state read, one map lookup, a loaded check and a redstone lookup
  * of the block's six neighbors.
  */
@@ -68,7 +69,7 @@ public final class TradingBlockCall {
             VISITS.remove(villager.getUUID());
             return Optional.empty();
         }
-        if (villager.isSleeping() || villager.isBaby() || isBusyWithSomethingMoreImportant(villager.getBrain())) {
+        if (villager.isBaby() || isBusyWithSomethingMoreImportant(villager.getBrain())) {
             return Optional.empty();
         }
         if (level.hasNeighborSignal(block.get().pos())) {
@@ -126,6 +127,6 @@ public final class TradingBlockCall {
 
     private static boolean isBusyWithSomethingMoreImportant(Brain<Villager> brain) {
         return brain.isActive(Activity.PANIC) || brain.isActive(Activity.RAID) || brain.isActive(Activity.PRE_RAID)
-                || brain.isActive(Activity.HIDE) || brain.isActive(Activity.REST);
+                || brain.isActive(Activity.HIDE);
     }
 }

@@ -4,7 +4,7 @@ Vanilla-artiges Rework aller Villager für Minecraft 26.1 (NeoForge 26.1.0.19-be
 
 | Baustein | Ordner / Mod-ID | Rolle | Details |
 |---|---|---|---|
-| Smart Villager | `smart-villager/` · `smartvillager` | unterste Stufe, braucht nichts: Claim und Anlocken per Smaragd, Handelsblock, doppelt so viele Zombie-Villager mit Heilen per goldenem Essen, Brauständer mit Brennstoff | [docs/smart-villager.md](docs/smart-villager.md) |
+| Smart Villager | `smart-villager/` · `smartvillager` | unterste Stufe, braucht nichts: Claim und Anlocken per Smaragd, Handelsblock, doppelt so viele Zombie-Villager mit Heilen per Schwäche-Effekt, Brauständer mit Brennstoff | [docs/smart-villager.md](docs/smart-villager.md) |
 | Smart Villager Progress | `smart-villager-progress/` · `smartvillager_progress` | Sektionen, Leveln durch Arbeit, Handelsfenster, Restock, Glück, Arbeitsplätze; Vanilla-Trades für jeden Beruf; braucht Smart Villager | [docs/progress.md](docs/progress.md) |
 | Smart Villager Professions | `smart-villager-professions/` · `smartvillager_professions` | die designten Berufe, Quests/Masteries/Passive; braucht Progress | [docs/professions.md](docs/professions.md) |
 | Smart Iron Golem | `smart-golem/` · `smartgolem` | Nachtpatrouille, Klettern, Anlocken; eigenständig | [docs/smart-golem.md](docs/smart-golem.md) |

@@ -50,10 +50,10 @@ import java.util.UUID;
  * (insert) saves and removes the mob; letting it out (releaseOccupant) loads it back - also when the cage is broken, burnt or pushed away
  * (preRemoveSideEffects). The client gets the tag too and draws a display copy (client/CageRenderer).
  *
- * The cure is Vanilla's: a potion of weakness (any form) weakens the prisoner for WEAKNESS_TICKS, a golden apple on a weakened prisoner starts the
- * cure (Vanilla's 3 to 5 minutes). When it is done the cage opens and the prisoner is let out as a zombie villager with the conversion at its last
- * tick - Vanilla's own conversion makes the villager (data, trades, gossip, reputation, advancement). Breaking the cage in the middle of the
- * cure lets it out with the rest of the time still running.
+ * The cure is Smart Villager's rule: weakness starts it, no golden apple. A potion of weakness (any form) on the cage starts the cure (Vanilla's 3 to
+ * 5 minutes). When it is done the cage opens and the prisoner is let out as a zombie villager with the conversion at its last tick - Vanilla's own
+ * conversion makes the villager (data, trades, gossip, reputation, advancement). Breaking the cage in the middle of the cure lets it out with the rest of
+ * the time still running.
  *
  * The reservation (which golem is bringing a zombie villager here) lives only in memory.
  */
@@ -61,8 +61,6 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    /** How long the potion of weakness weakens the prisoner (ticks; Vanilla's potion lasts 90 s, a splash potion 67 s). */
-    public static final int WEAKNESS_TICKS = 2400;
     /** The cure takes this long, plus up to {@link #CURE_EXTRA_TICKS} (Vanilla: 3600 + 0 to 2400). */
     public static final int CURE_MIN_TICKS = 3600;
     public static final int CURE_EXTRA_TICKS = 2400;
@@ -70,7 +68,6 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
     public static final int RESERVATION_TICKS = 400;
 
     private @Nullable CompoundTag occupant;
-    private long weakenedUntil = -1L;
     private long cureAt = -1L;
     private @Nullable UUID curer;
 
@@ -84,12 +81,12 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
         super(Cages.CAGE_ENTITY.get(), pos, state);
     }
 
-    public boolean isOccupied() {
-        return occupant != null;
-    }
-
     public boolean isCuring() {
         return occupant != null && cureAt >= 0L;
+    }
+
+    public boolean isOccupied() {
+        return occupant != null;
     }
 
     public @Nullable CompoundTag occupantTag() {
@@ -147,7 +144,6 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
         tag.remove("Fire");
         zombie.discard();
         occupant = tag;
-        weakenedUntil = -1L;
         cureAt = -1L;
         curer = null;
         reservedBy = null;
@@ -159,43 +155,29 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
 
     /* ---- the cure ---- */
 
-    /** Right-click with a potion of weakness or a golden apple. */
+    /** Right-click with a potion of weakness: the cure starts. */
     public InteractionResult interact(ItemStack stack, Player player, InteractionHand hand) {
-        if (occupant == null || isCuring()) {
+        if (occupant == null || isCuring() || !isWeaknessPotion(stack)) {
             return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         if (!(level instanceof ServerLevel server)) {
             // The client may say yes already; the server decides.
-            return isWeaknessPotion(stack) || stack.is(Items.GOLDEN_APPLE) ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
+            return InteractionResult.SUCCESS;
         }
-        long now = server.getGameTime();
-        if (isWeaknessPotion(stack)) {
-            weakenedUntil = now + WEAKNESS_TICKS;
-            if (stack.is(Items.POTION)) {
-                player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
-            } else {
-                stack.consume(1, player);
-            }
-            server.playSound(null, worldPosition, SoundEvents.SPLASH_POTION_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
-            server.sendParticles(ParticleTypes.WITCH, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, 14, 0.3, 0.6, 0.3, 0.02);
-            return InteractionResult.SUCCESS_SERVER;
-        }
-        if (stack.is(Items.GOLDEN_APPLE)) {
-            if (now >= weakenedUntil) {
-                // Like Vanilla: it only works on a weakened zombie villager, and the apple stays.
-                return InteractionResult.CONSUME;
-            }
+        if (stack.is(Items.POTION)) {
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
+        } else {
             stack.consume(1, player);
-            startCure(server, player.getUUID(), now + CURE_MIN_TICKS + server.getRandom().nextInt(CURE_EXTRA_TICKS + 1));
-            return InteractionResult.SUCCESS_SERVER;
         }
-        return InteractionResult.TRY_WITH_EMPTY_HAND;
+        server.playSound(null, worldPosition, SoundEvents.SPLASH_POTION_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
+        server.sendParticles(ParticleTypes.WITCH, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, 14, 0.3, 0.6, 0.3, 0.02);
+        startCure(server, player.getUUID(), server.getGameTime() + CURE_MIN_TICKS + server.getRandom().nextInt(CURE_EXTRA_TICKS + 1));
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     private void startCure(ServerLevel server, UUID starter, long finishAt) {
         cureAt = finishAt;
         curer = starter;
-        weakenedUntil = -1L;
         // The display copy shakes like a curing zombie villager does.
         if (occupant != null) {
             occupant.putInt("ConversionTime", (int) Math.max(1L, finishAt - server.getGameTime()));
@@ -262,7 +244,6 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
             }
         }
         occupant = null;
-        weakenedUntil = -1L;
         cureAt = -1L;
         curer = null;
         Entity zombie = EntityType.loadEntityRecursive(EntityType.ZOMBIE_VILLAGER, tag, server, EntitySpawnReason.LOAD, EntityProcessor.NOP);
@@ -301,7 +282,6 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.storeNullable("Occupant", CompoundTag.CODEC, occupant);
-        output.putLong("WeakenedUntil", weakenedUntil);
         output.putLong("CureAt", cureAt);
         output.storeNullable("Curer", UUIDUtil.CODEC, curer);
     }
@@ -310,7 +290,6 @@ public class ZombieVillagerCageBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         occupant = input.read("Occupant", CompoundTag.CODEC).orElse(null);
-        weakenedUntil = input.getLongOr("WeakenedUntil", -1L);
         cureAt = input.getLongOr("CureAt", -1L);
         curer = input.read("Curer", UUIDUtil.CODEC).orElse(null);
         displayEntity = null;

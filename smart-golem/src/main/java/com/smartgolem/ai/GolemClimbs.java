@@ -1,6 +1,7 @@
 package com.smartgolem.ai;
 
 import com.smartgolem.SmartGolemMod;
+import com.smartgolem.climb.ClimbPath;
 import com.smartgolem.climb.GolemClimb;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -16,11 +17,12 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 /**
  * The Iron Golem's climb up a wall two blocks high (the animation "2_block_climb" of the Blockbench project, 4 seconds), the part of the plan after the
  * navigation: GolemPathNavigation brings the golem to the foot of the wall and calls start.
- * - start: the golem is put on top of the wall at once (where the animation ends), turned to the wall, and the climb
- *   is set on it (GolemClimb, synced to the clients, which play the animation drawn at the start, a block from the wall: ClimbGolemClient);
- * - during the climb the golem cannot move or turn - whatever its goals do, it is held where it is: on top of the wall (the target);
- * - at the end the climb is simply cleared - the golem is already where the animation ends, in the standing pose - and its path is worked out
- *   anew from there. Nothing hops or jumps: walking and jumping stay Vanilla's.
+ * - start: the golem turns to the wall and the climb is set on it (GolemClimb, synced to the clients, which play the animation);
+ * - during the climb the golem cannot walk or turn - whatever its goals do, it is put on the path of the climb (ClimbPath) every tick: it glides to the
+ *   start of the animation, hangs still while the hands are on the ledge, then moves up in a straight line while it pulls itself up - the real golem
+ *   moves, with its hitbox; the model is the animation (ClimbGolemModel) with that movement taken out;
+ * - at the end the climb is cleared - the golem is on top, in the standing pose the animation ends in - and its path is worked out anew from there.
+ *   Nothing hops or jumps: walking and jumping stay Vanilla's.
  */
 @EventBusSubscriber(modid = SmartGolemMod.MODID)
 public final class GolemClimbs {
@@ -36,7 +38,7 @@ public final class GolemClimbs {
 
     /** Starts the climb from the foot node to the top node (two blocks higher, on the other side of the wall); false if the wall or the room on top is no longer there. */
     public static boolean start(IronGolem golem, Node foot, Node top) {
-        if (!(golem.level() instanceof ServerLevel level)) {
+        if (!(golem.level() instanceof ServerLevel level) || golem.isVehicle()) {
             return false;
         }
         int footprint = ClimbGeometry.footprint(golem);
@@ -51,12 +53,11 @@ public final class GolemClimbs {
         }
         float yaw = direction.toYRot();
         Vec3 from = golem.position();
-        // The golem itself is at the target from the first tick, the model is drawn at the start (client): nothing moves when the animation ends.
-        golem.snapTo(target.x, target.y, target.z, yaw, 0.0F);
+        // The golem turns to the wall and ClimbPath takes it from here (every tick, on the server; the client works out the same).
         face(golem, yaw);
         golem.setDeltaMovement(Vec3.ZERO);
         // No jump towards the node two blocks up in this tick.
-        golem.getMoveControl().setWantedPosition(target.x, target.y, target.z, 0.0);
+        golem.getMoveControl().setWantedPosition(from.x, from.y, from.z, 0.0);
         golem.noPhysics = true;
         golem.setData(GolemClimb.ATTACHMENT, new GolemClimb(level.getGameTime(), from, start, target));
         return true;
@@ -76,9 +77,10 @@ public final class GolemClimbs {
             finish(golem, level, climb);
             return;
         }
-        // Held where it is - on top; the model is drawn at the start meanwhile (client) - looking at the wall.
+        // Moved along the path of the climb (it passes through the wall - no physics - and nothing pushes it off).
         golem.noPhysics = true;
-        golem.setPos(climb.target().x, climb.target().y, climb.target().z);
+        Vec3 at = ClimbPath.position(climb, elapsed);
+        golem.setPos(at.x, at.y, at.z);
         face(golem, yawOf(climb));
         golem.setDeltaMovement(Vec3.ZERO);
         golem.fallDistance = 0.0;
@@ -86,6 +88,8 @@ public final class GolemClimbs {
 
     private static void finish(IronGolem golem, ServerLevel level, GolemClimb climb) {
         golem.noPhysics = false;
+        // The top may have been built over in the meantime - the golem then stays where the path ends and the navigation finds a way from there.
+        golem.setPos(climb.target().x, climb.target().y, climb.target().z);
         face(golem, yawOf(climb));
         golem.setDeltaMovement(Vec3.ZERO);
         golem.fallDistance = 0.0;

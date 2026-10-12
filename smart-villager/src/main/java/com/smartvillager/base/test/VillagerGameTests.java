@@ -19,6 +19,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.zombie.ZombieVillager;
@@ -40,7 +43,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Gametests of Smart Villager (run headless with ./gradlew :smart-villager:runGameTestServer): the golden food cure, the emerald claim of a
+ * Gametests of Smart Villager (run headless with ./gradlew :smart-villager:runGameTestServer): the weakness cure, the emerald claim of a
  * Vanilla workplace and of a Trading Block, the Trading Block call by redstone, and the fuel of generated brewing stands. Chunk generation
  * and natural zombie spawns need a real world and are not covered here.
  */
@@ -51,9 +54,9 @@ public final class VillagerGameTests {
     private static final int PADDING = 24;
 
     static {
-        FUNCTIONS.register("cure_with_golden_carrot", () -> helper -> cureWith(helper, Items.GOLDEN_CARROT, true));
-        FUNCTIONS.register("cure_with_golden_apple_without_weakness", () -> helper -> cureWith(helper, Items.GOLDEN_APPLE, true));
-        FUNCTIONS.register("no_cure_with_plain_carrot", () -> helper -> cureWith(helper, Items.CARROT, false));
+        FUNCTIONS.register("cure_by_weakness", () -> VillagerGameTests::cureByWeakness);
+        FUNCTIONS.register("no_cure_with_golden_apple_alone", () -> helper -> noCureWith(helper, Items.GOLDEN_APPLE));
+        FUNCTIONS.register("no_cure_with_golden_carrot", () -> helper -> noCureWith(helper, Items.GOLDEN_CARROT));
         FUNCTIONS.register("claim_vanilla_workplace", () -> VillagerGameTests::claimVanillaWorkplace);
         FUNCTIONS.register("claim_trading_block_and_call", () -> VillagerGameTests::claimTradingBlockAndCall);
         FUNCTIONS.register("brewing_stand_fuel", () -> VillagerGameTests::brewingStandFuel);
@@ -71,7 +74,7 @@ public final class VillagerGameTests {
     static void onRegisterGameTests(RegisterGameTestsEvent event) {
         Holder<TestEnvironmentDefinition<?>> environment = event.registerEnvironment(id("default"));
         Identifier structure = Identifier.withDefaultNamespace("empty");
-        for (String name : new String[]{"cure_with_golden_carrot", "cure_with_golden_apple_without_weakness", "no_cure_with_plain_carrot",
+        for (String name : new String[]{"cure_by_weakness", "no_cure_with_golden_apple_alone", "no_cure_with_golden_carrot",
                 "claim_vanilla_workplace", "claim_trading_block_and_call", "brewing_stand_fuel"}) {
             event.registerTest(id(name), new FunctionGameTestInstance(ResourceKey.create(Registries.TEST_FUNCTION, id(name)),
                     new TestData<>(environment, structure, 200, 0, true, Rotation.NONE, false, 1, 1, false, PADDING)));
@@ -84,6 +87,14 @@ public final class VillagerGameTests {
 
     /** A stone floor at y = 0, air above, 12 x 12. */
     private static void area(GameTestHelper helper) {
+        // The chunks of the area are forced: loaded and ticking, so mobs and effects run whatever the test world has around.
+        BlockPos low = helper.absolutePos(new BlockPos(-2, 0, -2));
+        BlockPos high = helper.absolutePos(new BlockPos(14, 0, 14));
+        for (int chunkX = Math.min(low.getX(), high.getX()) >> 4; chunkX <= Math.max(low.getX(), high.getX()) >> 4; chunkX++) {
+            for (int chunkZ = Math.min(low.getZ(), high.getZ()) >> 4; chunkZ <= Math.max(low.getZ(), high.getZ()) >> 4; chunkZ++) {
+                helper.getLevel().setChunkForced(chunkX, chunkZ, true);
+            }
+        }
         for (int x = 0; x < 12; x++) {
             for (int z = 0; z < 12; z++) {
                 helper.setBlock(x, 0, z, Blocks.STONE);
@@ -101,15 +112,37 @@ public final class VillagerGameTests {
         return player;
     }
 
-    private static void cureWith(GameTestHelper helper, net.minecraft.world.item.Item food, boolean cures) {
+    /** The weakness effect alone starts the cure (it takes time, like Vanilla's, and uses up the weakness); when the time is over it is a villager. */
+    private static void cureByWeakness(GameTestHelper helper) {
+        area(helper);
+        ZombieVillager zombie = helper.spawn(EntityType.ZOMBIE_VILLAGER, 4, 1, 4);
+        AABB around = new AABB(helper.absolutePos(new BlockPos(4, 1, 4))).inflate(3.0);
+        boolean[] timeSkipped = {false};
+        helper.runAfterDelay(2, () -> zombie.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200), null));
+        helper.onEachTick(() -> {
+            if (!timeSkipped[0] && zombie.isConverting()) {
+                helper.assertTrue(zombie.isAlive() && helper.getLevel().getEntitiesOfClass(Villager.class, around).isEmpty(), "it is still a zombie villager while it is cured");
+                helper.assertTrue(!zombie.hasEffect(MobEffects.WEAKNESS), "the cure used up the weakness");
+                // Not the 3 to 5 minutes of the test: the last tick.
+                zombie.setVillagerConversionTime(1);
+                timeSkipped[0] = true;
+            }
+        });
+        helper.succeedWhen(() -> {
+            helper.assertTrue(timeSkipped[0], "the cure started");
+            helper.assertTrue(!zombie.isAlive() && !helper.getLevel().getEntitiesOfClass(Villager.class, around).isEmpty(), "and ends in a villager");
+        });
+    }
+
+    /** Golden food does not cure any more - not even a golden apple. */
+    private static void noCureWith(GameTestHelper helper, net.minecraft.world.item.Item food) {
         area(helper);
         ZombieVillager zombie = helper.spawn(EntityType.ZOMBIE_VILLAGER, 4, 1, 4);
         ServerPlayer player = survivalPlayer(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(food, 2));
         helper.runAfterDelay(2, () -> {
             player.interactOn(zombie, InteractionHand.MAIN_HAND, zombie.position());
-            helper.assertTrue(zombie.isConverting() == cures, "zombie villager " + (cures ? "starts" : "does not start") + " converting with " + food);
-            helper.assertTrue(player.getMainHandItem().getCount() == (cures ? 1 : 2), "the food is " + (cures ? "eaten" : "kept") + ": " + player.getMainHandItem());
+            helper.assertTrue(!zombie.isConverting(), "zombie villager does not start converting with " + food);
             helper.succeed();
         });
     }

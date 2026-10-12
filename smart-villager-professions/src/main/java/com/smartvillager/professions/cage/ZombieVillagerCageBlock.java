@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
  * zombie villager in and the cage keeps it - the cage holds it as saved data only (ZombieVillagerCageBlockEntity), never as a living mob, so it
  * cannot attack, burn or wander. Breaking the cage lets it out again.
  *
- * Right-click cures it, the Vanilla way: a potion of weakness first, then a golden apple. Only the lower half has the block entity; OCCUPIED is
+ * Right-click with a potion of weakness starts the cure (Smart Villager: weakness starts it, no golden apple). Only the lower half has the block entity; OCCUPIED is
  * kept equal on both halves. The lower half of a free cage is a point of interest (Cages.CAGE_POI), which is how the golems find it.
  */
 public class ZombieVillagerCageBlock extends BaseEntityBlock {
@@ -114,7 +114,7 @@ public class ZombieVillagerCageBlock extends BaseEntityBlock {
         return super.playerWillDestroy(level, pos, state, player);
     }
 
-    /** Potion of weakness, then golden apple - on either half. */
+    /** Potion of weakness starts the cure - on either half. */
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
                                           BlockHitResult hit) {
